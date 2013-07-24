@@ -21,3 +21,6 @@ function IndexController($scope, $http){
   //  $scope.cdordvd = data;
   //});
 }
+
+function AdminController($scope, $http){
+}
