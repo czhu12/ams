@@ -1,0 +1,27 @@
+body {
+  padding-top:50px;
+
+}
+
+.center {
+  display:table;
+  margin: 0 auto;
+}
+
+#search-bar{
+  outline-width:0px;
+  border: 3px solid #ccc;
+  -moz-border-radius:10px;
+  -webkit-border-radius:10px;
+  border-radius:10px;
+  -moz-box-shadow:1px 1px 1px #666;
+  -webkit-box-shadow:1px 1px 1px #666;
+  box-shadow:1px 1px 1px #666;
+  background:#cccccc;
+  width:500px;
+  height: 50px;
+  font-size: 25px;
+  padding-right:10px;
+  padding-left:20px;
+}
+  

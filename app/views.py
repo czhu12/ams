@@ -1,4 +1,5 @@
 from app import app
+from app import db
 from flask import render_template, make_response
 
 @app.route('/')
@@ -9,13 +10,8 @@ def index():
 
 @app.route('/songs', methods=["GET", "POST", "PUT", "DELETE"])
 def rest_songs():
-  if request.method == 'POST':
-  
-  if request.method == 'GET':
-  
-  if request.method == 'PUT':
+  return db.test()
 
-  if request.method == 'DELETE':
 
 
   
