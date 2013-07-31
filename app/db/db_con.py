@@ -1,11 +1,11 @@
 import MySQLdb as mdb
 import sys
 
-class db:
-
+class Database:
+  
   def __init__(self):
     self.con = mdb.connect('localhost', 'testuser', 'test623', 'testdb')
-    self.cursor = con.cursor()
+    self.cursor = self.con.cursor(mdb.cursors.DictCursor)
 
   def get_cursor(self):
     return self.cursor

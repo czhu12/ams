@@ -15,6 +15,32 @@
   <script src="static/js/controllers.js"></script>
 </head>
 <body>
-  <div ng-view id="view"></div>
+  <div id="wrap">
+  <div id="header">
+    <div id="logo">
+      <h1>Our Website</h1>
+      
+    </div>
+  </div>
+  <div id="menu">
+    <ul>
+      <li><a href="#">Home</a></li>
+      <li><a href="#/admin">Admin</a></li>
+      <li><a href="#">Clerk</a></li>
+      <li><a href="#">Contact Us</a></li>
+    </ul>
+  <div class="clear"></div>
+  </div>
+
+  <div id="main">
+    <div ng-view id="content"></div>
+  </div>
+
+  <div id="footer">
+    This is our footer
+  </div>
+  
+  </div>
+
 </body>
 </html>
