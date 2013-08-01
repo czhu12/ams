@@ -10,6 +10,18 @@ function RegistrationController($scope, $http){
 }
 function AdminController($scope, $http){
 }
+function ClerkController($scope, $http){
+
+  $scope.credit=true;
+  $scope.toggleCredit = function(){
+    if(!$scope.credit){
+      $scope.credit = true;
+    }else{
+      $scope.credit = false;
+    }
+
+  }
+}
 
 function SongController($scope, $routeParams){
   $scope.songId = $routeParams.songId;
@@ -17,7 +29,8 @@ function SongController($scope, $routeParams){
     upc:'1111111',
     title:'Starlight',
     type:'CD',
-    category:'classical',
+    artist:'Taylor Swift',
+    category:'Classical',
     company:'company?',
     year:'2012',
     price:0.99,

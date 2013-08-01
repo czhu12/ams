@@ -41,9 +41,6 @@ img {
   color:#fff;
 }
 
-#content {
-  background:green;
-}
 
 #wrap {
   width:940px;
@@ -78,7 +75,29 @@ img {
   padding-top:10px;
 }
 .thumb {
+  padding:0px;
+  margin:0px;
   width:100px;
   height:100px;
+}
+#col1 {
+  float:left;
+  width:460px;
+}
+#col2{
+  float:right;
+  width:460px;
+}
+#content {
+  background:#606060;
+  padding:10px;
+  margin:0px;
 
+}
+.image {
+  line-height:0px;
+}
+
+li#song {
+  line-height:2em; 
 }

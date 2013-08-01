@@ -1,2 +1,15 @@
-<img src="{{song.thumbUrl}}" class="thumb" />
-
+<div id="song_page">
+  <div id="col1">
+  
+  <div class="image"><img src="{{song.thumbUrl}}" class="thumb" /></div>
+  </div>
+  <div id="col2">
+    {{song.title}}
+    <p>{{song.artist}} | Format: {{song.type}}</p>
+    <hr />
+    <p class="price">Price: {{song.price}}</p>
+    <p class="stock">Stock: {{song.stock}}</p>
+    <button id="buy_song">Purchase</button>
+  </div>
+  <div class="clear"></div>
+</div>
