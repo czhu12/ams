@@ -1,6 +1,7 @@
 'use strict';
 
 function IndexController($scope, $http){
+  $scope.hello = 'hello world';
   $http.get("api/songs").success(function(data){
     $scope.songs = data.songs;
   });
@@ -36,6 +37,13 @@ function SongController($scope, $routeParams){
     price:0.99,
     stock:100,
     thumbUrl:"http://wac.450f.edgecastcdn.net/80450F/popcrush.com/files/2012/10/RED-single.jpg"
+  }
+  $scope.purchase(){
+    $http({
+      method:"POST", 
+      url:"/song/" + $scope.song.upc + "/purchase",
+      data:""
+    });
   }
   //$http.get("api/songs/" + $routeParams.songId).success(function(data){
   //  $scope.song = data.song;

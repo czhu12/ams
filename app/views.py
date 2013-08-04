@@ -13,7 +13,8 @@ def index():
 @app.route('/api/songs', methods=["GET"])
 def get_songs():
   return jsonify({ "songs": conn.read("SELECT * FROM Songs") })
-@app.route('/api/songs', methods=["POST])
-def add_song():
+
+#@app.route('/api/songs', methods=["POST"])
+#def add_song():
 
 

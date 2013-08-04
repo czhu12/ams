@@ -72,7 +72,8 @@ img {
 }
 
 #footer {
-  padding-top:10px;
+
+  padding:10px;
 }
 .thumb {
   padding:0px;
@@ -90,8 +91,6 @@ img {
 }
 #content {
   background:#606060;
-  padding:10px;
-  margin:0px;
 
 }
 .image {
@@ -101,3 +100,20 @@ img {
 li#song {
   line-height:2em; 
 }
+#admin-page{
+}
+#col1-admin{
+  float:left;
+  width:130;
+  padding:20px;
+  border-right:1px solid #000;
+  min-height:200px;
+}
+#col2-admin {
+  float:left;
+  width:790;
+  padding:20px;
+  height:100%;
+}
+
+  
