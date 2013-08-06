@@ -2,6 +2,7 @@ from app import app
 from db import db_con
 from flask import render_template, make_response, jsonify
 
+
 conn = db_con.Database()
 
 @app.route('/')
@@ -13,6 +14,10 @@ def index():
 @app.route('/api/songs', methods=["GET"])
 def get_songs():
   return jsonify({ "songs": conn.read("SELECT * FROM Songs") })
+
+@app.route('/api/songs/<item_upc>/purchase', methods=["POST"])
+def purchase_song(item_upc):
+  return item_upc
 
 #@app.route('/api/songs', methods=["POST"])
 #def add_song():

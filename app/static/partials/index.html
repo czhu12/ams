@@ -1,5 +1,5 @@
-<div class="center"><input type="text" id="search-bar" ng-model="name" placeholder="Search"></div>
+<div class="center"><input type="text" id="search-bar" ng-model="query" placeholder="Search"></div>
 </div>
 <ul>
-  <li id="song" ng-repeat="song in songs | filter:name"><a href="#/songs/{{song.id}}">{{song.name}} - {{song.album}} - {{song.artist}}</a></li>
+  <li id="song" ng-repeat="song in songs | filter:query"><a href="#/songs/{{song.id}}">{{song.name}} - {{song.album}} - {{song.artist}}</a></li>
 </ul>

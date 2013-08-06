@@ -10,9 +10,22 @@
 
   <title>AMS</title>
   <link rel="stylesheet" href="static/css/stylesheet.css">
+
+  <link rel="stylesheet" href="static/css/ui-lightness/jquery-ui-1.10.3.custom.css">
+  <script src="static/lib/jquery-ui/jquery-1.9.1.js"></script>
+  <script src="static/lib/jquery-ui/jquery-ui-1.10.3.custom.js"></script>
+
   <script src="static/lib/angular/angular.js"></script>
   <script src="static/js/app.js"></script>
   <script src="static/js/controllers.js"></script>
+
+  <script type="text/javascript">
+    $("document").ready(function(){
+      $("#btnShowRegistration").click(function(){
+        $("#dialog-registration").dialog();
+      });
+    });
+  </script>
 </head>
 <body>
   <div id="wrap">
@@ -28,12 +41,24 @@
       <li><a href="#/admin">Admin</a></li>
       <li><a href="#/clerk">Clerk</a></li>
       <li><a href="#">Contact Us</a></li>
+      <span class="menu-button"><li><input type="button" id="btnShowRegistration" value="Register" /></li></span>
     </ul>
   <div class="clear"></div>
   </div>
 
   <div id="main">
-    <div ng-view id="content"></div>
+    <div data-ng-view id="content">
+    </div>
+    <div id="dialog-registration" title="Register" style="display:none">
+      <span>
+        <form action="" method="POST">
+          User ID: <input type="text" name="userid" />
+          Password: <input type="password" name="password" />
+          Password Confirmation: <input type="password" name="password" />
+          <input type="submit" value="Register" name="submit"/>
+        </form>
+      </span>
+    </div>
   </div>
 
   <div id="footer">

@@ -7,6 +7,7 @@ angular.module("ams", []).
     when("/songs/:songId", {templateUrl:"static/partials/view_song.html", controller: SongController}).
     when("/sign_up", {templateUrl:"static/partials/view_sign_up.html", controller: RegistrationController}).
     when("/clerk", {templateUrl:"static/partials/view_clerk.html", controller: ClerkController}).
+    when("/purchase", {templateUrl:"static/partials/view_purchase.html", controller: PurchaseController}).
     //$routeProvider.when("/signup", {templateUrl:"partials/signup.html", controller: SignupController}).
     otherwise({redirectTo:"/"});
 }]);

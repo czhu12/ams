@@ -4,12 +4,13 @@
   <div class="image"><img src="{{song.thumbUrl}}" class="thumb" /></div>
   </div>
   <div id="col2">
-    {{song.title}}
-    <p>{{song.artist}} | Format: {{song.type}}</p>
+    <span id="song-title">{{song.title}}</span>
+    <p class="meta-data"> Stock: {{song.stock}}| Format: {{song.type}}</p>
     <hr />
-    <p class="price">Price: {{song.price}}</p>
-    <p class="stock">Stock: {{song.stock}}</p>
-    <button id="buy_song" ng-click="purchase()">Purchase</button>
+    <p class="price">Price: <span id="song-price">${{song.price}}</p></span>
+    <p class="artist" ng-click="search(song.artist)">{{song.artist}}</p>
+    <p class="album" ng-click="search(song.album)">{{song.album}}</p>
+    <button id="buy-song" ng-click="purchase()">Purchase</button>
   </div>
   <div class="clear"></div>
 </div>
