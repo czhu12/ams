@@ -118,10 +118,17 @@ img {
 }
 
 li#song {
-  padding:10px;
+  padding:20px;
   line-height:2em; 
+  -webkit-transition:1s;
+  -moz-transition:1s;
+  -o-transition:1s;
+  -ms-transition:1s;
+  transition:1s;
+
 }
 li#song:hover{
+
   background-color:red;
 }
 
@@ -163,4 +170,7 @@ li#song:hover{
 }
 #admin-side li {
   line-height:30px;
+}
+#song-list-meta {
+  font-size:15px;
 }

@@ -14,6 +14,9 @@
   <link rel="stylesheet" href="static/css/ui-lightness/jquery-ui-1.10.3.custom.css">
   <script src="static/lib/jquery-ui/jquery-1.9.1.js"></script>
   <script src="static/lib/jquery-ui/jquery-ui-1.10.3.custom.js"></script>
+  <script src="static/lib/jquery/jquery.cookie.js"></script>
+
+  <script src="static/lib/json/json2.js"></script>
 
   <script src="static/lib/angular/angular.js"></script>
   <script src="static/js/app.js"></script>
@@ -24,7 +27,13 @@
       $("#btnShowRegistration").click(function(){
         $("#dialog-registration").dialog();
       });
+      $("#dialog-registration").submit(function(){
+        console.log("clicked me");
+        return false;
+      });
+      $.cookie('cart', JSON.stringify([]));
     });
+
   </script>
 </head>
 <body>
@@ -40,7 +49,6 @@
       <li><a href="#">Home</a></li>
       <li><a href="#/admin">Admin</a></li>
       <li><a href="#/clerk">Clerk</a></li>
-      <li><a href="#">Contact Us</a></li>
       <span class="menu-button"><li><input type="button" id="btnShowRegistration" value="Register" /></li></span>
     </ul>
   <div class="clear"></div>

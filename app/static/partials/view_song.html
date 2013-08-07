@@ -10,7 +10,9 @@
     <p class="price">Price: <span id="song-price">${{song.price}}</p></span>
     <p class="artist" ng-click="search(song.artist)">{{song.artist}}</p>
     <p class="album" ng-click="search(song.album)">{{song.album}}</p>
-    <button id="buy-song" ng-click="purchase()">Purchase</button>
+    <input type="text" ng-model="quantity" name="quantity"/>
+    ${{ calcPrice(quantity, song.price) }}
+    <button id="buy-song" ng-click="addSongToCart()">Add to Cart</button>
   </div>
   <div class="clear"></div>
 </div>

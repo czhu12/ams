@@ -42,6 +42,12 @@ function ClerkController($scope, $http){
 }
 
 function SongController($scope, $routeParams, $http, $location){
+
+  $scope.calcPrice = function(quantity, price){
+    if(isNaN(parseInt(quantity)))
+      return 0;
+    return quantity * price;
+  }
   $scope.songId = $routeParams.songId;
   $scope.song = {
     upc:'1111111',
@@ -55,12 +61,23 @@ function SongController($scope, $routeParams, $http, $location){
     price:0.99,
     stock:100,
     thumbUrl:"http://wac.450f.edgecastcdn.net/80450F/popcrush.com/files/2012/10/RED-single.jpg"
-  }
-  $scope.purchase = function(){
-    $http.post("/api/songs/" + $scope.song.upc + "/purchase", "").success(function(data, status, headers, config){
-      window.location="#/purchase?upc=" + $scope.song.upc;
-    });
-  }
+  };
+  
+  $scope.addSongToCart = function(){
+    var currentList = $.parseJSON($.cookie("cart"));
+    currentList.push({
+      upc: $scope.song.upc,
+      quantity: $scope.quantity });
+    $.cookie("cart", JSON.stringify(currentList));
+    console.log($.cookie('cart'));
+    window.location = "#/";
+  };
+
+  //$scope.purchase = function(){
+  //  $http.post("/api/songs/" + $scope.song.upc + "/purchase", "").success(function(data, status, headers, config){
+  //    window.location="#/purchase?upc=" + $scope.song.upc;
+  //  });
+  //};
   $scope.search = function(query){
     window.location="#/?query=" + query;
   };
