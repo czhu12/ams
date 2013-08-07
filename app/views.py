@@ -1,5 +1,5 @@
 from app import app
-from db import db_con
+#from db import db_con
 from flask import render_template, make_response, jsonify
 
 

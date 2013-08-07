@@ -2,6 +2,10 @@ body {
   font: 1em Arial;
 }
 
+a {
+  text-decoration:none;
+}
+
 h1, ul {
   margin:0px;
   padding:0px;
@@ -12,8 +16,12 @@ img {
   margin:0px;
   padding:0px;
 }
+
 .clear{
   clear:both;
+}
+#song-list-meta {
+  
 }
 #header {
   margin-bottom:10px;
@@ -76,7 +84,6 @@ img {
 }
 
 #footer {
-
   padding:10px;
 }
 .thumb {
@@ -101,12 +108,26 @@ img {
 .image {
   line-height:0px;
 }
+.song-list{
+  text-align:center;
+}
+.song-list ul{
+  margin:10px;
+  padding:0px;
+  display:inline-block;
+}
 
 li#song {
+  padding:10px;
   line-height:2em; 
 }
+li#song:hover{
+  background-color:red;
+}
+
 #admin-page{
 }
+
 #col1-admin{
   float:left;
   width:130;
@@ -136,6 +157,7 @@ li#song {
   box-shadow:inset 0 1px 0 rgba(255,255,255,0.5);
   border-radius:5px;
 }
+
 #buy-song:hover{
   background-color:rgba(255,204,0,0.8);
 }
