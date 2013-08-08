@@ -5,7 +5,7 @@
   </div>
   <div id="col2">
     <span id="song-title">{{song.title}}</span>
-    <p class="meta-data"> Stock: {{song.stock}}| Format: {{song.type}}</p>
+    <p class="meta-data"><span id="song-stock">Stock: {{song.stock}}</span>| Format: {{song.type}}</p>
     <hr />
     <p class="price">Price: <span id="song-price">${{song.price}}</p></span>
     <p class="artist" ng-click="search(song.artist)">{{song.artist}}</p>

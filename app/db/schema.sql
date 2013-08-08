@@ -28,7 +28,7 @@ CREATE TABLE HasSong (
 );
 
 CREATE TABLE Customer(
-  	cid INTEGER,
+  cid INTEGER,
 	password VARCHAR(20),
 	name VARCHAR(50),
 	address VARCHAR(50),
@@ -72,4 +72,5 @@ CREATE TABLE ReturnItem(
 	PRIMARY KEY(retid, upc),
 	FOREIGN KEY(upc) REFERENCES Item(upc)
 );
+
 

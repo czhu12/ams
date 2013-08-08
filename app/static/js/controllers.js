@@ -7,7 +7,23 @@ function IndexController($scope, $http, $routeParams){
   });
 }
 
-function RegistrationController($scope, $http){
+function CheckoutController($scope, $http){
+  var cart = $.parseJSON($.cookie("cart"));
+  //var songs = [];
+  //for(var i = 0; i < cart.length; i++){
+  //  var item = cart[i];
+  //  $http.get("api/songs/" + item.upc).success(function(data){
+  //    var song = data.song;
+  //    song.quantity = item.quantity;
+  //    songs.push(song);
+  //  });
+  //}
+
+  //var totalPrice = 0;
+  //for(var i = 0; i < songs.length; i++){
+  //  totalPrice = totalPrice + (songs[i].quantity * songs[i].price);
+  //}
+  //$scope.totalPrice = totalPrice;
 }
 function PurchaseController($scope, $http, $routeParams){
   $scope.upc = $routeParams.upc;
@@ -59,16 +75,20 @@ function SongController($scope, $routeParams, $http, $location){
     company:'company?',
     year:'2012',
     price:0.99,
-    stock:100,
+    stock:10,
     thumbUrl:"http://wac.450f.edgecastcdn.net/80450F/popcrush.com/files/2012/10/RED-single.jpg"
   };
+
+  if ($scope.song.stock == 0) {
+    $("#song-stock").css("color", "red");
+  }
   
   $scope.addSongToCart = function(){
     var currentList = $.parseJSON($.cookie("cart"));
     currentList.push({
       upc: $scope.song.upc,
       quantity: $scope.quantity });
-    $.cookie("cart", JSON.stringify(currentList));
+    $.cookie("cart", JSON.stringify(currentList), {expires:3, path:'/'});
     console.log($.cookie('cart'));
     window.location = "#/";
   };

@@ -10,6 +10,7 @@
 
   <title>AMS</title>
   <link rel="stylesheet" href="static/css/stylesheet.css">
+  <link rel="stylesheet" href="static/css/animation.css">
 
   <link rel="stylesheet" href="static/css/ui-lightness/jquery-ui-1.10.3.custom.css">
   <script src="static/lib/jquery-ui/jquery-1.9.1.js"></script>
@@ -28,9 +29,12 @@
         $("#dialog-registration").dialog();
       });
       $("#dialog-registration").submit(function(){
-        console.log("clicked me");
+        if (isNaN(parseInt($("input[name='name']").val())))
+          alert("User ID must be an Integer");
+        
         return false;
       });
+
       $.cookie('cart', JSON.stringify([]));
     });
 
@@ -47,7 +51,7 @@
   <div id="menu">
     <ul>
       <li><a href="#">Home</a></li>
-      <li><a href="#/admin">Admin</a></li>
+      <li><a href="#/admin">Manager</a></li>
       <li><a href="#/clerk">Clerk</a></li>
       <span class="menu-button"><li><input type="button" id="btnShowRegistration" value="Register" /></li></span>
     </ul>
@@ -55,17 +59,18 @@
   </div>
 
   <div id="main">
-    <div data-ng-view id="content">
+    <div data-ng-view id="content" >
     </div>
-    <div id="dialog-registration" title="Register" style="display:none">
-      <span>
-        <form action="" method="POST">
-          User ID: <input type="text" name="userid" />
-          Password: <input type="password" name="password" />
-          Password Confirmation: <input type="password" name="password" />
-          <input type="submit" value="Register" name="submit"/>
-        </form>
-      </span>
+    <div class="modal" id="dialog-registration" title="Register" style="display:none;">
+      <form action="/customers" method="POST" id="registration-form">
+        User ID: <input type="text" name="userid" />
+        Password: <input type="password" name="password" />
+        Password Confirmation: <input type="password" name="password" />
+        Name: <input type="text" name="name" />
+        Address: <input type="text" name="address" />
+        Phone: <input type="text" name="phone" />
+        <input type="submit" value="Register" name="submit"/>
+      </form>
     </div>
   </div>
 
