@@ -1,11 +1,28 @@
 <div id="page1-admin">
-  <h2>Add Item</h2>
   <form action="" method="POST">
-    <input type="submit" name="submit" value="Submit"/>
+    <fieldset>
+    <legend>Add a Song</legend>
+      UPC: <input type="text" name="upc" />
+      <br />
+      Category: <select name="category">
+        <option value="rock">Rock</option>
+        <option value="pop">Pop</option>
+        <option value="country">Country</option>
+        <option value="rap">Rap</option>
+        <option value="classical">Classical</option>
+        <option value="new">New Age</option>
+        <option value="instrumental">Instrumental</option>
+      </select>
+      <br/>
+      <input type="submit" name="submit" value="Submit"/>
+    </fieldset>
   </form>
 
   <form action="" method="PUT">
+    <fieldset>
+    <legend>Update a Song<legend>
     <input type="text">
     <input type="submit" name="submit" value="Submit"/>
+    </fieldset>
   </form>
 </div>

@@ -11,27 +11,23 @@ def index():
   response = make_response(render_template("index.html"))
   return response
 
-@app.route('/api/songs', methods=["GET"])
-def get_songs():
-  return jsonify({ "songs": conn.read("SELECT * FROM Songs") })
+@app.route('/api/items', methods=["GET"])
+def get_items():
+  return jsonify({ "items": conn.read("SELECT * FROM Songs") })
 
-@app.route('/api/songs/<item_upc>', methods=["GET"])
-def get_song():
-  return jsonify({ "songs": conn.read("SELECT * FROM Songs") })
+@app.route('/api/items/<item_upc>', methods=["GET"])
+def get_item():
+  return jsonify({ "items": conn.read("SELECT * FROM Songs") })
 
-@app.route('/api/songs/<item_upc>', methods=["POST"])
-def add_song(item_upc):
+@app.route('/api/items/<item_upc>', methods=["PUT"])
+def update_item(item_upc):
   return item_upc
 
-@app.route('/api/songs/<item_upc>', methods=["PUT"])
-def update_song(item_upc):
+@app.route('/api/items/<item_upc>', methods=["DELETE"])
+def delete_item(item_upc):
   return item_upc
 
-@app.route('/api/songs/<item_upc>', methods=["DELETE"])
-def delete_song(item_upc):
-  return item_upc
-
-@app.route('/api/songs/purchase', methods=["POST"])
-def purchase_song(item_upc):
+@app.route('/api/items/purchase', methods=["POST"])
+def purchase_item(item_upc):
   return item_upc
 

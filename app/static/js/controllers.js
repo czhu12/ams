@@ -2,8 +2,8 @@
 
 function IndexController($scope, $http, $routeParams){
   $scope.query = $routeParams.query;
-  $http.get("api/songs").success(function(data){
-    $scope.songs = data.songs;
+  $http.get("api/items").success(function(data){
+    $scope.songs = data.items;
   });
 }
 

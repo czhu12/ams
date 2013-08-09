@@ -1,12 +1,23 @@
 <div id="checkout-view">
   <div class='grid'>
-    <div class="col-2-3">
-      <div id="checkout-main">
-      </div>
+    <div id="checkout-main" class="col-2-3">
+        
     </div>
-    <div class="col-1-3">
-      <div id="checkout-side">
-      </div>
+    <div id="checkout-side" class="col-1-3">
+        <form action="" method="POST">
+          <fieldset>
+            <legend>User Information</legend>
+            User ID: <input type="text" name="userid"/>
+            Password: <input type="password" name="password"/>
+          </fieldset>
+          <fieldset>
+            <legend>Credit Card Information</legend>
+            Number: <input type="text" name="ccn"/>
+            Expires: <input type="text" name="expires" size="5"/>
+          </fieldset>
+          <input type="submit" value="Purchase" name="submit" style="float:right;">
+        </form>
+        
     </div>
   </div>
 </div>

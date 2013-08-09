@@ -8,8 +8,6 @@ button:hover, input[type="submit"], input[type="button"] {
   cursor:pointer;
 }
 body {
-  height:100%;
-  width:100%;
   font: 1em Arial;
 }
 
@@ -232,10 +230,9 @@ li#song:hover{
 }
 
 #checkout-main {
-  height:250px;
+  border-right:1px solid #000;
+  display:inline-block;
 }
 #checkout-side {
-  height:250px;
   padding:10px;
-  border-left:1px solid #000;
 }
