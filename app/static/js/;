@@ -6,22 +6,10 @@ function IndexController($scope, $http, $routeParams){
     $scope.songs = data.data;
   });
 }
+
 function CheckoutController($scope, $http){
   var cart = $.parseJSON($.cookie("cart"));
-	$scope.upcs = {};
-	var allItems;
-	$http.get('api/items').success(function(data){
-		allItems = data.data;
-	});
-	
-	$scope.selectedItems = {};
-	for(var i = 0; i < allItems.length; i++){
-		
-	}
-}
-	
-	
-
+  console.log(cart);
   //var songs = [];
   //for(var i = 0; i < cart.length; i++){
   //  var item = cart[i];
@@ -37,6 +25,7 @@ function CheckoutController($scope, $http){
   //  totalPrice = totalPrice + (songs[i].quantity * songs[i].price);
   //}
   //$scope.totalPrice = totalPrice;
+}
 function PurchaseController($scope, $http, $routeParams){
   $scope.upc = $routeParams.upc;
   $http.get("api/songs/" + $scope.upc).success(function(data){
@@ -87,6 +76,7 @@ function ClerkController($scope, $http){
       }; 
       orders.push(order);
     });
+    //console.log(orders);
     console.log(JSON.stringify({'arr':orders}));
     //$http.post('/api/store_purchase', {arr:JSON.stringify(orders)} );
 		$.post('/api/store_purchase', {'arr':JSON.stringify(orders)} );
@@ -95,10 +85,11 @@ function ClerkController($scope, $http){
 
   $("#clerk-main-list").on('input', function(){
       computeTotalPrice();
-      $("#totalprice").text(totalPrice);
+      $("#totalprice").text("$" + totalPrice);
   });
 
   $http.get("/api/items").success(function(data){
+    console.log(data.data);
     $scope.songs = data.data;
   });
 
@@ -112,10 +103,6 @@ function ClerkController($scope, $http){
   };
 
   $scope.addUpc = function(upc){
-		if(upc in $scope.selectedSongs){
-			return;
-		}
-
     for(var i = 0; i < $scope.songs.length; i++){
       if ($scope.songs[i].upc == upc){
         //$scope.selectedSongs.push($scope.songs[i]);
@@ -124,11 +111,11 @@ function ClerkController($scope, $http){
         break;
       }
     }
-	
-    $("#totalprice").text(totalPrice);
+    $("#totalprice").text("$" + totalPrice);
   }
   
   $scope.dropItem = function(upc){
+    console.log('lick');
     delete $scope.selectedSongs[upc];
   }
 
@@ -147,20 +134,13 @@ function SongController($scope, $routeParams, $http){
   	}
 	});
 
+  
   $scope.addSongToCart = function(){
-		if (($scope.quantity == "") || (typeof $scope.quantity != "string")){
-			alert("Must specify a Quantity");
-			return false;
-		}
-
-    var currentCart = $.parseJSON($.cookie("cart"));
-		var writeQuan = parseInt($scope.quantity);
-		if ($scope.song.upc in currentCart){
-			var currentQuan = parseInt(currentCart[$scope.song.upc]);
-			writeQuan = writeQuan + currentQuan;
-		}
-		currentCart[$scope.song.upc] = writeQuan;
-		$.cookie("cart", JSON.stringify(currentCart), {expires:3, path:'/'});
+    var currentList = $.parseJSON($.cookie("cart"));
+    currentList.push({
+      upc: $scope.song.upc,
+      quantity: $scope.quantity });
+    $.cookie("cart", JSON.stringify(currentList), {expires:3, path:'/'});
     console.log($.cookie('cart'));
     window.location = "#/";
   };

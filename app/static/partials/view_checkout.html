@@ -5,7 +5,7 @@
         <div id="checkout-main-list">
         <h2>Checkout</h2>
           <ul>
-            <li id="checkout-song-list">
+            <li id="checkout-song-list" ng-repeat="itemOrder in itemOrders">
               UPC: {{item.upc}} <br />
               Title: {{item.title}} - {{item.price}}
               Quantity: <input type="text" name="quantity" value="item.quantity"/>
