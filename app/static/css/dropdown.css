@@ -9,7 +9,7 @@
 
 #nav li
 {
-	width:100px;
+	width:200px;
 	float:left;
 	margin-right:10px;
 	text-align:center;
@@ -21,6 +21,7 @@
 	display:block;
 	padding:5px;
 	background:darkgrey;
+	white-space:nowrap;
 }
 
 #nav a:hover

@@ -5,15 +5,15 @@
         <div id="checkout-main-list">
         <h2>Checkout</h2>
           <ul>
-            <li id="checkout-song-list" ng-repeat="itemOrder in itemOrders">
-              UPC: {{item.upc}} <br />
-              Title: {{item.title}} - {{item.price}}
-              Quantity: <input type="text" name="quantity" value="item.quantity"/>
+            <li id="checkout-song-list" ng-repeat="itemOrder in selectedItems">
+              UPC: {{itemOrder.item.upc}} <br />
+              Title: {{itemOrder.item.title}} - {{itemOrder.item.category}}
+              Quantity: <input type="text" name="quantity" value="{{itemOrder.quantity}}"/>
             </li>
           </ul>
         </div>
         <div id="checkout-main-total">
-          Total Price: ${{total-price}}
+          <span style="float:left;">Expected Delivery Date: {{expected_date}}</span><span style="float:right;">Total Price: ${{total-price}}</span>
         </div>
       </div>
     </div>

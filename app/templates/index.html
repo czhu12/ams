@@ -43,8 +43,6 @@
       });
 
       $.cookie('cart', JSON.stringify({}));
-
-      $("#menu").ptMenu();
     });
 
   </script>
@@ -81,22 +79,23 @@
 -->
   <div id="menu">
     <ul id="nav">
-      <li><a href="#">Home</a>
+      <li><a href="#">Customer</a>
         <ul>
-          <li><a href="#">aaa</a></li>
-          <li><a href="#">bbb</a></li>
+          <li><a href="#">Home</a></li>
+          <li><a href="#">Search</a></li>
+          <li><a href="/#/advanced">Advanced Search</a></li>
+          <li><a href="/#/checkout">Checkout</a></li>
         </ul>
       </li>
-      <li><a href="#/admin">Manager</a>
+      <li><a href="/#/admin">Manager</a>
         <ul>
-          <li><a href="#">ccc</a></li>
-          <li><a href="#">ddd</a></li>
+          <li><a href="#">Daily Report</a></li>
         </ul>
       </li>
       <li><a href="#/clerk">Clerk</a>
         <ul>
-          <li><a href="#">eee</a></li>
-          <li><a href="#">fff</a></li>
+          <li><a href="/#/clerk/register">Register Purchase</a></li>
+          <li><a href="/#/clerk/refund">Refund Purchase</a></li>
         </ul>
       </li>
 

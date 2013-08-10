@@ -1,0 +1,42 @@
+<div class="grid">
+  <div class="col-2-3">
+    <div id="clerk-main">
+      <h2>Selected</h2>
+      <div id="clerk-main-list">
+      <ul id="clerk-selected-list">
+        <li ng-repeat="song in selectedSongs" class="selected-songs" >
+        {{song.upc}} - {{song.title}}<span style="float:right;">
+        Quantity: <input type="text" name="{{song.upc}}" value="1" size=5 />
+        </span><br/>
+        {{song.price}} <button ng-click="dropItem(song.upc)" style="float:right;" ng-click="dropItem(song.upc)" >Drop Item</button>
+        <div class="clear"></div>
+        </li>
+      </ul>
+      </div>
+    </div>
+    Total: $ <span id="totalprice">0</span>
+  </div>
+  <div class="col-1-3">
+  <input type="text" ng-model="upcquery" name="upcquery" placeholder="Song UPC" />
+    <div id="clerk-upc-view">
+      <ul>
+        <li ng-repeat="song in songs | filter:upcquery" ng-click="addUpc(song.upc)">{{song.upc}}</li>
+      </ul>
+    </div>
+    <form action="" method="POST">
+      <fieldset>
+        <legend>Purchase</legend>
+          Credit: <input type="checkbox" ng-change="toggleCredit()" ng-model="creditCheckBox"/>
+          <br/>
+          Credit Card Number: 
+          <br/>
+          <input type="text" name="ccn" ng-disabled="credit" size="16" />
+          <br/>
+          Price: $<input type="text" name="price" size="10"/>
+          <br>
+          <input type="submit" name="submit" value="Purchase" ng-click="purchase()" />
+          
+      </fieldset>
+    </form>
+  </div>
+</div>

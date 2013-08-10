@@ -225,6 +225,9 @@ li#song:hover{
   float:left;
   padding-right:10px;
 }
+.col-1-2 {
+  width:50%;
+}
 
 .col-1-5 {
   width:20%
@@ -261,7 +264,6 @@ li#song:hover{
 }
 #checkout-main-total {
   height:10%;
-  float:right;
   font-weight:bold;
 }
 

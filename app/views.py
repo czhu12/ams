@@ -244,7 +244,7 @@ def get_item(item_upc):
   curr = conn.get_cursor()
   curr.execute("SELECT * FROM Item WHERE upc = %s", item_upc)
   item = curr.fetchall()
-  curr.execute("SELECT * FROM hasSong WHERE upc = %s", item_upc)
+  curr.execute("SELECT * FROM HasSong WHERE upc = %s", item_upc)
   songs = curr.fetchall()
   conn.con.commit()
   return jsonify({ "data": stringify(item), "songs": stringify(songs)})

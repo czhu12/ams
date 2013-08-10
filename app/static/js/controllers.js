@@ -6,43 +6,40 @@ function IndexController($scope, $http, $routeParams){
     $scope.songs = data.data;
   });
 }
+
+function AdvancedController($scope){}
+
+function ClerkController($scope){
+}
+
 function CheckoutController($scope, $http){
+  $http.get('api/checkout/expected').success(function(data){
+    $scope.expected_date = data;
+  });
   var cart = $.parseJSON($.cookie("cart"));
 	$scope.upcs = {};
 	var allItems;
 	$http.get('api/items').success(function(data){
 		allItems = data.data;
+		$scope.selectedItems = {};
+		for(var i = 0; i < allItems.length; i++){
+		if (allItems[i].upc in cart) {
+			$scope.selectedItems[allItems[i].upc] = {};
+			$scope.selectedItems[allItems[i].upc].item = allItems[i];
+			$scope.selectedItems[allItems[i].upc].quantity = cart[allItems[i].upc];
+		}
+	}
+	console.log($scope.selectedItems);
 	});
 	
-	$scope.selectedItems = {};
-	for(var i = 0; i < allItems.length; i++){
-		
-	}
 }
-	
-	
 
-  //var songs = [];
-  //for(var i = 0; i < cart.length; i++){
-  //  var item = cart[i];
-  //  $http.get("api/songs/" + item.upc).success(function(data){
-  //    var song = data.song;
-  //    song.quantity = item.quantity;
-  //    songs.push(song);
-  //  });
-  //}
-
-  //var totalPrice = 0;
-  //for(var i = 0; i < songs.length; i++){
-  //  totalPrice = totalPrice + (songs[i].quantity * songs[i].price);
-  //}
-  //$scope.totalPrice = totalPrice;
-function PurchaseController($scope, $http, $routeParams){
-  $scope.upc = $routeParams.upc;
+function ClerkRefundController($scope, $http){
   $http.get("api/songs/" + $scope.upc).success(function(data){
     $scope.song = data.song;
   });
 }
+
 function AdminController($scope, $http){
   $scope.test = "hello";
 
@@ -60,7 +57,7 @@ function AdminController($scope, $http){
     $("#col2-admin").load("/static/partials/admin_partials/page4.html");
   };
 }
-function ClerkController($scope, $http){
+function ClerkRegisterController($scope, $http){
   $scope.selectedSongs = {};
   $scope.quantityChange = function(upc){
     console.log('hello' + upc);
