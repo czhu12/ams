@@ -9,6 +9,7 @@ function IndexController($scope, $http, $routeParams){
 
 function CheckoutController($scope, $http){
   var cart = $.parseJSON($.cookie("cart"));
+  console.log(cart);
   //var songs = [];
   //for(var i = 0; i < cart.length; i++){
   //  var item = cart[i];
@@ -65,6 +66,23 @@ function ClerkController($scope, $http){
     });
   };
 
+  $scope.purchase = function(){
+    var orders = [];
+    $.each($(".selected-songs"), function(index, Element){
+      var input = $(Element).find("input");
+      var order = {
+        upc: input.attr('name'),
+        quantity: input.val()
+      }; 
+      orders.push(order);
+    });
+    //console.log(orders);
+    console.log(JSON.stringify({'arr':orders}));
+    //$http.post('/api/store_purchase', {arr:JSON.stringify(orders)} );
+		$.post('/api/store_purchase', {'arr':JSON.stringify(orders)} );
+    return false;
+  }
+
   $("#clerk-main-list").on('input', function(){
       computeTotalPrice();
       $("#totalprice").text("$" + totalPrice);
@@ -104,12 +122,15 @@ function ClerkController($scope, $http){
 }
 
 function SongController($scope, $routeParams, $http, $location){
-
+	console.log($routeParams.songUpc);
   $scope.calcPrice = function(quantity, price){
     if(isNaN(parseInt(quantity)))
       return 0;
-    return quantity * price;
+    return Math.round(quantity * price * 100)/100;
   }
+	$http.get("/api/items").success(function(){
+	
+	});
   $scope.songId = $routeParams.songId;
   $scope.song = {
     upc:'1111111',

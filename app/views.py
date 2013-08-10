@@ -28,7 +28,6 @@ def purchase():
 	cur = conn.get_cursor()
 	today = str(date.today())
 	items = json.loads(request.form['arr'])
-	return str(items)
 
 	if not is_valid(items):
 		return 'Invalid input'

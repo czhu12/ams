@@ -25,6 +25,12 @@ h1, ul, h2 {
   padding:0px;
   list-style:none;
 }
+input[type="checkbox"] {
+  width:12px;
+  height:12px;
+  margin:0px;
+  padding:0px;
+}
 input {
   padding:0px;
   margin:0px;
