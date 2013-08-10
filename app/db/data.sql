@@ -13,6 +13,11 @@ VALUES ('Feel Good', 'dvd', 'new age', 'YES', '2012-01-01', 5.55, 100);
 INSERT INTO Item (title, type, category, company, year, price, stock)
 VALUES ('Enjoy', 'cd', 'classical', 'Old Label', '2001-01-01', 15.00, 1);
 
+INSERT INTO hasSong(upc, title)
+VALUES (1000, 'The all nighters');
+INSERT INTO hasSong(upc, title)
+VALUES (1000, 'Infinite Caffeine');
+
 INSERT INTO Purchase(purchasedate)
 VALUES ('2013-05-01');
 

@@ -15,6 +15,19 @@ def index():
 
 """ Henry's Code Start """
 
+@app.route('/api/registration', methods=["POST"])
+def registration():
+	cur = conn.get_cursor()
+	customer = json.loads(request.form['customer'])
+	cid = str(customer['cid'])
+
+	if len(cid) > 20:
+		return "Illegal ID"
+
+	cur.execute("SELECT * from Customer WHERE cid=%s", cid)
+	if cur.fetchall():
+		commit
+
 @app.route('/api/price', methods=["GET"])
 def price_request():
 	items = json.loads(request.args['arr'])
@@ -230,9 +243,11 @@ def get_items():
 def get_item(item_upc):
   curr = conn.get_cursor()
   curr.execute("SELECT * FROM Item WHERE upc = %s", item_upc)
+  item = curr.fetchall()
+  curr.execute("SELECT * FROM hasSong WHERE upc = %s", item_upc)
+  songs = curr.fetchall()
   conn.con.commit()
-  return jsonify({ "data": stringify(curr.fetchall()) })
-
+  return jsonify({ "data": stringify(item), "songs": stringify(songs)})
 
 @app.route('/api/items/<item_upc>', methods=["PUT"])
 def update_item(item_upc):

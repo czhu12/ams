@@ -27,20 +27,18 @@ CREATE TABLE HasSong (
 );
 
 CREATE TABLE Customer(
-  	cid INTEGER AUTO_INCREMENT,
+  	cid VARCHAR(20),
 	password VARCHAR(20),
 	name VARCHAR(50),
 	address VARCHAR(50),
 	phone VARCHAR (20),
 	PRIMARY KEY(cid)
-)
-	AUTO_INCREMENT = 1000
-;
+);
 
 CREATE TABLE Purchase (
 	receiptid INTEGER AUTO_INCREMENT,
 	purchasedate DATE,
-	cid INTEGER,
+	cid VARCHAR(20),
 	cardnum CHAR(16),
 	expirydate DATE,
 	expecteddate DATE,
