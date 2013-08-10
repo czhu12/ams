@@ -1,0 +1,25 @@
+<div id="manager-add-items">
+  <div class="grid">
+    <div class="col-2-3">
+      <div id="manager-item-view">
+        hello world
+      </div>
+    </div>
+    <div class="col-1-3">
+      <div id="manager-item-change">
+        <input type="text" ng-model="query">
+        <div id="manager-item-form">
+          <form action="" method="POST">
+            <fieldset>
+              <legend>Update Item</legend>
+              UPC: <span id="manager-song-upc">{{selectedSong.upc}}</span>
+              Title: <span id="manager-song-title">{{selectedSong.title}}</span>
+              Stock: <input id="manager-song-stock" type="text" value="selectedSong.stock"></span>
+              Price: $<input id="manager-song-price" type="text" value="selectedSong.price"></span>
+            </fieldset>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

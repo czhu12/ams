@@ -8,6 +8,10 @@ function IndexController($scope, $http, $routeParams){
 }
 
 function AdvancedController($scope){}
+function ManagerAddItemsController($scope){}
+function ManagerSalesReportController($scope){}
+function ManagerTopItemsController($scope){}
+function ManagerProcessDeliveryController($scope){}
 
 function ClerkController($scope, $location){
   $scope.purchase = function(){
@@ -47,22 +51,19 @@ function ClerkRefundController($scope, $http){
   });
 }
 
-function AdminController($scope, $http){
-  $scope.test = "hello";
-
-  $("#col2-admin").load("/static/partials/admin_partials/page1.html");
-  $scope.page1 = function(){
-    $("#col2-admin").load("/static/partials/admin_partials/page1.html");
-  };
-  $scope.page2 = function(){
-    $("#col2-admin").load("/static/partials/admin_partials/page2.html");
-  };
-  $scope.page3 = function(){
-    $("#col2-admin").load("/static/partials/admin_partials/page3.html");
-  };
-  $scope.page4 = function(){
-    $("#col2-admin").load("/static/partials/admin_partials/page4.html");
-  };
+function ManagerController($scope, $http, $location){
+  $scope.addItem = function(){
+    $location.path("/manager/add_items")
+  }
+  $scope.processDelivery = function(){
+    $location.path("/manager/process_delivery")
+  }
+  $scope.salesReport = function(){
+    $location.path("/manager/sales_report")
+  }
+  $scope.topItems = function(){
+    $location.path("/manager/top_items")
+  }
 }
 function ClerkRegisterController($scope, $http){
   $scope.selectedSongs = {};
