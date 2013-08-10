@@ -13,9 +13,16 @@
   <link rel="stylesheet" href="static/css/animation.css">
 
   <link rel="stylesheet" href="static/css/ui-lightness/jquery-ui-1.10.3.custom.css">
+  <link rel="stylesheet" href="static/css/dropdown.css">
+
+
   <script src="static/lib/jquery-ui/jquery-1.9.1.js"></script>
   <script src="static/lib/jquery-ui/jquery-ui-1.10.3.custom.js"></script>
   <script src="static/lib/jquery/jquery.cookie.js"></script>
+
+  <!-- <script src="static/lib/jquery-ui/jquery.ui.potato.menu.min.js"></script>
+    <link rel="stylesheet" media="screen" type="text/css" href="static/lib/jquery-ui/jquery.ui.potato.menu.css">
+  -->
 
   <script src="static/lib/json/json2.js"></script>
 
@@ -36,6 +43,8 @@
       });
 
       $.cookie('cart', JSON.stringify([]));
+
+      $("#menu").ptMenu();
     });
 
   </script>
@@ -47,25 +56,47 @@
       <h1>Our Website</h1>
       
     </div>
+
   </div>
+
+<!--<div id='cssmenu'>
+  <ul>
+    <li class='active'><a href='index.html'><span>Home</span></a></li>
+    <li class='has-sub'><a href='#'><span>Products</span></a>
+  <ul>
+    <li><a href='#'><span>Widgets</span></a></li>
+    <li><a href='#'><span>Menus</span></a></li>
+    <li class='last'><a href='#'><span>Products</span></a></li>
+  </ul>
+  </li>
+  <li class='has-sub'><a href='#'><span>Company</span></a>
+  <ul>
+  <li><a href='#'><span>About</span></a></li>
+  <li class='last'><a href='#'><span>Location</span></a></li>
+  </ul>
+  </li>
+  <li class='last'><a href='#'><span>Contact</span></a></li>
+  </ul>
+</div>
+-->
   <div id="menu">
-    <ul>
+    <ul id="nav">
       <li><a href="#">Home</a>
         <ul>
-          <li><a href="#"></a></li>
-          <li><a href="#"></a></li>
+          <li><a href="#">aaa</a></li>
+          <li><a href="#">bbb</a></li>
         </ul>
       </li>
       <li><a href="#/admin">Manager</a>
         <ul>
-          <li><a href="#"></a></li>
-          <li><a href="#"></a></li>
+          <li><a href="#">ccc</a></li>
+          <li><a href="#">ddd</a></li>
         </ul>
       </li>
       <li><a href="#/clerk">Clerk</a>
         <ul>
-          <li><a href="#"></a></li>
-          <li><a href="#"></a></li>
+          <li><a href="#">eee</a></li>
+          <li><a href="#">fff</a></li>
         </ul>
       </li>
 

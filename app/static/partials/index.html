@@ -2,7 +2,7 @@
 </div>
 <div class="song-list">
 <ul>
-  <li id="song" ng-animate="'animate'" ng-repeat="song in songs | filter:query"><a href="#/songs/{{song.id}}">{{song.name}} <br/>
-  <span id="song-list-meta">{{song.album}} - {{song.artist}}</span></a></li>
+  <li id="song" ng-animate="'animate'" ng-repeat="song in songs | filter:query"><a href="#/songs/{{song.upc}}">{{song.title}} <br/>
+  <span id="song-list-meta">{{song.company}} - {{song.category}}</span></a></li>
 </ul>
 </div>

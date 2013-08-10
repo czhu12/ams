@@ -12,12 +12,11 @@ CREATE TABLE Item (
 	AUTO_INCREMENT = 1000
 ;
 
-
 CREATE TABLE LeadSinger (
 	upc INTEGER,
 	name VARCHAR(50),
 	PRIMARY KEY(upc, name),
-	FOREIG KEY(upc) REFERENCES Item(upc)
+	FOREIGN KEY(upc) REFERENCES Item(upc)
 );
 
 CREATE TABLE HasSong (
@@ -28,25 +27,29 @@ CREATE TABLE HasSong (
 );
 
 CREATE TABLE Customer(
-  cid INTEGER,
+  	cid INTEGER AUTO_INCREMENT,
 	password VARCHAR(20),
 	name VARCHAR(50),
 	address VARCHAR(50),
 	phone VARCHAR (20),
 	PRIMARY KEY(cid)
-);
+)
+	AUTO_INCREMENT = 1000
+;
 
 CREATE TABLE Purchase (
-	receiptid INTEGER,
+	receiptid INTEGER AUTO_INCREMENT,
 	purchasedate DATE,
 	cid INTEGER,
-	cardnum INTEGER(16),
+	cardnum CHAR(16),
 	expirydate DATE,
 	expecteddate DATE,
 	delivereddate DATE,
 	PRIMARY KEY(receiptid),
 	FOREIGN KEY(cid) REFERENCES Customer(cid)
-);
+)
+	AUTO_INCREMENT = 1000
+;
 
 CREATE TABLE PurchaseItem (
 	receiptid INTEGER,
@@ -58,12 +61,14 @@ CREATE TABLE PurchaseItem (
 );
 
 CREATE TABLE ReturnTable(
-	retid INTEGER,
+	retid INTEGER AUTO_INCREMENT,
 	returndate DATE,
 	receiptid INTEGER,
 	PRIMARY KEY(retid),
 	FOREIGN KEY(receiptid) REFERENCES Purchase(receiptid)
-);
+)
+	AUTO_INCREMENT = 1000
+;
 
 CREATE TABLE ReturnItem(
 	retid INTEGER,
@@ -72,5 +77,4 @@ CREATE TABLE ReturnItem(
 	PRIMARY KEY(retid, upc),
 	FOREIGN KEY(upc) REFERENCES Item(upc)
 );
-
 

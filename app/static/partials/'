@@ -49,19 +49,13 @@ function AdminController($scope, $http){
   };
 }
 function ClerkController($scope, $http){
+  $scope.totalPrice = 0;
   $scope.selectedSongs = {};
-  $scope.quantityChange = function(upc){
-    console.log('hello' + upc);
-  };
+   
+  $("input").on('input', function(e){
+    console.log('hello');
+    console.log(e);
 
-  $("#clerk-main-list").on('input', function(){
-    var totalPrice = 0;
-    $.each($scope.selectedSongs, function(index, song){
-      var quantity = parseFloat($("input[name=" + song.upc + "]").val());
-      var price = parseFloat(song.price);
-      totalPrice += quantity*price;
-    });
-      $("#totalprice").text("$" + totalPrice);
   });
 
   $http.get("/api/items").success(function(data){

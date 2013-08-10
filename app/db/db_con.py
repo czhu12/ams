@@ -4,7 +4,7 @@ import sys
 class Database:
   
   def __init__(self):
-    self.con = mdb.connect('localhost', 'testuser', 'test623', 'testdb')
+    self.con = mdb.connect('localhost', 'testuser', 'test623', 'ams')
     self.cursor = self.con.cursor(mdb.cursors.DictCursor)
 
   def get_cursor(self):

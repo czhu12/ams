@@ -5,8 +5,10 @@
 }
 
 button:hover, input[type="submit"], input[type="button"] {
+
   cursor:pointer;
 }
+
 body {
   height:100%;
   width:100%;
@@ -17,12 +19,16 @@ a {
   text-decoration:none;
 }
 
-h1, ul {
+
+h1, ul, h2 {
   margin:0px;
   padding:0px;
   list-style:none;
 }
-
+input {
+  padding:0px;
+  margin:0px;
+}
 img {
   margin:0px;
   padding:0px;
@@ -206,13 +212,17 @@ li#song:hover{
   display:table;
 }
 
-
+.grid {
+  padding-left:10px;
+}
 [class*='col-'] {
   float:left;
+  padding-right:10px;
 }
 
 .col-1-5 {
   width:20%
+  padding:10px;
 }
 .col-2-5 {
   width:40%
@@ -232,10 +242,52 @@ li#song:hover{
 }
 
 #checkout-main {
-  height:250px;
+  padding:10px;
+  height:300px;
 }
 #checkout-side {
-  height:250px;
   padding:10px;
-  border-left:1px solid #000;
+  height:300px;
+}
+
+#checkout-main-list {
+  height:90%;
+}
+#checkout-main-total {
+  height:10%;
+  float:right;
+  font-weight:bold;
+}
+
+#checkout-side-form {
+  height:90%;
+}
+
+#checkout-side-purchase {
+  height:10%;
+}
+
+#clerk-upc-view {
+  overflow:auto;
+  height:150px;
+  border: 1px solid #000;
+}
+
+#clerk-main-list {
+  height:150px;
+  overflow:auto;
+  border:1px solid #000;
+}
+
+#clerk-selected-list> li:nth-child(even){
+  background-color:rgba( 255,255,112,0.3);
+}
+#clerk-selected-list> li:nth-child(odd){
+  background-color:rgba( 255,184,112,0.3);
+}
+#clerk-selected-list> li:nth-child(even):hover{
+  background-color:rgba( 255,255,112,0.9);
+}
+#clerk-selected-list> li:nth-child(odd):hover{
+  background-color:rgba( 255,184,112,0.9);
 }
