@@ -1,7 +1,8 @@
 from app import app
 from db import db_con
-from flask import render_template, make_response, jsonify 
+from flask import request, render_template, make_response, jsonify 
 from datetime import date, timedelta
+import json
 
 
 conn = db_con.Database()
@@ -27,6 +28,7 @@ def purchase():
 	cur = conn.get_cursor()
 	today = str(date.today())
 	items = json.loads(request.form['arr'])
+	return str(items)
 
 	if not is_valid(items):
 		return 'Invalid input'
@@ -34,7 +36,7 @@ def purchase():
 	# Check if quantity legal for online purchase
 	if request.form.has_key('customer'):
 		for item in items:
-			cur.execute("SELECT stock FROM item WHERE item.upc = %s", str(item['upc']) )
+			cur.execute("SELECT stock FROM item WHERE Item.upc = %s", str(item['upc']) )
 			if cur.fetchone()['stock'] < item['quantity']:
 				conn.con.commit()
 				return "Illegal quantity for item " + str(item['upc'])
@@ -47,13 +49,9 @@ def purchase():
 	else:
 		cur.execute("INSERT INTO Purchase (purchasedate) VALUES (%s)", today) 
 
-	# Insert into Purchaseitesm
-	# Update Item stock
-	for item in items:
-		cur.execute( "INSERT INTO Purchaseitem (select last_insert_id(),%s, %s)", (str(item['upc']), str(item['quantity'])) )
-		cur.execute( "UPDATE Item SET stock = stock-%s WHERE upc = %s", (str(item['quantity']), str(item['upc'])) )
 	cur.execute("SELECT last_insert_id()")
 	pid = str(cur.fetchone()['last_insert_id()'])
+	purchase_item(cur, pid, items)
 	conn.con.commit()
 
 	# Receipt Preparation
@@ -124,6 +122,11 @@ def return_item():
 		return "Return Processed, credit $" + str(total) + " to credit card ***********" + purchase_info['cardnum'][-5:]
 
 	return "Return Processed, return $" + str(total) + " in cash"
+
+def purchase_item(cur, items, pid):
+	for item in items:
+		cur.execute( "INSERT INTO Purchaseitem %s ,%s, %s)", (pid, str(item['upc']), str(item['quantity'])) )
+		cur.execute( "UPDATE Item SET stock = stock-%s WHERE upc = %s", (str(item['quantity']), str(item['upc'])) )
 
 def is_valid(items):
 	for item in items:
