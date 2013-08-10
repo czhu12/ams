@@ -15,59 +15,101 @@ def index():
 
 """ Henry's Code Start """
 
+@app.route('/api/registration', methods=["POST"])
+def registration():
+	cur = conn.get_cursor()
+	customer = json.loads(request.form['customer'])
+	cid = str(customer['cid'])
+
+	if len(cid) > 20:
+		return "Illegal ID"
+
+	cur.execute("SELECT * from Customer WHERE cid=%s", cid)
+	if cur.fetchall():
+		commit
+
 @app.route('/api/price', methods=["GET"])
 def price_request():
 	items = json.loads(request.args['arr'])
+
 	if is_valid(items):
 		return str(price(items))
 	else:
 		return 'Invalid input'
 
-@app.route('/api/store_purchase', methods=["POST"])
-def purchase():
+@app.route('/api/online_purchase', methods=["POST"])
+def purchase_online():
 	cur = conn.get_cursor()
 	today = str(date.today())
 	items = json.loads(request.form['arr'])
+	expected = str(expected_delivery())
+	customer = json.loads(request.form['customer'])
+
 	if not is_valid(items):
 		return 'Invalid input'
 
-	# Check if quantity legal for online purchase
-	if request.form.has_key('customer'):
-		for item in items:
-			cur.execute("SELECT stock FROM item WHERE item.upc = %s", str(item['upc']) )
-			if cur.fetchone()['stock'] < item['quantity']:
-				conn.con.commit()
-				return "Illegal quantity for item " + str(item['upc'])
+	if not is_legal_quantity(cur, items):
+		return 'Illegal quantity'
 
-	# Insert into Purchase
-	if request.form.has_key('credit'):
-		credit = json.loads(request.form['credit'])
-		insert_args = (today, str(credit['cardnum']), str(credit['expirydate']) )
-		cur.execute("INSERT INTO Purchase (purchasedate, cardnum, expirydate) VALUES (%s,%s,%s)", insert_args)
-	else:
-		cur.execute("INSERT INTO Purchase (purchasedate) VALUES (%s)", today) 
+	if not authenticate(cur, customer):
+		return 'Authentication Error'
 
-	# Insert into Purchaseitesm
-	# Update Item stock
-	for item in items:
-		cur.execute( "INSERT INTO Purchaseitem (select last_insert_id(),%s, %s)", (str(item['upc']), str(item['quantity'])) )
-		cur.execute( "UPDATE Item SET stock = stock-%s WHERE upc = %s", (str(item['quantity']), str(item['upc'])) )
+	credit = json.loads(request.form['credit'])
+	insert_args = (today, str(credit['cardnum']), str(credit['expirydate']), expected, str(customer['cid']) )
+	cur.execute("INSERT INTO Purchase (purchasedate, cardnum, expirydate, expecteddate, cid) VALUES (%s,%s,%s,%s, %s)", insert_args)
+
 	cur.execute("SELECT last_insert_id()")
-	pid = str(cur.fetchone()['last_insert_id()'])
+	pid = cur.fetchone()['last_insert_id()']
+	purchase_item(cur, items)
 	conn.con.commit()
 
-	# Receipt Preparation
-	cur.execute("select * from purchase, purchaseitem, item where purchase.receiptid=%s and purchase.receiptid=purchaseitem.receiptid and purchaseitem.upc = item.upc", pid)
+	context = receipt_base(cur, pid, today, items)
+	context['cardnum'] = str(credit['cardnum'])[-5:]
+	context['expecteddate'] = expected
+
+	return jsonify(context)
+
+
+@app.route('/api/store_purchase/credit', methods=["POST"])
+def purchase_credit():
+	cur = conn.get_cursor()
+	today = str(date.today())
+	items = json.loads(request.form['arr'])
+
+	if not is_valid(items):
+		return 'Invalid input'
+
+	credit = json.loads(request.form['credit'])
+	insert_args = (today, str(credit['cardnum']), str(credit['expirydate']) )
+	cur.execute("INSERT INTO Purchase (purchasedate, cardnum, expirydate) VALUES (%s,%s,%s)", insert_args)
+
+	cur.execute("SELECT last_insert_id()")
+	pid = cur.fetchone()['last_insert_id()']
+	purchase_item(cur, items)
 	conn.con.commit()
 
-	context = {}
-	context['purhcaseitems'] = stringify(cur.fetchall())
-	context['price'] = str(price(items))
-	context['date'] = str(today)
-	context['pid'] = str(pid)
-	if request.form.has_key('credit'):
-		context['cardnum'] = str(credit['cardnum'])[-5:]
+	context = receipt_base(cur, pid, today, items)
+	context['cardnum'] = str(credit['cardnum'])[-5:]
 
+	return jsonify(context)
+
+@app.route('/api/store_purchase/cash', methods=["POST"])
+def purchase_cash():
+	cur = conn.get_cursor()
+	today = str(date.today())
+	items = json.loads(request.form['arr'])
+
+	if not is_valid(items):
+		return 'Invalid input'
+
+	cur.execute("INSERT INTO Purchase (purchasedate) VALUES (%s)", today) 
+
+	cur.execute("SELECT last_insert_id()")
+	pid = cur.fetchone()['last_insert_id()']
+	purchase_item(cur, items)
+	conn.con.commit()
+
+	context = receipt_base(cur, pid, today, items)
 	return jsonify(context)
 		
 
@@ -77,14 +119,14 @@ def return_item():
 	today = date.today()
 	receiptid = request.form['receiptid']
 	items = json.loads(request.form['arr'])
-	
+
 	if not is_valid(items):
 		return "Invalid input"
 
 	total = price(items)
 
 	# Check if purchased within 15 days
-	curr.execute("select purchasedate, cardnum from purchase where receiptid= %s", receiptid)
+	curr.execute("SELECT purchasedate, cardnum FROM Purchase WHERE receiptid= %s", receiptid)
 	purchase_info = curr.fetchone()
 	diff = today - purchase_info['purchasedate']
 
@@ -93,12 +135,12 @@ def return_item():
 		return "Receipt expired"
 
 	# Check if quantity is legal
-	curr.execute("select upc,quantity from purchaseitem where receiptid= %s", receiptid)
+	curr.execute("SELECT upc,quantity FROM PurchaseItem WHERE receiptid= %s", receiptid)
 	purchased_items = {}
 	for item in curr.fetchall():
 		purchased_items[item['upc']] = item['quantity']
 
-	curr.execute("select upc,sum(quantity) from returnitem,returntable where receiptid= %s GROUP BY upc", receiptid)
+	curr.execute("SELECT upc,SUM(quantity) FROM ReturnItem,ReturnTable WHERE receiptid= %s GROUP BY upc", receiptid)
 	returned_items = {}
 	for item in curr.fetchall():
 		returned_items[item['upc']] = item['sum(quantity)']
@@ -113,9 +155,9 @@ def return_item():
 			return "Illegal Return Quantity for item " + str(item['upc'])
 		
 	# Return the item
-	curr.execute("INSERT INTO Returntable (receiptid, returndate) VALUES (%s, %s)", (receiptid, str(today)) )
+	curr.execute("INSERT INTO ReturnTable (receiptid, returndate) VALUES (%s, %s)", (receiptid, str(today)) )
 	for item in items:
-		curr.execute("INSERT INTO returnitem (select last_insert_id(),%s,%s)", (str(item['upc']), str(item['quantity'])))
+		curr.execute("INSERT INTO ReturnItem (select last_insert_id(),%s,%s)", (str(item['upc']), str(item['quantity'])))
 		curr.execute("UPDATE Item SET stock = stock+%s WHERE upc = %s", (str(item['quantity']), str(item['upc'])))
 	conn.con.commit()
 
@@ -124,6 +166,37 @@ def return_item():
 		return "Return Processed, credit $" + str(total) + " to credit card ***********" + purchase_info['cardnum'][-5:]
 
 	return "Return Processed, return $" + str(total) + " in cash"
+
+def authenticate(cur, customer):
+	cur.execute("SELECT password FROM Customer WHERE cid = %s", str(customer['cid']))
+	if customer['password'] != cur.fetchone()['password']:
+		conn.con.commit()
+		return False
+	return True
+
+
+def is_legal_quantity(cur, items):
+	for item in items:
+		cur.execute("SELECT stock FROM Item WHERE Item.upc = %s", str(item['upc']) )
+		if cur.fetchone()['stock'] < item['quantity']:
+			conn.con.commit()
+			return False
+	return True
+	
+def receipt_base(cur, pid, today, items):
+	cur.execute("select * from Purchase, PurchaseItem, Item where Purchase.receiptid=%s and Purchase.receiptid=Purchaseitem.receiptid and PurchaseItem.upc = Item.upc", pid)
+	conn.con.commit()
+	context = {}
+	context['purhcaseitems'] = stringify(cur.fetchall())
+	context['price'] = str(price(items))
+	context['date'] = str(today)
+	context['pid'] = str(pid)
+	return context;
+
+def purchase_item(cur, items):
+	for item in items:
+		cur.execute( "INSERT INTO PurchaseItem (SELECT last_insert_id() ,%s, %s)", (str(item['upc']), str(item['quantity'])) )
+		cur.execute( "UPDATE Item SET stock = stock-%s WHERE upc = %s", (str(item['quantity']), str(item['upc'])) )
 
 def is_valid(items):
 	for item in items:
@@ -134,7 +207,7 @@ def is_valid(items):
 def has_items(items):
 	curr = conn.get_cursor()
 	for item in items:
-		curr.execute("select * from item where upc=%s", str(item['upc']) )
+		curr.execute("select * from Item WHERE upc=%s", str(item['upc']) )
 		if not curr.fetchall():
 			conn.con.commit()
 			return False
@@ -145,7 +218,7 @@ def price(items):
 	curr = conn.get_cursor()
 	total = 0
 	for item in items:
-		curr.execute("select price from item where upc=%s", str(item['upc']) )
+		curr.execute("SELECT price from Item WHERE upc=%s", str(item['upc']) )
 		price = curr.fetchone()['price']
 		total += price*item['quantity']
 	conn.con.commit()
@@ -170,9 +243,11 @@ def get_items():
 def get_item(item_upc):
   curr = conn.get_cursor()
   curr.execute("SELECT * FROM Item WHERE upc = %s", item_upc)
+  item = curr.fetchall()
+  curr.execute("SELECT * FROM hasSong WHERE upc = %s", item_upc)
+  songs = curr.fetchall()
   conn.con.commit()
-  return jsonify({ "data": stringify(curr.fetchall()) })
-
+  return jsonify({ "data": stringify(item), "songs": stringify(songs)})
 
 @app.route('/api/items/<item_upc>', methods=["PUT"])
 def update_item(item_upc):
@@ -180,10 +255,6 @@ def update_item(item_upc):
 
 @app.route('/api/items/<item_upc>', methods=["DELETE"])
 def delete_item(item_upc):
-  return item_upc
-
-@app.route('/api/items/purchase', methods=["POST"])
-def purchase_item(item_upc):
   return item_upc
 
 @app.route('/api/checkout/expected', methods=["GET"])
