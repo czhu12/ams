@@ -14,6 +14,23 @@ def index():
   return response
 
 """ Henry's Code Start """
+@app.route('/api/search', methods=["GET"])
+def search():
+	cur = conn.get_cursor()
+	search_terms = json.loads(request.args['search'])
+	singer = str(search_terms['leadsinger']).lower()
+	title = str(search_terms['title'])
+	category = str(search_terms['category'])
+	if len(singer) > 100:
+		return "Invalid input"
+	if len(title) > 100:
+		return "Invalid input"
+	if len(category) > 100:
+		return "Invalid input"
+	cur.execute("SELECT * from Item I, LeadSinger L WHERE LOWER(L.name)=%s AND I.title=%s AND I.category=%s", (singer, title, category) )
+	search_result = stringify(cur.fetchall())
+	conn.con.commit()
+	return jsonify({'result':search_result})
 
 @app.route('/api/registration', methods=["POST"])
 def registration():
@@ -21,12 +38,24 @@ def registration():
 	customer = json.loads(request.form['customer'])
 	cid = str(customer['cid'])
 
-	if len(cid) > 20:
-		return "Illegal ID"
+	if not is_customer_valid(customer):
+		return "Invalid input"
 
 	cur.execute("SELECT * from Customer WHERE cid=%s", cid)
 	if cur.fetchall():
-		commit
+		conn.con.commit()
+		return "CID is already exist"
+
+	cid = str(customer['cid'])
+	password = str(customer['password'])
+	name = str(customer['name'])
+	address = str(customer['address'])
+	phone = str(customer['phone'])
+	input_args = (cid, password, name, address, phone)
+
+	cur.execute("INPUT INTO Customer VALUES (%s, %s, %s, %s, %s)", input_args)
+	return "Registration complete"
+	
 
 @app.route('/api/price', methods=["GET"])
 def price_request():
@@ -227,11 +256,30 @@ def price(items):
 def stringify(items):
 	for item in items:
 		for attribute in item.keys():
-			if item[attribute]:
+			if item[attribute] is not None:
 				item[attribute] = str(item[attribute])
 			else:
 				item[attribute] = 'NULL'
 	return items
+
+def is_cusomter_valid(customer):
+	cid = len(str(customer['cid']))
+	password = len(str(customer['password']))
+	name = len(str(customer['name']))
+	address = len(str(customer['address']))
+	phone = len(str(customer['phone']))
+
+	if cid > 20 or cid < 1:
+		return False
+	if password > 20 or password < 1:
+		return False
+	if name > 50 or name < 1:
+		return False
+	if address > 50 or address < 1:
+		return False
+	if phone > 20 or phone < 1:
+		return False
+	return True
 
 """Henry's Code End"""
 
