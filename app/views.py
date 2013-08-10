@@ -1,7 +1,8 @@
 from app import app
 from db import db_con
-from flask import render_template, make_response, jsonify 
+from flask import request, render_template, make_response, jsonify 
 from datetime import date, timedelta
+import json
 
 
 conn = db_con.Database()
@@ -27,7 +28,6 @@ def purchase():
 	cur = conn.get_cursor()
 	today = str(date.today())
 	items = json.loads(request.form['arr'])
-
 	if not is_valid(items):
 		return 'Invalid input'
 

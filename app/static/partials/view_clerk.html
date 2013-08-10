@@ -4,7 +4,7 @@
       <h2>Selected</h2>
       <div id="clerk-main-list">
       <ul id="clerk-selected-list">
-        <li ng-repeat="song in selectedSongs" >
+        <li ng-repeat="song in selectedSongs" class="selected-songs" >
         {{song.upc}} - {{song.title}}<span style="float:right;">
         Quantity: <input type="text" name="{{song.upc}}" value="1" size=5 />
         </span><br/>
@@ -34,7 +34,7 @@
           <br/>
           Price: $<input type="text" name="price" size="10"/>
           <br>
-          <input type="submit" name="submit" value="Purchase" />
+          <input type="submit" name="submit" value="Purchase" ng-click="purchase()" />
           
       </fieldset>
     </form>
