@@ -75,3 +75,48 @@ $.post(
 		console.log(resp);
 	}
 );
+
+Add Item
+$.post(
+	'/api/items/add',
+	{ upc:1001, quantity:3, price:10 },
+	function(resp){
+		console.log(resp);
+	}
+);
+
+Daily Sales Report
+$.get(
+	'/api/sales_report',
+	{date:'2013-08-10'},
+	function(resp){
+		console.log(resp);
+	}
+);
+
+Top Selling Items
+$.get(
+	'/api/top_items',
+	{n: 1, date:'2013-08-10'},
+	function(resp){
+		console.log(resp)
+	}
+);
+
+SELECT I.upc, category, SUM(quantity) units, I.price*SUM(quantity) total
+FROM Item I,Purchase P,PurchaseItem PI
+WHERE I.upc = PI.upc AND P.receiptid = PI.receiptid
+	AND purchasedate = '2013-08-10'
+GROUP BY I.upc, I.price, category
+ORDER BY category
+;
+
+SELECT I.upc, SUM(quantity)
+FROM Item I, Purchase P, PurchaseItem PI
+WHERE I.upc = PI.upc AND P.receiptid = PI.receiptid
+	AND purchasedate = '2013-08-10'
+GROUP BY I.upc
+ORDER BY SUM(quantity) DESC
+;
+
+
