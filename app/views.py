@@ -14,10 +14,11 @@ def index():
   return response
 
 """ Henry's Code Start """
-@app.route('/api/search', methods=["GET"])
+@app.route('/api/search', methods=["GET", "POST"])
 def search():
 	cur = conn.get_cursor()
-	search_terms = json.loads(request.args['search'])
+	#search_terms = json.loads(request.args['search'])
+	search_terms = request.args
 	singer = str(search_terms['leadsinger']).lower()
 	title = str(search_terms['title'])
 	category = str(search_terms['category'])
@@ -53,7 +54,8 @@ def registration():
 	phone = str(customer['phone'])
 	input_args = (cid, password, name, address, phone)
 
-	cur.execute("INPUT INTO Customer VALUES (%s, %s, %s, %s, %s)", input_args)
+	cur.execute("INSERT INTO Customer VALUES (%s, %s, %s, %s, %s)", input_args)
+	conn.con.commit()
 	return "Registration complete"
 	
 
@@ -80,8 +82,9 @@ def purchase_online():
 	if not is_legal_quantity(cur, items):
 		return 'Illegal quantity'
 
-	if not authenticate(cur, customer):
-		return 'Authentication Error'
+	result = authenticate(cur, customer)
+	if not result=='Success': 
+		return result
 
 	credit = json.loads(request.form['credit'])
 	insert_args = (today, str(credit['cardnum']), str(credit['expirydate']), expected, str(customer['cid']) )
@@ -172,7 +175,7 @@ def return_item():
 	curr.execute("SELECT upc,SUM(quantity) FROM ReturnItem,ReturnTable WHERE receiptid= %s GROUP BY upc", receiptid)
 	returned_items = {}
 	for item in curr.fetchall():
-		returned_items[item['upc']] = item['sum(quantity)']
+		returned_items[item['upc']] = item['SUM(quantity)']
 	for item in items:
 		upc = item['upc']
 		quantity = item['quantity']
@@ -196,12 +199,171 @@ def return_item():
 
 	return "Return Processed, return $" + str(total) + " in cash"
 
+@app.route('/api/items', methods=["GET"])
+def get_items():
+  return jsonify({ "data": stringify(conn.read("SELECT * FROM Item")) })
+
+@app.route('/api/items/<item_upc>', methods=["GET"])
+def get_item(item_upc):
+  curr = conn.get_cursor()
+  curr.execute("SELECT * FROM Item WHERE upc = %s", item_upc)
+  item = curr.fetchall()
+  curr.execute("SELECT * FROM HasSong WHERE upc = %s", item_upc)
+  songs = curr.fetchall()
+  conn.con.commit()
+  return jsonify({ "data": stringify(item), "songs": stringify(songs)})
+
+@app.route('/api/items/<item_upc>', methods=["PUT"])
+def update_item(item_upc):
+  return item_upc
+
+@app.route('/api/items/<item_upc>', methods=["DELETE"])
+def delete_item(item_upc):
+  return item_upc
+
+@app.route('/api/checkout/expected', methods=["GET"])
+def expected_delivery():
+  cur = conn.get_cursor()
+  cur.execute("SELECT COUNT(delivereddate) FROM Purchase")
+  pending = cur.fetchone()['COUNT(delivereddate)']
+  expected = pending/10
+  expect_date = str(date.today()+timedelta(days=expected))
+  return expect_date
+
+@app.route('/api/items/add', methods=["POST"])
+def add_item():
+	cur = conn.get_cursor()
+	item = request.form
+	upc = str(item['upc'])
+	quantity = str(item['quantity'])
+	if 'price' in item:
+		price = str(item['price'])
+		if len(price) > 30:
+			return 'Invalid Input'
+	else:
+		price = None
+
+	if len(upc) > 30 or len(quantity) > 30:
+		return 'Invalid Input'
+
+	cur.execute("SELECT * FROM Item WHERE upc=%s", upc)
+	if not cur.fetchone():
+		conn.con.commit()
+		return 'Item not exist'
+
+	if 'price' in item:
+		cur.execute("UPDATE Item SET price=%s, stock=stock+%s WHERE Item.upc=%s", (price, quantity, upc) )
+	else:
+		cur.execute("UPDATE Item SET stock=stock+%s WHERE Item.upc=%s", (quantity, upc) )
+	cur.execute("SELECT * from Item WHERE upc=%s", upc)
+	result = cur.fetchone()
+	conn.con.commit()
+
+	if 'price' in item:
+		return 'Item ' + upc + ' now has stock ' + str(result['stock']) + ' and price ' + str(result['price'])
+	else:
+		return 'Item ' + upc + ' now has stock ' + str(result['stock']) + ' and price is not changed' 
+
+
+@app.route('/api/sales_report', methods=["GET"])
+def sales_report():
+	cur = conn.get_cursor()
+	date = str(request.args['date'])	
+	if len(date) > 10:
+		return 'Invalid Input'
+
+	query = " SELECT I.upc, category, SUM(quantity) units, I.price*SUM(quantity) total " + \
+		"FROM Item I,Purchase P,PurchaseItem PI " + \
+		"WHERE I.upc = PI.upc AND P.receiptid = PI.receiptid " + \
+    		"AND purchasedate = '" + date + "' " \
+		"GROUP BY I.upc, I.price, category " + \
+		"ORDER BY category"
+
+	cur.execute(query)
+	data = cur.fetchall()
+	conn.con.commit()
+	partition = {}
+	for entry in data:
+		if entry['category'] not in partition:
+			partition[entry['category']] = [entry]
+		else:
+			partition[entry['category']].append(entry)
+	for part in partition.keys():
+		partition[part] = stringify(partition[part])
+
+	return jsonify(partition)
+
+@app.route('/api/top_items', methods=["GET"])
+def top_items():
+	cur = conn.get_cursor()
+	date = str(request.args['date'])
+	try:
+		n = int(request.args['n'])
+	except ValueError:
+		return 'Invalid Input'
+
+	if len(date) > 10:
+		return 'Invalid Input'
+	
+	query = " SELECT I.upc, SUM(quantity) units " + \
+		"FROM Item I,Purchase P,PurchaseItem PI " + \
+		"WHERE I.upc = PI.upc AND P.receiptid = PI.receiptid " + \
+    		"AND purchasedate = '" + date + "' " \
+		"GROUP BY I.upc " + \
+		"ORDER BY SUM(quantity) DESC"
+
+	cur.execute(query)
+	data = []
+	for i in range(0,n):
+		entry = cur.fetchone()
+		if not entry:
+			break
+		data.append(entry)
+		
+	conn.con.commit()
+	return jsonify({'items':stringify(data)})
+		
+		
+		
+@app.route('/api/deliver_update', methods=["POST"])
+def deliver_update():
+	cur = conn.get_cursor()
+	date = str(request.form['date'])
+	receiptid = str(request.form['receiptid'])
+	if len(date) > 10 or len(receiptid) > 10:
+		return "Invalid input"
+
+	cur.execute("SELECT expecteddate FROM Purchase WHERE receiptid=%s", receiptid)
+	data = cur.fetchone()
+	if not data:
+		conn.con.commit()
+		return "Receipt ID does not exist"
+	if not data['expecteddate']:
+		conn.con.commit()
+		return "Not online purchase"
+	
+	cur.execute("UPDATE Purchase SET delivereddate=%s WHERE receiptid=%s", (date, receiptid))
+	conn.con.commit()
+	return "Purchase " + receiptid + "'s delivered date is updated to " + date
+
+	
+"""
+==================================================
+	Helper Functions
+==================================================
+"""
+
 def authenticate(cur, customer):
 	cur.execute("SELECT password FROM Customer WHERE cid = %s", str(customer['cid']))
-	if customer['password'] != cur.fetchone()['password']:
+	result = cur.fetchone()
+	if not result:
 		conn.con.commit()
-		return False
-	return True
+		return 'User not exist'
+	if customer['password'] != result['password']:
+		conn.con.commit()
+		return 'Wrong password'
+	conn.con.commit()
+	return 'Success'
 
 
 def is_legal_quantity(cur, items):
@@ -262,7 +424,7 @@ def stringify(items):
 				item[attribute] = 'NULL'
 	return items
 
-def is_cusomter_valid(customer):
+def is_customer_valid(customer):
 	cid = len(str(customer['cid']))
 	password = len(str(customer['password']))
 	name = len(str(customer['name']))
@@ -280,37 +442,3 @@ def is_cusomter_valid(customer):
 	if phone > 20 or phone < 1:
 		return False
 	return True
-
-"""Henry's Code End"""
-
-@app.route('/api/items', methods=["GET"])
-def get_items():
-  return jsonify({ "data": stringify(conn.read("SELECT * FROM Item")) })
-
-@app.route('/api/items/<item_upc>', methods=["GET"])
-def get_item(item_upc):
-  curr = conn.get_cursor()
-  curr.execute("SELECT * FROM Item WHERE upc = %s", item_upc)
-  item = curr.fetchall()
-  curr.execute("SELECT * FROM HasSong WHERE upc = %s", item_upc)
-  songs = curr.fetchall()
-  conn.con.commit()
-  return jsonify({ "data": stringify(item), "songs": stringify(songs)})
-
-@app.route('/api/items/<item_upc>', methods=["PUT"])
-def update_item(item_upc):
-  return item_upc
-
-@app.route('/api/items/<item_upc>', methods=["DELETE"])
-def delete_item(item_upc):
-  return item_upc
-
-@app.route('/api/checkout/expected', methods=["GET"])
-def expected_delivery():
-  cur = conn.get_cursor()
-  cur.execute("SELECT COUNT(delivereddate) FROM Purchase")
-  pending = cur.fetchone()['COUNT(delivereddate)']
-  expected = pending/10
-  expect_date = str(date.today()+timedelta(days=expected))
-  return expect_date
-
