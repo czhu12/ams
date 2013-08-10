@@ -164,11 +164,15 @@ def stringify(items):
 
 @app.route('/api/items', methods=["GET"])
 def get_items():
-  return jsonify({ "items": conn.read("SELECT * FROM Item") })
+  return jsonify({ "data": stringify(conn.read("SELECT * FROM Item")) })
 
 @app.route('/api/items/<item_upc>', methods=["GET"])
-def get_item():
-  return jsonify({ "items": conn.read("SELECT * FROM Songs") })
+def get_item(item_upc):
+  curr = conn.get_cursor()
+  curr.execute("SELECT * FROM Item WHERE upc = %s", item_upc)
+  conn.con.commit()
+  return jsonify({ "data": stringify(curr.fetchall()) })
+
 
 @app.route('/api/items/<item_upc>', methods=["PUT"])
 def update_item(item_upc):
