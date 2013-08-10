@@ -5,7 +5,6 @@
 }
 
 button:hover, input[type="submit"], input[type="button"] {
-
   cursor:pointer;
 }
 
@@ -15,6 +14,19 @@ body {
   font: 1em Arial;
 }
 
+.error {
+  color:red;
+}
+.error-input {
+  background:#FF0000;
+}
+
+.success {
+  color:green;
+}
+.success-input {
+  background:#33FF33;
+}
 a {
   text-decoration:none;
 }
@@ -75,6 +87,10 @@ img {
 
 .menu-button {
   float:right;
+}
+
+#main-search-list {
+  width:90%;
 }
 
 #wrap {
@@ -142,16 +158,16 @@ img {
 li#song {
   padding:20px;
   line-height:2em; 
-  -webkit-transition:1s;
-  -moz-transition:1s;
-  -o-transition:1s;
-  -ms-transition:1s;
-  transition:1s;
+  -webkit-transition:0.3s;
+  -moz-transition:0.3s;
+  -o-transition:0.3s;
+  -ms-transition:0.3s;
+  transition:0.3s;
 
 }
 li#song:hover{
 
-  background-color:red;
+  background-color:#FFE773;
 }
 
 #col1-admin{
@@ -250,11 +266,37 @@ li#song:hover{
   width:66.66%
 }
 
+#checkout-view {
+  background-color:black;
+}
+
 #checkout-main {
+  background-color:white;
+  -moz-border-radius:5px;
+  -ms-border-radius:5px;
+  -webkit-border-radius:5px;
+  -o-border-radius:5px;
+  border-radius:5px;
+  border:1px solid #000;
   padding:10px;
+  margin-top:10px;
+  margin-bottom:10px;
   height:300px;
 }
+#purchase-button {
+  position:relative;
+  bottom:17px;
+}
 #checkout-side {
+  background-color:white;
+  -moz-border-radius:5px;
+  margin-top:10px;
+  -moz-border-radius:5px;
+  -webkit-border-radius:5px;
+  -o-border-radius:5px;
+  -ms-border-radius:5px;
+  border-radius:5px;
+  border: 1px solid #000;
   padding:10px;
   height:300px;
 }
@@ -298,4 +340,10 @@ li#song:hover{
 }
 #clerk-selected-list> li:nth-child(odd):hover{
   background-color:rgba( 255,184,112,0.9);
+}
+
+.clerk-button {
+  text-align:center;
+}
+.big-buttons {
 }

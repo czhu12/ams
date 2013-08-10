@@ -7,7 +7,7 @@
         <li ng-repeat="song in selectedSongs" class="selected-songs" >
         {{song.upc}} - {{song.title}}<span style="float:right;">
         Quantity: <input type="text" name="{{song.upc}}" value="1" size=5 />
-        </span><br/>
+        </span><br/><br/>
         {{song.price}} <button ng-click="dropItem(song.upc)" style="float:right;" ng-click="dropItem(song.upc)" >Drop Item</button>
         <div class="clear"></div>
         </li>
