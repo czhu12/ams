@@ -1,0 +1,77 @@
+Search
+
+$.get(
+	'/api/search',
+	{leadsinger:'no', title:'test', category:'rock'},
+	function(resp){
+		console.log(resp);
+	}
+);
+
+Price
+$.get(
+	'/api/price',
+	{arr:JSON.stringify([{upc:1000, quantity:1},{upc:1001, quantity:2}])},
+	function(resp){
+		console.log(resp);
+	}
+);
+
+Registration
+$.post(
+	'/api/registration',
+	{customer:JSON.stringify(
+		{cid:'adf', password:'adf', name:'adf', address:'adf', phone:'adf'})
+	},
+	function(resp){
+		console.log(resp);
+	}
+);
+
+Cash Purchase
+$.post(
+	'/api/store_purchase/cash',
+	{arr:JSON.stringify(
+		[{upc:1000, quantity:1}, {upc:1003, quantity:3} ]
+	 )},
+	function(resp){
+		console.log(resp);
+	}
+);
+
+Credit Purchase
+$.post(
+	'/api/store_purchase/credit',
+	{arr:JSON.stringify(
+		[{upc:1000, quantity:1}, {upc:1003, quantity:3} ]
+	 ), 
+	credit:JSON.stringify({cardnum:123456, expirydate:'2012-01-03'})},
+	function(resp){
+		console.log(resp);
+	}
+);
+
+Online Purchase
+$.post(
+	'/api/online_purchase',
+	{arr:JSON.stringify(
+		[{upc:1000, quantity:1}, {upc:1003, quantity:3} ]
+	 ), 
+	credit:JSON.stringify({cardnum:123456, expirydate:'2012-01-03'}),
+	customer:JSON.stringify({cid:'asd', password:'asd'})
+	},
+	function(resp){
+		console.log(resp);
+	}
+);
+
+Return Item
+$.post(
+	'/api/return',
+	{arr:JSON.stringify(
+		[{upc:1000, quantity:1}, {upc:1003, quantity:3} ]
+	 ),receiptid:1000},
+	function(resp){
+		console.log(resp);
+	}
+);

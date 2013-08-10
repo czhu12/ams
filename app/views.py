@@ -14,10 +14,11 @@ def index():
   return response
 
 """ Henry's Code Start """
-@app.route('/api/search', methods=["GET"])
+@app.route('/api/search', methods=["GET", "POST"])
 def search():
 	cur = conn.get_cursor()
-	search_terms = json.loads(request.args['search'])
+	#search_terms = json.loads(request.args['search'])
+	search_terms = request.args
 	singer = str(search_terms['leadsinger']).lower()
 	title = str(search_terms['title'])
 	category = str(search_terms['category'])
@@ -53,7 +54,8 @@ def registration():
 	phone = str(customer['phone'])
 	input_args = (cid, password, name, address, phone)
 
-	cur.execute("INPUT INTO Customer VALUES (%s, %s, %s, %s, %s)", input_args)
+	cur.execute("INSERT INTO Customer VALUES (%s, %s, %s, %s, %s)", input_args)
+	conn.con.commit()
 	return "Registration complete"
 	
 
@@ -80,8 +82,9 @@ def purchase_online():
 	if not is_legal_quantity(cur, items):
 		return 'Illegal quantity'
 
-	if not authenticate(cur, customer):
-		return 'Authentication Error'
+	result = authenticate(cur, customer)
+	if not result=='Success': 
+		return result
 
 	credit = json.loads(request.form['credit'])
 	insert_args = (today, str(credit['cardnum']), str(credit['expirydate']), expected, str(customer['cid']) )
@@ -172,7 +175,7 @@ def return_item():
 	curr.execute("SELECT upc,SUM(quantity) FROM ReturnItem,ReturnTable WHERE receiptid= %s GROUP BY upc", receiptid)
 	returned_items = {}
 	for item in curr.fetchall():
-		returned_items[item['upc']] = item['sum(quantity)']
+		returned_items[item['upc']] = item['SUM(quantity)']
 	for item in items:
 		upc = item['upc']
 		quantity = item['quantity']
@@ -198,10 +201,15 @@ def return_item():
 
 def authenticate(cur, customer):
 	cur.execute("SELECT password FROM Customer WHERE cid = %s", str(customer['cid']))
-	if customer['password'] != cur.fetchone()['password']:
+	result = cur.fetchone()
+	if not result:
 		conn.con.commit()
-		return False
-	return True
+		return 'User not exist'
+	if customer['password'] != result['password']:
+		conn.con.commit()
+		return 'Wrong password'
+	conn.con.commit()
+	return 'Success'
 
 
 def is_legal_quantity(cur, items):
@@ -262,7 +270,7 @@ def stringify(items):
 				item[attribute] = 'NULL'
 	return items
 
-def is_cusomter_valid(customer):
+def is_customer_valid(customer):
 	cid = len(str(customer['cid']))
 	password = len(str(customer['password']))
 	name = len(str(customer['name']))
