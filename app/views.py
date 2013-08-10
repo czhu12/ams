@@ -30,6 +30,7 @@ def purchase_online():
 	today = str(date.today())
 	items = json.loads(request.form['arr'])
 	expected = str(expected_delivery())
+	customer = json.loads(request.form['customer'])
 
 	if not is_valid(items):
 		return 'Invalid input'
@@ -37,9 +38,12 @@ def purchase_online():
 	if not is_legal_quantity(cur, items):
 		return 'Illegal quantity'
 
+	if not authenticate(cur, customer):
+		return 'Authentication Error'
+
 	credit = json.loads(request.form['credit'])
-	insert_args = (today, str(credit['cardnum']), str(credit['expirydate']), expected )
-	cur.execute("INSERT INTO Purchase (purchasedate, cardnum, expirydate, expecteddate) VALUES (%s,%s,%s,%s)", insert_args)
+	insert_args = (today, str(credit['cardnum']), str(credit['expirydate']), expected, str(customer['cid']) )
+	cur.execute("INSERT INTO Purchase (purchasedate, cardnum, expirydate, expecteddate, cid) VALUES (%s,%s,%s,%s, %s)", insert_args)
 
 	cur.execute("SELECT last_insert_id()")
 	pid = cur.fetchone()['last_insert_id()']
@@ -109,7 +113,7 @@ def return_item():
 	total = price(items)
 
 	# Check if purchased within 15 days
-	curr.execute("select purchasedate, cardnum from purchase where receiptid= %s", receiptid)
+	curr.execute("SELECT purchasedate, cardnum FROM Purchase WHERE receiptid= %s", receiptid)
 	purchase_info = curr.fetchone()
 	diff = today - purchase_info['purchasedate']
 
@@ -118,12 +122,12 @@ def return_item():
 		return "Receipt expired"
 
 	# Check if quantity is legal
-	curr.execute("select upc,quantity from purchaseitem where receiptid= %s", receiptid)
+	curr.execute("SELECT upc,quantity FROM PurchaseItem WHERE receiptid= %s", receiptid)
 	purchased_items = {}
 	for item in curr.fetchall():
 		purchased_items[item['upc']] = item['quantity']
 
-	curr.execute("select upc,sum(quantity) from returnitem,returntable where receiptid= %s GROUP BY upc", receiptid)
+	curr.execute("SELECT upc,SUM(quantity) FROM ReturnItem,ReturnTable WHERE receiptid= %s GROUP BY upc", receiptid)
 	returned_items = {}
 	for item in curr.fetchall():
 		returned_items[item['upc']] = item['sum(quantity)']
@@ -138,9 +142,9 @@ def return_item():
 			return "Illegal Return Quantity for item " + str(item['upc'])
 		
 	# Return the item
-	curr.execute("INSERT INTO Returntable (receiptid, returndate) VALUES (%s, %s)", (receiptid, str(today)) )
+	curr.execute("INSERT INTO ReturnTable (receiptid, returndate) VALUES (%s, %s)", (receiptid, str(today)) )
 	for item in items:
-		curr.execute("INSERT INTO returnitem (select last_insert_id(),%s,%s)", (str(item['upc']), str(item['quantity'])))
+		curr.execute("INSERT INTO ReturnItem (select last_insert_id(),%s,%s)", (str(item['upc']), str(item['quantity'])))
 		curr.execute("UPDATE Item SET stock = stock+%s WHERE upc = %s", (str(item['quantity']), str(item['upc'])))
 	conn.con.commit()
 
@@ -150,16 +154,24 @@ def return_item():
 
 	return "Return Processed, return $" + str(total) + " in cash"
 
+def authenticate(cur, customer):
+	cur.execute("SELECT password FROM Customer WHERE cid = %s", str(customer['cid']))
+	if customer['password'] != cur.fetchone()['password']:
+		conn.con.commit()
+		return False
+	return True
+
+
 def is_legal_quantity(cur, items):
 	for item in items:
-		cur.execute("SELECT stock FROM item WHERE Item.upc = %s", str(item['upc']) )
+		cur.execute("SELECT stock FROM Item WHERE Item.upc = %s", str(item['upc']) )
 		if cur.fetchone()['stock'] < item['quantity']:
 			conn.con.commit()
 			return False
 	return True
 	
 def receipt_base(cur, pid, today, items):
-	cur.execute("select * from purchase, purchaseitem, item where purchase.receiptid=%s and purchase.receiptid=purchaseitem.receiptid and purchaseitem.upc = item.upc", pid)
+	cur.execute("select * from Purchase, PurchaseItem, Item where Purchase.receiptid=%s and Purchase.receiptid=Purchaseitem.receiptid and PurchaseItem.upc = Item.upc", pid)
 	conn.con.commit()
 	context = {}
 	context['purhcaseitems'] = stringify(cur.fetchall())
@@ -170,7 +182,7 @@ def receipt_base(cur, pid, today, items):
 
 def purchase_item(cur, items):
 	for item in items:
-		cur.execute( "INSERT INTO PurchaseItem (select last_insert_id() ,%s, %s)", (str(item['upc']), str(item['quantity'])) )
+		cur.execute( "INSERT INTO PurchaseItem (SELECT last_insert_id() ,%s, %s)", (str(item['upc']), str(item['quantity'])) )
 		cur.execute( "UPDATE Item SET stock = stock-%s WHERE upc = %s", (str(item['quantity']), str(item['upc'])) )
 
 def is_valid(items):
@@ -182,7 +194,7 @@ def is_valid(items):
 def has_items(items):
 	curr = conn.get_cursor()
 	for item in items:
-		curr.execute("select * from item where upc=%s", str(item['upc']) )
+		curr.execute("select * from Item WHERE upc=%s", str(item['upc']) )
 		if not curr.fetchall():
 			conn.con.commit()
 			return False
@@ -193,7 +205,7 @@ def price(items):
 	curr = conn.get_cursor()
 	total = 0
 	for item in items:
-		curr.execute("select price from item where upc=%s", str(item['upc']) )
+		curr.execute("SELECT price from Item WHERE upc=%s", str(item['upc']) )
 		price = curr.fetchone()['price']
 		total += price*item['quantity']
 	conn.con.commit()
