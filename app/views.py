@@ -1,11 +1,34 @@
 from app import app
 from db import db_con
-from flask import request, render_template, make_response, jsonify 
+from flask import request, render_template, make_response, jsonify
+from flask import url_for, redirect, session
 from datetime import date, timedelta
 import json
 
 
 conn = db_con.Database()
+
+@app.route('/api/logout', methods=["POST"])
+def logout():
+	if 'login' in session:
+		cid = session['cid']
+		del session['login']
+		del session['cid']
+		return cid + ' Logged out'
+	else:
+		return 'Logged out'
+
+@app.route('/api/login', methods=["POST"])
+def login():
+	cur = conn.get_cursor()
+	customer = request.form
+	if authenticate(cur, customer) =='Success':
+		session['login'] = 'Success'
+		session['cid'] = customer['cid']
+		return session['cid'] + ' Login Succeeded'
+		return redirect(url_for('index'))
+	else:
+		return 'Login Required'
 
 @app.route('/')
 @app.route('/index')
@@ -14,10 +37,10 @@ def index():
   return response
 
 """ Henry's Code Start """
+
 @app.route('/api/search', methods=["GET", "POST"])
 def search():
 	cur = conn.get_cursor()
-	#search_terms = json.loads(request.args['search'])
 	search_terms = request.args
 	singer = str(search_terms['leadsinger']).lower()
 	title = str(search_terms['title'])
@@ -352,6 +375,12 @@ def deliver_update():
 	Helper Functions
 ==================================================
 """
+def is_logged_in():
+	if not 'login' in session:
+		return False
+	if not session['login']=='Success':
+		return False
+	return True
 
 def authenticate(cur, customer):
 	cur.execute("SELECT password FROM Customer WHERE cid = %s", str(customer['cid']))
