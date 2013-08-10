@@ -8,6 +8,24 @@ import json
 
 conn = db_con.Database()
 
+"""
+==================================================
+Index
+==================================================
+"""
+
+@app.route('/')
+@app.route('/index')
+def index():
+  response = make_response(render_template("index.html"))
+  return response
+
+"""
+==================================================
+Login and Logout
+==================================================
+"""
+
 @app.route('/api/logout', methods=["POST"])
 def logout():
 	if 'login' in session:
@@ -30,28 +48,47 @@ def login():
 	else:
 		return 'Login Required'
 
-@app.route('/')
-@app.route('/index')
-def index():
-  response = make_response(render_template("index.html"))
-  return response
-
-""" Henry's Code Start """
-
+"""
+==================================================
+Search, Registration, Online Purchase, Price Request
+==================================================
+"""
 @app.route('/api/search', methods=["GET", "POST"])
 def search():
 	cur = conn.get_cursor()
 	search_terms = request.args
-	singer = str(search_terms['leadsinger']).lower()
-	title = str(search_terms['title'])
-	category = str(search_terms['category'])
-	if len(singer) > 100:
-		return "Invalid input"
-	if len(title) > 100:
-		return "Invalid input"
-	if len(category) > 100:
-		return "Invalid input"
-	cur.execute("SELECT * from Item I, LeadSinger L WHERE LOWER(L.name)=%s AND I.title=%s AND I.category=%s", (singer, title, category) )
+	query = "SELECT * from Item I, LeadSinger L WHERE"
+	first = True
+	if 'leadsinger' in search_terms:
+		singer = str(search_terms['leadsinger']).lower()
+		if len(singer) > 100:
+			return "Invalid input"
+		if first:
+			first = False
+		query += " LOWER(L.name)='" + singer + "' "
+		
+
+	if 'title' in search_terms:
+		title = str(search_terms['title'])
+		if len(title) > 100:
+			return "Invalid input"
+		if first:
+			first = False
+		else:
+			query += " AND "
+		query += " I.title='" + title + "' "
+
+	if 'category' in search_terms:
+		category = str(search_terms['category'])
+		if len(category) > 100:
+			return "Invalid input"
+		if first:
+			first = False
+		else:
+			query += " AND "
+		query += " I.category='" + category + "' "
+
+	cur.execute(query)
 	search_result = stringify(cur.fetchall())
 	conn.con.commit()
 	return jsonify({'result':search_result})
@@ -125,6 +162,11 @@ def purchase_online():
 	return jsonify(context)
 
 
+"""
+==================================================
+Credit Purchase, Cash Purchase, Return
+==================================================
+"""
 @app.route('/api/store_purchase/credit', methods=["POST"])
 def purchase_credit():
 	cur = conn.get_cursor()
@@ -222,6 +264,12 @@ def return_item():
 
 	return "Return Processed, return $" + str(total) + " in cash"
 
+
+"""
+==================================================
+Get Item(s), Expected delivery, Add item, 
+==================================================
+"""
 @app.route('/api/items', methods=["GET"])
 def get_items():
   return jsonify({ "data": stringify(conn.read("SELECT * FROM Item")) })
@@ -235,14 +283,6 @@ def get_item(item_upc):
   songs = curr.fetchall()
   conn.con.commit()
   return jsonify({ "data": stringify(item), "songs": stringify(songs)})
-
-@app.route('/api/items/<item_upc>', methods=["PUT"])
-def update_item(item_upc):
-  return item_upc
-
-@app.route('/api/items/<item_upc>', methods=["DELETE"])
-def delete_item(item_upc):
-  return item_upc
 
 @app.route('/api/checkout/expected', methods=["GET"])
 def expected_delivery():
@@ -287,6 +327,12 @@ def add_item():
 	else:
 		return 'Item ' + upc + ' now has stock ' + str(result['stock']) + ' and price is not changed' 
 
+
+"""
+==================================================
+Sales Report, Top Items, Delivery Update
+==================================================
+"""
 
 @app.route('/api/sales_report', methods=["GET"])
 def sales_report():
@@ -345,8 +391,6 @@ def top_items():
 		
 	conn.con.commit()
 	return jsonify({'items':stringify(data)})
-		
-		
 		
 @app.route('/api/deliver_update', methods=["POST"])
 def deliver_update():
