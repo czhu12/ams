@@ -284,7 +284,6 @@ li#song:hover{
   height:300px;
 }
 #purchase-button {
-  position:relative;
   bottom:17px;
 }
 #checkout-side {
@@ -346,4 +345,11 @@ li#song:hover{
   text-align:center;
 }
 .big-buttons {
+}
+.manager-buttons{
+  width:400px;
+}
+
+.row {
+  text-align:center;
 }

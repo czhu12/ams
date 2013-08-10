@@ -462,8 +462,8 @@
 }
 
 .btn-3:active {
+  top:2px;
 	background: #f58500;
-	top: 2px;
 }
 
 .btn-3:before {
