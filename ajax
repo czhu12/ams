@@ -103,6 +103,15 @@ $.get(
 	}
 );
 
+Delivery Update
+$.post(
+	'/api/deliver_update',
+	{receiptid:'1001', date:'2013-08-09'},
+	function(resp){
+		console.log(resp);
+	}
+);
+
 SELECT I.upc, category, SUM(quantity) units, I.price*SUM(quantity) total
 FROM Item I,Purchase P,PurchaseItem PI
 WHERE I.upc = PI.upc AND P.receiptid = PI.receiptid

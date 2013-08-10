@@ -325,6 +325,27 @@ def top_items():
 		
 		
 		
+@app.route('/api/deliver_update', methods=["POST"])
+def deliver_update():
+	cur = conn.get_cursor()
+	date = str(request.form['date'])
+	receiptid = str(request.form['receiptid'])
+	if len(date) > 10 or len(receiptid) > 10:
+		return "Invalid input"
+
+	cur.execute("SELECT expecteddate FROM Purchase WHERE receiptid=%s", receiptid)
+	data = cur.fetchone()
+	if not data:
+		conn.con.commit()
+		return "Receipt ID does not exist"
+	if not data['expecteddate']:
+		conn.con.commit()
+		return "Not online purchase"
+	
+	cur.execute("UPDATE Purchase SET delivereddate=%s WHERE receiptid=%s", (date, receiptid))
+	conn.con.commit()
+	return "Purchase " + receiptid + "'s delivered date is updated to " + date
+
 	
 """
 ==================================================
