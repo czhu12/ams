@@ -9,7 +9,14 @@ function IndexController($scope, $http, $routeParams){
 
 function AdvancedController($scope){}
 
-function ClerkController($scope){
+function ClerkController($scope, $location){
+  $scope.purchase = function(){
+    $location.path("/clerk/register");
+  }
+  
+  $scope.refund = function(){
+    $location.path("/clerk/refund");
+  }
 }
 
 function CheckoutController($scope, $http){
@@ -85,14 +92,13 @@ function ClerkRegisterController($scope, $http){
       orders.push(order);
     });
     console.log(JSON.stringify({'arr':orders}));
-    //$http.post('/api/store_purchase', {arr:JSON.stringify(orders)} );
 		$.post('/api/store_purchase', {'arr':JSON.stringify(orders)} );
     return false;
   }
 
   $("#clerk-main-list").on('input', function(){
       computeTotalPrice();
-      $("#totalprice").text(totalPrice);
+      $("#totalprice").text(Math.round(totalPrice*100)/100);
   });
 
   $http.get("/api/items").success(function(data){
@@ -122,7 +128,7 @@ function ClerkRegisterController($scope, $http){
       }
     }
 	
-    $("#totalprice").text(totalPrice);
+    $("#totalprice").text(Math.round(totalPrice*100)/100);
   }
   
   $scope.dropItem = function(upc){
@@ -132,24 +138,35 @@ function ClerkRegisterController($scope, $http){
 }
 
 function SongController($scope, $routeParams, $http){
+  $scope.validate = function(){
+    console.log('validating...');
+    if(isNaN(parseInt($scope.quantity))){
+      $("input[name=quantity]").attr("class", "error-input");
+      return;
+    }
+
+    $("input[name=quantity]").attr("class", "success-input");
+  }
+
   $scope.calcPrice = function(quantity, price){
     if(isNaN(parseInt(quantity)))
       return 0;
     return Math.round(quantity * price * 100)/100;
   }
+
 	$http.get("/api/items/" + $routeParams.songUpc).success(function(data){
 		$scope.song = data.data[0];
   	if ($scope.song.stock === "0") {
     	$("#song-stock").css("color", "red");
   	}
 	});
-
+  
   $scope.addSongToCart = function(){
-		if (($scope.quantity == "") || (typeof $scope.quantity != "string")){
-			alert("Must specify a Quantity");
+		if (($scope.quantity == "") || (isNaN(parseInt($scope.quantity)))){
+			alert("Must specify a valid Quantity");
 			return false;
 		}
-
+    
     var currentCart = $.parseJSON($.cookie("cart"));
 		var writeQuan = parseInt($scope.quantity);
 		if ($scope.song.upc in currentCart){
@@ -162,11 +179,7 @@ function SongController($scope, $routeParams, $http){
     window.location = "#/";
   };
 
-  //$scope.purchase = function(){
-  //  $http.post("/api/songs/" + $scope.song.upc + "/purchase", "").success(function(data, status, headers, config){
-  //    window.location="#/purchase?upc=" + $scope.song.upc;
-  //  });
-  //};
+  
   $scope.search = function(query){
     window.location="#/?query=" + query;
   };

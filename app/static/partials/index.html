@@ -1,7 +1,7 @@
 <div class="center"><input type="text" id="search-bar" ng-model="query" placeholder="Search"></div>
 </div>
 <div class="song-list">
-<ul>
+<ul id="main-search-list"> 
   <li id="song" ng-animate="'animate'" ng-repeat="song in songs | filter:query"><a href="#/songs/{{song.upc}}">{{song.title}} <br/>
   <span id="song-list-meta">{{song.company}} - {{song.category}}</span></a></li>
 </ul>
