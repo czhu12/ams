@@ -54,13 +54,19 @@ function ClerkController($scope, $http){
     console.log('hello' + upc);
   };
 
-  $("#clerk-main-list").on('input', function(){
-    var totalPrice = 0;
+  var totalPrice = 0;
+
+  function computeTotalPrice(){
+    totalPrice = 0;
     $.each($scope.selectedSongs, function(index, song){
       var quantity = parseFloat($("input[name=" + song.upc + "]").val());
       var price = parseFloat(song.price);
       totalPrice += quantity*price;
     });
+  };
+
+  $("#clerk-main-list").on('input', function(){
+      computeTotalPrice();
       $("#totalprice").text("$" + totalPrice);
   });
 
@@ -83,10 +89,11 @@ function ClerkController($scope, $http){
       if ($scope.songs[i].upc == upc){
         //$scope.selectedSongs.push($scope.songs[i]);
         $scope.selectedSongs[upc] = $scope.songs[i];
-        $scope.totalPrice += parseFloat($scope.songs[i].price);
+        totalPrice += parseFloat($scope.songs[i].price);
         break;
       }
     }
+    $("#totalprice").text("$" + totalPrice);
   }
   
   $scope.dropItem = function(upc){
