@@ -18,13 +18,43 @@ def index():
 @app.route('/api/price', methods=["GET"])
 def price_request():
 	items = json.loads(request.args['arr'])
+
 	if is_valid(items):
 		return str(price(items))
 	else:
 		return 'Invalid input'
 
-@app.route('/api/store_purchase', methods=["POST"])
-def purchase():
+@app.route('/api/online_purchase', methods=["POST"])
+def purchase_online():
+	cur = conn.get_cursor()
+	today = str(date.today())
+	items = json.loads(request.form['arr'])
+	expected = str(expected_delivery())
+
+	if not is_valid(items):
+		return 'Invalid input'
+
+	if not is_legal_quantity(cur, items):
+		return 'Illegal quantity'
+
+	credit = json.loads(request.form['credit'])
+	insert_args = (today, str(credit['cardnum']), str(credit['expirydate']), expected )
+	cur.execute("INSERT INTO Purchase (purchasedate, cardnum, expirydate, expecteddate) VALUES (%s,%s,%s,%s)", insert_args)
+
+	cur.execute("SELECT last_insert_id()")
+	pid = cur.fetchone()['last_insert_id()']
+	purchase_item(cur, items)
+	conn.con.commit()
+
+	context = receipt_base(cur, pid, today, items)
+	context['cardnum'] = str(credit['cardnum'])[-5:]
+	context['expecteddate'] = expected
+
+	return jsonify(context)
+
+
+@app.route('/api/store_purchase/credit', methods=["POST"])
+def purchase_credit():
 	cur = conn.get_cursor()
 	today = str(date.today())
 	items = json.loads(request.form['arr'])
@@ -32,39 +62,37 @@ def purchase():
 	if not is_valid(items):
 		return 'Invalid input'
 
-	# Check if quantity legal for online purchase
-	if request.form.has_key('customer'):
-		for item in items:
-			cur.execute("SELECT stock FROM item WHERE Item.upc = %s", str(item['upc']) )
-			if cur.fetchone()['stock'] < item['quantity']:
-				conn.con.commit()
-				return "Illegal quantity for item " + str(item['upc'])
-
-	# Insert into Purchase
-	if request.form.has_key('credit'):
-		credit = json.loads(request.form['credit'])
-		insert_args = (today, str(credit['cardnum']), str(credit['expirydate']) )
-		cur.execute("INSERT INTO Purchase (purchasedate, cardnum, expirydate) VALUES (%s,%s,%s)", insert_args)
-	else:
-		cur.execute("INSERT INTO Purchase (purchasedate) VALUES (%s)", today) 
+	credit = json.loads(request.form['credit'])
+	insert_args = (today, str(credit['cardnum']), str(credit['expirydate']) )
+	cur.execute("INSERT INTO Purchase (purchasedate, cardnum, expirydate) VALUES (%s,%s,%s)", insert_args)
 
 	cur.execute("SELECT last_insert_id()")
-	pid = str(cur.fetchone()['last_insert_id()'])
-	purchase_item(cur, pid, items)
+	pid = cur.fetchone()['last_insert_id()']
+	purchase_item(cur, items)
 	conn.con.commit()
 
-	# Receipt Preparation
-	cur.execute("select * from purchase, purchaseitem, item where purchase.receiptid=%s and purchase.receiptid=purchaseitem.receiptid and purchaseitem.upc = item.upc", pid)
+	context = receipt_base(cur, pid, today, items)
+	context['cardnum'] = str(credit['cardnum'])[-5:]
+
+	return jsonify(context)
+
+@app.route('/api/store_purchase/cash', methods=["POST"])
+def purchase_cash():
+	cur = conn.get_cursor()
+	today = str(date.today())
+	items = json.loads(request.form['arr'])
+
+	if not is_valid(items):
+		return 'Invalid input'
+
+	cur.execute("INSERT INTO Purchase (purchasedate) VALUES (%s)", today) 
+
+	cur.execute("SELECT last_insert_id()")
+	pid = cur.fetchone()['last_insert_id()']
+	purchase_item(cur, items)
 	conn.con.commit()
 
-	context = {}
-	context['purhcaseitems'] = stringify(cur.fetchall())
-	context['price'] = str(price(items))
-	context['date'] = str(today)
-	context['pid'] = str(pid)
-	if request.form.has_key('credit'):
-		context['cardnum'] = str(credit['cardnum'])[-5:]
-
+	context = receipt_base(cur, pid, today, items)
 	return jsonify(context)
 		
 
@@ -74,7 +102,7 @@ def return_item():
 	today = date.today()
 	receiptid = request.form['receiptid']
 	items = json.loads(request.form['arr'])
-	
+
 	if not is_valid(items):
 		return "Invalid input"
 
@@ -122,9 +150,27 @@ def return_item():
 
 	return "Return Processed, return $" + str(total) + " in cash"
 
-def purchase_item(cur, items, pid):
+def is_legal_quantity(cur, items):
 	for item in items:
-		cur.execute( "INSERT INTO Purchaseitem %s ,%s, %s)", (pid, str(item['upc']), str(item['quantity'])) )
+		cur.execute("SELECT stock FROM item WHERE Item.upc = %s", str(item['upc']) )
+		if cur.fetchone()['stock'] < item['quantity']:
+			conn.con.commit()
+			return False
+	return True
+	
+def receipt_base(cur, pid, today, items):
+	cur.execute("select * from purchase, purchaseitem, item where purchase.receiptid=%s and purchase.receiptid=purchaseitem.receiptid and purchaseitem.upc = item.upc", pid)
+	conn.con.commit()
+	context = {}
+	context['purhcaseitems'] = stringify(cur.fetchall())
+	context['price'] = str(price(items))
+	context['date'] = str(today)
+	context['pid'] = str(pid)
+	return context;
+
+def purchase_item(cur, items):
+	for item in items:
+		cur.execute( "INSERT INTO PurchaseItem (select last_insert_id() ,%s, %s)", (str(item['upc']), str(item['quantity'])) )
 		cur.execute( "UPDATE Item SET stock = stock-%s WHERE upc = %s", (str(item['quantity']), str(item['upc'])) )
 
 def is_valid(items):
@@ -182,10 +228,6 @@ def update_item(item_upc):
 
 @app.route('/api/items/<item_upc>', methods=["DELETE"])
 def delete_item(item_upc):
-  return item_upc
-
-@app.route('/api/items/purchase', methods=["POST"])
-def purchase_item(item_upc):
   return item_upc
 
 @app.route('/api/checkout/expected', methods=["GET"])
