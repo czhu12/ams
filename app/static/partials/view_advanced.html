@@ -1,11 +1,15 @@
 <div id="advanced-view">
   <h2>Advanced Search</h2>
-  Title:<input type="text" name="title" ng-model="title" />
-  <br />
-  Lead Singer: <input type="text" name="singer" ng-model="singer" />
-  <br />
+  <form id="advanced-search">
+    Title:<input type="text" name="title" ng-model="title" />
+    <br />
+    Lead Singer: <input type="text" name="singer" ng-model="singer" />
+    <br />
+  </form>
+
   Category:
-  <select>
+  <select id="select-category" ng-model="category">
+    <option value=""></option>
     <option value="rock">Rock</option>
     <option value="pop">Pop</option>
     <option value="rap">Rap</option>
@@ -14,5 +18,8 @@
     <option value="new">New Age</option>
     <option value="instrumental">Instrumental</option>
   </select>
-  
+  <br/>
+
+  <button ng-click="search()">Search</button>
+
 </div>

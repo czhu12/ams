@@ -6,21 +6,26 @@
   <div class="col-1-3">
     <div id="song-info">
       <span id="song-title"></span>
-      <p class="meta-data"><span id="song-stock">Stock: {{song.stock}}</span>| Format: {{song.type}}</p>
+      <p class="meta-data"><span id="song-stock">Stock: {{item.stock}}</span>| Format: {{item.type}}</p>
       <hr />
-      <p class="price">Price: <span id="song-price">${{song.price}}</p></span>
-      <p class="artist" ng-click="search(song.artist)">{{song.artist}}</p>
+      <p class="price">Price: <span id="song-price">${{item.price}}</p></span>
+      <p class="artist" ng-click="search(song.artist)">{{item.artist}}</p>
       Quantity: <input type="text" size=5 ng-model="quantity" name="quantity" value=1 ng-change="validate()"/>
       <br/>
       <br/>
-      Total: ${{ calcPrice(quantity, song.price) }}
+      Total: ${{ calcPrice(quantity, item.price) }}
       <br/>
       <button id="buy-song" class="btn btn-3 btn-3b" ng-click="addSongToCart()" style="float:right;">Add to Cart</button>
     </div>
   </div>
 
   <div class="col-1-3">
-    hello world
+    <h2>Songs</h2>
+    <div id="item-songs">
+      <ul class="song-song-list">
+        <li ng-repeat="song in songs">{{song.title}}</li>
+      </ul>
+    </div>
   </div>
 
 
