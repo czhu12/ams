@@ -275,7 +275,8 @@ function ClerkRegisterController($scope, $http){
     return false;
   }
 
-  $("#clerk-main-list").on('input', function(){
+  $("#clerk-selected-list").on('input', function(){
+	  console.log("input");
       computeTotalPrice();
       $("#totalprice").text(Math.round(totalPrice*100)/100);
   });

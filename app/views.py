@@ -314,7 +314,7 @@ def get_item(item_upc):
   curr.execute("SELECT * FROM LeadSinger WHERE upc = %s", item_upc)
   singers = curr.fetchall()
   conn.con.commit()
-  return jsonify({ "data": stringify(item), "songs": stringify(songs), "singers": stringify()}
+  return jsonify({ "data": stringify(item), "songs": stringify(songs), "singers": stringify()})
 
 @app.route('/api/outstanding', methods=["GET"])
 def oustanding():
@@ -331,6 +331,7 @@ def expected_delivery():
   pending = cur.fetchone()['COUNT(delivereddate)']
   expected = pending/10
   expect_date = str(date.today()+timedelta(days=expected))
+  conn.con.commit()
   return expect_date
 
 @app.route('/api/items/add', methods=["POST"])
