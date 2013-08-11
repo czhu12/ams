@@ -7,6 +7,9 @@ function IndexController($scope, $http, $routeParams){
   });
 }
 
+function CustomerController($scope){
+}
+
 function AdvancedController($scope){}
 function ManagerAddItemsController($scope, $http){
 
