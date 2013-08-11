@@ -316,7 +316,7 @@ def oustanding():
 	curr.execute("SELECT * from Purchase WHERE cid IS NOT NULL AND delivereddate is NULL")
 	purchases = curr.fetchall()
 	conn.con.commit()
-	return jsonify(stringify(purchases))
+	return jsonify({'data':stringify(purchases)})
 
 @app.route('/api/checkout/expected', methods=["GET"])
 def expected_delivery():
