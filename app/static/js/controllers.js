@@ -418,10 +418,10 @@ function SongController($scope, $routeParams, $http){
   }
 
 	$http.get("/api/items/" + $routeParams.songUpc).success(function(data){
-		$scope.song = data.data[0];
+		$scope.item = data.data[0];
 		$scope.artist = data.singers[0];
 		$scope.songs = data.songs;
-  	if ($scope.song.stock === "0") {
+  	if ($scope.item.stock === "0") {
     	$("#song-stock").css("color", "red");
   	}
     $scope.songs = data.songs;

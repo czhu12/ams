@@ -136,7 +136,7 @@ def registration():
 	if not is_customer_valid(customer):
 		return jsonify({'error':"invalid input"})
 
-	cur.execute("select * from customer where cid=%s", cid)
+	cur.execute("select * from Customer where cid=%s", cid)
 	if cur.fetchall():
 		conn.con.commit()
 		return jsonify({'error':"cid already exist"})
@@ -152,7 +152,7 @@ def registration():
 	phone = str(customer['phone'])
 	input_args = (cid, password, name, address, phone)
 
-	cur.execute("insert into customer values (%s, %s, %s, %s, %s)", input_args)
+	cur.execute("insert into Customer values (%s, %s, %s, %s, %s)", input_args)
 	conn.con.commit()
 	return jsonify({'sucess':"registration complete"})
 	
