@@ -47,45 +47,42 @@ def login():
 	else:
 		return 'Login Required'
 
+@app.route('/api/user', methods=["GET"])
+def get_user():
+	if 'login' in session:
+		return jsonify({'success':str(cid)})
+	else:
+		return jsonify({'error': ''})
+	
 """
 ==================================================
 Search, Registration, Online Purchase, Price Request
 ==================================================
 """
-@app.route('/api/search', methods=["GET", "POST"])
+@app.route('/api/search', methods=["GET"])
 def search():
 	cur = conn.get_cursor()
 	search_terms = request.args
-	query = "SELECT * from Item I, LeadSinger L WHERE"
-	first = True
+	query = "SELECT * from Item I, LeadSinger L WHERE I.upc=L.upc "
+
 	if 'leadsinger' in search_terms:
 		singer = str(search_terms['leadsinger']).lower()
 		if len(singer) > 100:
 			return "Invalid input"
-		if first:
-			first = False
-		query += " LOWER(L.name)='" + singer + "' "
+		query += "AND LOWER(L.name)='" + singer + "' "
 		
 
 	if 'title' in search_terms:
 		title = str(search_terms['title'])
 		if len(title) > 100:
 			return "Invalid input"
-		if first:
-			first = False
-		else:
-			query += " AND "
-		query += " I.title='" + title + "' "
+		query += "AND I.title='" + title + "' "
 
 	if 'category' in search_terms:
 		category = str(search_terms['category'])
 		if len(category) > 100:
 			return "Invalid input"
-		if first:
-			first = False
-		else:
-			query += " AND "
-		query += " I.category='" + category + "' "
+		query += "AND I.category='" + category + "' "
 
 	cur.execute(query)
 	search_result = stringify(cur.fetchall())
