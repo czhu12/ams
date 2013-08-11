@@ -1,25 +1,17 @@
 <div id="manager-top-selling">
   <div class="grid">
-    <div class="col-2-1">
-      <div id="manager-top-selling-view">
-      Top Selling Daily Item
-      </div>
-    </div>
-    <div class="col-1-3">
-        <div id="manager-top-selling-form">
-            <fieldset>
-                    <br>Enter Date:</br>
-                    <input name="date" type="date">
-                    
-                    <br>Top number of items:</br>
-                    <input name="n" type="text">
-					<button ng-click="getTopItems()"> submit </button>
-            </fieldset>
+	<div class="col-1-5">
+		<div>
+			hello world
+		</div>
+	</div>
+	<div class="col-3-5">
+		<div>
             <fieldset>
               <legend>Report</legend>
               <!--UPC: <span id="manager-top-selling">{{selecte.upc}}</span>-->
 					{{ message }}<br>
-				<table>
+				<table >
 					<thead ng-hide="data.length==0">
 						<th>upc</th>
 						<th>title</th>
@@ -37,7 +29,20 @@
 				</table>
             </fieldset>
         </div>
-      </div>
-    </div>
+	</div>
+
+    <div class="col-1-5">
+        <div id="manager-top-selling-form">
+            <fieldset>
+                    <br>Enter Date:</br>
+                    <input name="date" type="date">
+                    
+                    <br>Top number of items:</br>
+                    <input name="n" type="text">
+					<button ng-click="getTopItems()"> submit </button>
+            </fieldset>
+		</div>
+	</div>
+
   </div>
 </div>
