@@ -83,6 +83,8 @@ def add_to_cart():
 			cart_quantity  = session['cart'][upc] + quantity
 			if cart_quantity > stock:
 				available = max(0, stock-cart_quantity)
+				if available == 0:
+					return jsonify({'error':'Item out of stock'})
 				return jsonify({'error':'Not Enough Stock', 'available':available})
 			else:
 				session['cart'][upc] = cart_quantity
@@ -276,6 +278,12 @@ def purchase_credit():
 	if not is_valid(items):
 		return 'invalid input'
 
+	for item in items:
+		try:
+			quantity = int(item['quantity'])
+		except ValueError:
+			return jsonify({'error':'invalid quantity'})
+
 	credit = json.loads(request.form['credit'])
 	if 'expirydate' not in credit:
 		return 'invalid input'
@@ -286,15 +294,12 @@ def purchase_credit():
 	except mdb.error, e:
 		return 'invalid input'
 	
-
 	cur.execute("select last_insert_id()")
 	pid = cur.fetchone()['last_insert_id()']
 	purchase_item(cur, items)
 	conn.con.commit()
-
 	context = receipt_base(cur, pid, today, items)
 	context['cardnum'] = str(credit['cardnum'])[-5:]
-
 	return jsonify(context)
 
 @app.route('/api/store_purchase/cash', methods=["post"])
@@ -306,13 +311,18 @@ def purchase_cash():
 	if not is_valid(items):
 		return 'invalid input'
 
+	for item in items:
+		try:
+			quantity = int(item['quantity'])
+		except ValueError:
+			return jsonify({'error':'invalid quantity'})
+
 	cur.execute("insert into purchase (purchasedate) values (%s)", today) 
 
 	cur.execute("select last_insert_id()")
 	pid = cur.fetchone()['last_insert_id()']
 	purchase_item(cur, items)
 	conn.con.commit()
-
 	context = receipt_base(cur, pid, today, items)
 	return jsonify(context)
 		
@@ -621,8 +631,13 @@ def receipt_base(cur, pid, today, items):
 
 def purchase_item(cur, items):
 	for item in items:
+		try:
+			quantity = int(item['quantity'])
+		except ValueError:
+			return False
 		cur.execute( "INSERT INTO PurchaseItem (SELECT last_insert_id() ,%s, %s)", (str(item['upc']), str(item['quantity'])) )
 		cur.execute( "UPDATE Item SET stock = stock-%s WHERE upc = %s", (str(item['quantity']), str(item['upc'])) )
+	return True
 
 def is_valid(items):
 	for item in items:
