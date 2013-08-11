@@ -36,6 +36,31 @@
 
   <script type="text/javascript">
     $("document").ready(function(){
+      $.fn.serializeObject = function() {
+        var o = {};
+        var a = this.serializeArray();
+        $.each(a, function() {
+          if (o[this.name] !== undefined) {
+            if (!o[this.name].push) {
+              o[this.name] = [o[this.name]];
+            }
+            o[this.name].push(this.value || '');
+            } else {
+              o[this.name] = this.value || '';
+            }
+        });
+        return o;
+      };
+      $("#registration-form").submit(function(){
+
+        var customerInfo = JSON.stringify($("#registration-form").serializeObject());
+        console.log({customer: customerInfo});
+        $.post("/api/registration", 
+        {customer: customerInfo}, function(resp){
+          console.log(resp);
+        });
+        return false; 
+      });
       $("#btnShowRegistration").click(function(){
         $("#dialog-registration").dialog();
       });
@@ -116,9 +141,9 @@
     </div>
     <div class="modal" id="dialog-registration" title="Register" style="display:none;">
       <form action="/customers" method="POST" id="registration-form">
-        User ID: <input type="text" name="userid" />
+        User ID: <input type="text" name="cid" />
         Password: <input type="password" name="password" />
-        Password Confirmation: <input type="password" name="password" />
+        Password Confirmation: <input type="password" name="password_confirmation" />
         Name: <input type="text" name="name" />
         Address: <input type="text" name="address" />
         Phone: <input type="text" name="phone" />
