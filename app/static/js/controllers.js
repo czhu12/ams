@@ -243,13 +243,18 @@ function ManagerController($scope, $http, $location){
     $location.path("/manager/top_items")
   }
 }
+
 function ClerkRegisterController($scope, $http){
+  $scope.price = 0;
   $scope.selectedSongs = {};
   $scope.quantityChange = function(upc){
     console.log('hello' + upc);
   };
 
   var totalPrice = 0;
+  function refresh(){
+	$http.get('api/items/1000');
+  }
 
   function computeTotalPrice(){
     totalPrice = 0;
@@ -278,6 +283,17 @@ function ClerkRegisterController($scope, $http){
   $("#clerk-selected-list").on('input', function(){
       computeTotalPrice();
       $("#totalprice").text(Math.round(totalPrice*100)/100);
+  });
+
+  $("button[name='get_price']").click(function(){
+    $.get("/api/price",
+		{arr:JSON.stringify(selectedSongsArr())},
+		function(resp){
+			$scope.price = resp;
+			refresh();
+			console.log(resp);
+		}
+	);
   });
 
   $http.get("/api/items").success(function(data){
@@ -312,6 +328,14 @@ function ClerkRegisterController($scope, $http){
   
   $scope.dropItem = function(upc){
     delete $scope.selectedSongs[upc];
+  }
+
+  function selectedSongsArr(){
+	var arr = [];
+    $.each($scope.selectedSongs, function(index, song){
+		arr.push({upc:index, quantity:$("input[name="+ index +"]").val()});
+	});
+	return arr;
   }
 
 }

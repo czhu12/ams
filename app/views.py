@@ -122,7 +122,6 @@ def registration():
 @app.route('/api/price', methods=["GET"])
 def price_request():
 	items = json.loads(request.args['arr'])
-
 	if is_valid(items):
 		return str(price(items))
 	else:
@@ -524,7 +523,11 @@ def price(items):
 	for item in items:
 		curr.execute("SELECT price from Item WHERE upc=%s", str(item['upc']) )
 		price = curr.fetchone()['price']
-		total += price*item['quantity']
+		try:
+			quantity = int(item['quantity'])
+		except ValueError:
+			return 0
+		total += price*int(item['quantity'])
 	conn.con.commit()
 	return total
 
