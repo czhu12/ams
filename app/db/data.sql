@@ -275,7 +275,7 @@ INSERT INTO Purchase (purchasedate,cardnum,expirydate)
 VALUES ('2013-07-01', 1234567890123456,'2014-01-01');
 
 INSERT INTO Purchase (purchasedate) 
-VALUES ('2013-08-10', '2013-08-11');
+VALUES ('2013-08-10');
 
 INSERT INTO PurchaseItem VALUES(1000,1004,4);
 INSERT INTO PurchaseItem VALUES(1000,1023,1);
@@ -296,6 +296,3 @@ INSERT INTO ReturnTable (returndate,receiptid) VALUES('2013-07-10',1003);
 INSERT INTO ReturnItem VALUES (1000,1003,1);
 INSERT INTO ReturnItem VALUES (1001,1020,2);
 INSERT INTO ReturnItem VALUES (1001,1009,3);
-
-
-
