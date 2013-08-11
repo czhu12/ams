@@ -19,13 +19,14 @@ function ManagerSalesReportController($scope){
                 '/api/manager/sales_report',
                 {date:'2013-08-10'},
                 function(resp){
-                    console.log(resp);
-                    console.log($scope.title);
-                    $scope.title = 'blah';
-                    $scope.data = JSON.stringify(resp);
+                    addToScope(resp);
                 }
         );
     });
+    function addToScope(resp){
+        $scope.title="hi";
+        $scope.data = JSON.stringify(resp);
+    }
 }
 
 function ManagerTopItemsController($scope){}
