@@ -3,7 +3,7 @@
 <div class="song-list">
 <ul id="main-search-list"> 
   <li id="song" ng-animate="'animate'" ng-repeat="song in songs | filter:query"><a href="#/songs/{{song.upc}}">{{song.title}} <br/>
-  <span id="song-list-meta">{{song.company}} - {{song.singer}}</span></a></li>
+  <span id="song-list-meta">{{song.name}} - {{song.company}}</span></a></li>
 </ul>
 </div>
 </div>

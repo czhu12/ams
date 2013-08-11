@@ -375,7 +375,7 @@ Get Item(s), Expected delivery, Add item,
 """
 @app.route('/api/items', methods=["GET"])
 def get_items():
-  return jsonify({ "data": stringify(conn.read("SELECT * FROM Item")) })
+  return jsonify({ "data": stringify(conn.read("SELECT * FROM Item I, LeadSinger LS WHERE I.upc=LS.upc")) })
 
 @app.route('/api/items/<item_upc>', methods=["GET"])
 def get_item(item_upc):
@@ -573,7 +573,7 @@ def is_legal_quantity(cur, items):
 	return True
 	
 def receipt_base(cur, pid, today, items):
-	cur.execute("select * from Purchase, PurchaseItem, Item where Purchase.receiptid=%s and Purchase.receiptid=Purchaseitem.receiptid and PurchaseItem.upc = Item.upc", pid)
+	cur.execute("select * from Purchase, PurchaseItem, Item where Purchase.receiptid=%s and Purchase.receiptid=PurchaseItem.receiptid and PurchaseItem.upc = Item.upc", pid)
 	conn.con.commit()
 	context = {}
 	context['purhcaseitems'] = stringify(cur.fetchall())

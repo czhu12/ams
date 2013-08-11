@@ -7,10 +7,20 @@ function IndexController($scope, $http, $routeParams){
   });
 }
 
+function AdvancedController($scope, $http){
+  $scope.search = function(){
+    $.get("/api/search", {
+      title: $scope.title,
+      leadsinger: $scope.singer,
+      category: $scope.category
+    }, function(resp){
+      console.log(resp);
+    });
+  }
+}
 function CustomerController($scope){
 }
 
-function AdvancedController($scope){}
 function ManagerAddItemsController($scope, $http){
 
   console.log('ellol');
@@ -45,9 +55,6 @@ function ManagerAddItemsController($scope, $http){
     $scope.newPrice = item.price;
     $scope.newStock = 0;
   }
-  
-
-
 }
 
 function ManagerSalesReportController($scope, $http){
@@ -195,6 +202,9 @@ function ClerkController($scope, $location){
 }
 
 function CheckoutController($scope, $http){
+  $scope.getImgUrl = function(upc){
+    return img_url[upc];
+  }
   $http.get('api/checkout/expected').success(function(data){
     $scope.expected_date = data;
   });
@@ -373,6 +383,8 @@ function ClerkRegisterController($scope, $http){
   
   $scope.dropItem = function(upc){
     delete $scope.selectedSongs[upc];
+    computeTotalPrice();
+    $("#totalprice").text(Math.round(totalPrice*100)/100);
   }
 
   function selectedSongsArr(){
@@ -388,6 +400,7 @@ function ClerkRegisterController($scope, $http){
 function SongController($scope, $routeParams, $http){
   $scope.imgUrl = img_url[$routeParams.songUpc];
   console.log($scope.imgUrl);
+  $scope.songs = [];
   $scope.validate = function(){
     console.log('validating...');
     if(isNaN(parseInt($scope.quantity))){
@@ -406,9 +419,12 @@ function SongController($scope, $routeParams, $http){
 
 	$http.get("/api/items/" + $routeParams.songUpc).success(function(data){
 		$scope.song = data.data[0];
+		$scope.artist = data.singers[0];
+		$scope.songs = data.songs;
   	if ($scope.song.stock === "0") {
     	$("#song-stock").css("color", "red");
   	}
+    $scope.songs = data.songs;
 	});
   
   $scope.addSongToCart = function(){
@@ -419,11 +435,11 @@ function SongController($scope, $routeParams, $http){
     
     var currentCart = $.parseJSON($.cookie("cart"));
 		var writeQuan = parseInt($scope.quantity);
-		if ($scope.song.upc in currentCart){
+		if ($scope.item.upc in currentCart){
 			var currentQuan = parseInt(currentCart[$scope.song.upc]);
 			writeQuan = writeQuan + currentQuan;
 		}
-		currentCart[$scope.song.upc] = writeQuan;
+		currentCart[$scope.item.upc] = writeQuan;
 		$.cookie("cart", JSON.stringify(currentCart), {expires:3, path:'/'});
     console.log($.cookie('cart'));
     window.location = "#/";
