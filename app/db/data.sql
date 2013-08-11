@@ -1,6 +1,6 @@
 
 INSERT INTO Item (title, type, category, company, year, price, stock) 
-VALUES ('Random Access Memories','1' , '1', 'Columbia', 2013, 9.99, 43);
+VALUES ('Random Access Memories','1' , '1', 'Columbia', '2013-01-01', 9.99, 43);
 Insert INTO LeadSinger VALUES ( 1000, 'Daft Punk');
 Insert INTO HasSong VALUES (1000, 'Give Life Back to Music');
 Insert INTO HasSong VALUES (1000, 'The Game of Love');
@@ -17,7 +17,7 @@ Insert INTO HasSong VALUES (1000, 'Doin'' it Right');
 Insert INTO HasSong VALUES (1000, 'Contact');	
 
 INSERT INTO Item (title, type, category, company, year, price, stock) 
-VALUES ('The 20/20 Experience','1' , '2', 'RCA', 2013, 7.70, 21);
+VALUES ('The 20/20 Experience','1' , '2', 'RCA', '2013-01-01', 7.70, 21);
 Insert INTO LeadSinger VALUES ( 1001, 'Justin Timberlake');
 Insert INTO HasSong VALUES (1001, 'Pusher Love Girl');
 Insert INTO HasSong VALUES (1001, 'Suit & Tie featuring JAY Z');
@@ -31,7 +31,7 @@ Insert INTO HasSong VALUES (1001, 'Mirrors');
 Insert INTO HasSong VALUES (1001, 'Blue Ocean Floor');
 
 INSERT INTO Item (title, type, category, company, year, price, stock) 
-VALUES ('21','1' , '2', 'Columbia', 2011, 9.99, 37);
+VALUES ('21','1' , '2', 'Columbia', '2011-01-01', 9.99, 37);
 Insert INTO LeadSinger VALUES ( 1002, 'Adele');
 Insert INTO HasSong VALUES (1002, 'Rolling In The Deep');
 Insert INTO HasSong VALUES (1002, 'Rumor Has It');
@@ -46,7 +46,7 @@ Insert INTO HasSong VALUES (1002, 'Lovesong');
 Insert INTO HasSong VALUES (1002, 'Someone Like You');
 
 INSERT INTO Item (title, type, category, company, year, price, stock) 
-VALUES ('To Be Loved','1' , '2', 'Reprise', 2013, 8.70, 17);
+VALUES ('To Be Loved','1' , '2', 'Reprise', '2013-01-01', 8.70, 17);
 Insert INTO LeadSinger VALUES (1003, 'Michael Buble');
 Insert INTO HasSong VALUES (1003, 'You Make Me Feel So Young');
 Insert INTO HasSong VALUES (1003, 'It''s A Beautiful Day');
@@ -64,7 +64,7 @@ Insert INTO HasSong VALUES (1003, 'I Got It Easy');
 Insert INTO HasSong VALUES (1003, 'Young At Heart');
 
 INSERT INTO Item (title, type, category, company, year, price, stock) 
-VALUES ('Unorthodox Jukebox','1' , '2', 'Atlantic', 2012, 11.64, 58);
+VALUES ('Unorthodox Jukebox','1' , '2', 'Atlantic', '2012-01-01', 11.64, 58);
 Insert INTO LeadSinger VALUES (1004, 'Bruno Mars');
 Insert INTO HasSong VALUES (1004, 'Young Girls');
 Insert INTO HasSong VALUES (1004, 'Locked Out Of Heaven');
@@ -78,7 +78,7 @@ Insert INTO HasSong VALUES (1004, 'Money Make Her Smile');
 Insert INTO HasSong VALUES (1004, 'If I Knew');
 
 INSERT INTO Item (title, type, category, company, year, price, stock) 
-VALUES ('Night Visions','1' , '1', 'Interscope Records', 2012, 9.99, 41);
+VALUES ('Night Visions','1' , '1', 'Interscope Records', '2012-01-01', 9.99, 41);
 Insert INTO LeadSinger VALUES (1005, 'Imagine Dragons');
 Insert INTO HasSong VALUES (1005, 'Radioactive');
 Insert INTO HasSong VALUES (1005, 'Tip Toe');
@@ -93,7 +93,7 @@ Insert INTO HasSong VALUES (1005, 'Nothing Left To Say');
 Insert INTO HasSong VALUES (1005, 'Rocks');
 
 INSERT INTO Item (title, type, category, company, year, price, stock) 
-VALUES ('Coldplay: Live 2012','2' , '1', 'Capitol', 2012, 19.66, 10);
+VALUES ('Coldplay: Live 2012','2' , '1', 'Capitol', '2012-01-01', 19.66, 10);
 Insert INTO LeadSinger VALUES (1006, 'Coldplay');
 Insert INTO HasSong VALUES (1006, 'Mylo Xyloto');
 Insert INTO HasSong VALUES (1006, 'Hurts Like Heaven');
@@ -112,7 +112,7 @@ Insert INTO HasSong VALUES (1006, 'Fix You');
 Insert INTO HasSong VALUES (1006, 'Every Tear is a Waterfall');
 
 INSERT INTO Item (title, type, category, company, year, price, stock) 
-VALUES ('good kid, m.A.A.d city','1' , '3', 'Aftermath', 2013, 19.98, 14);
+VALUES ('good kid, m.A.A.d city','1' , '3', 'Aftermath', '2013-01-01', 19.98, 14);
 Insert INTO LeadSinger VALUES (1007, 'Kendrick Lamar');
 Insert INTO HasSong VALUES (1007, 'Sherane a.k.a Master Splinter''s Daughter');
 Insert INTO HasSong VALUES (1007, 'Trick, Don''t Kill My Vibe');
@@ -131,7 +131,7 @@ Insert INTO HasSong VALUES (1007, 'Black Boy Fly');
 Insert INTO HasSong VALUES (1007, 'Now or Never feat. Mary J. Blige');
 
 INSERT INTO Item (title, type, category, company, year, price, stock) 
-VALUES ('The Heist','1' , '3', 'Macklemore', 2012, 8.99, 14);
+VALUES ('The Heist','1' , '3', 'Macklemore', '2012-01-01', 8.99, 14);
 Insert INTO LeadSinger VALUES (1008, 'Macklemore & Ryan Lewis');
 Insert INTO HasSong VALUES (1008, 'Ten Thousand Hours');
 Insert INTO HasSong VALUES (1008, 'Can''t Hold Us');
@@ -150,7 +150,7 @@ Insert INTO HasSong VALUES (1008, 'Starting Over');
 Insert INTO HasSong VALUES (1008, 'Cowboy Boots');
 
 INSERT INTO Item (title, type, category, company, year, price, stock) 
-VALUES ('To All The Girls...','1' , '4', 'Legacy', 2013, 14.66, 24);
+VALUES ('To All The Girls...','1' , '4', 'Legacy', '2013-01-01', 14.66, 24);
 Insert INTO LeadSinger VALUES (1009, 'Willie Nelson');
 Insert INTO HasSong VALUES (1009, 'Dolly Parton - From Here To The Moon And Back');
 Insert INTO HasSong VALUES (1009, 'Miranda Lambert - She Was No Good For Me');
@@ -172,7 +172,7 @@ Insert INTO HasSong VALUES (1009, 'Paula Nelson - Have You Ever Seen The Rain');
 Insert INTO HasSong VALUES (1009, 'Tina Rose - After The Fire Is Gone');
 
 INSERT INTO Item (title, type, category, company, year, price, stock) 
-VALUES ('The Piano Guys','1' , '5', 'Sony Masterworks', 2012, 9.99, 3);
+VALUES ('The Piano Guys','1' , '5', 'Sony Masterworks', '2012-01-01', 9.99, 3);
 Insert INTO LeadSinger VALUES (1010, 'The Piano Guys');
 Insert INTO HasSong VALUES (1010,'Titanium / Pavane');
 Insert INTO HasSong VALUES (1010,'Peponi (Paradise)');
@@ -189,76 +189,76 @@ Insert INTO HasSong VALUES (1010,'Rolling in the Deep');
 Insert INTO HasSong VALUES (1010,'What Makes You Beautiful');
 
 INSERT INTO Item (title, type, category, company, year, price, stock) 
-VALUES ('Blurred Lines [feat. T.I., Pharrell]','1' , '2', 'Interscope', 2013, 1.29, 400);
+VALUES ('Blurred Lines [feat. T.I., Pharrell]','1' , '2', 'Interscope', '2013-01-01', 1.29, 400);
 Insert INTO LeadSinger VALUES (1011, 'Robin Thicke');
 Insert INTO HasSong VALUES (1011,'Blurred Lines');
 
 INSERT INTO Item (title, type, category, company, year, price, stock) 
-VALUES ('Safe and Sound','1' , '2', 'Capitol', 2013, 1.29, 400);
+VALUES ('Safe and Sound','1' , '2', 'Capitol', '2013-01-01', 1.29, 400);
 Insert INTO LeadSinger VALUES (1012, 'Capital Cities');
 Insert INTO HasSong VALUES (1012,'Safe and Sound');
 
 INSERT INTO Item (title, type, category, company, year, price, stock) 
-VALUES ('We Can''t Stop','1' , '2', 'RCA', 2013, 1.29, 400);
+VALUES ('We Can''t Stop','1' , '2', 'RCA', '2013-01-01', 1.29, 400);
 Insert INTO LeadSinger VALUES (1013, 'Miley Cyrus');
 Insert INTO HasSong VALUES (1013,'We Can''t Stop');
 
 INSERT INTO Item (title, type, category, company, year, price, stock) 
-VALUES ('Cups (Pitch Perfect''s "When I''m Gone")','1' , '2', 'Republic', 2013, 1.29, 400);
+VALUES ('Cups (Pitch Perfect''s "When I''m Gone")','1' , '2', 'Republic', '2013-01-01', 1.29, 400);
 Insert INTO LeadSinger VALUES (1014, 'Anna Kendrick');
 Insert INTO HasSong VALUES (1014,'Cups');
 
 INSERT INTO Item (title, type, category, company, year, price, stock) 
-VALUES ('Come & Get It','1' , '2', 'Hollywood', 2013, 1.29, 400);
+VALUES ('Come & Get It','1' , '2', 'Hollywood', '2013-01-01', 1.29, 400);
 Insert INTO LeadSinger VALUES (1015, 'Selena Gomez');
 Insert INTO HasSong VALUES (1015,'Come & Get It');
 
 INSERT INTO Item (title, type, category, company, year, price, stock) 
-VALUES ('I Knew You Were Trouble','1' , '2', 'Big Machine Records', 2012, 1.29, 400);
+VALUES ('I Knew You Were Trouble','1' , '2', 'Big Machine Records', '2012-01-01', 1.29, 400);
 Insert INTO LeadSinger VALUES (1016, 'Taylor Swift');
 Insert INTO HasSong VALUES (1016,'I Knew You Were Trouble');
 
 INSERT INTO Item (title, type, category, company, year, price, stock) 
-VALUES ('Just Give Me a Reason','1' , '2', 'RCA', 2012, 1.29, 400);
+VALUES ('Just Give Me a Reason','1' , '2', 'RCA', '2012-01-01', 1.29, 400);
 Insert INTO LeadSinger VALUES (1017, 'Pink');
 Insert INTO HasSong VALUES (1017,'Come & Get It');
 
 INSERT INTO Item (title, type, category, company, year, price, stock) 
-VALUES ('Wake Me Up','1' , '2', 'Island Records', 2013, 1.29, 400);
+VALUES ('Wake Me Up','1' , '2', 'Island Records', '2013-01-01', 1.29, 400);
 Insert INTO LeadSinger VALUES (1018, 'Avicii');
 Insert INTO HasSong VALUES (1018,'Wake Me Up');
 
 INSERT INTO Item (title, type, category, company, year, price, stock) 
-VALUES ('Burn','1' , '2', 'Interscope', 2013, 1.29, 400);
+VALUES ('Burn','1' , '2', 'Interscope', '2013-01-01', 1.29, 400);
 Insert INTO LeadSinger VALUES (1019, 'Ellie Goulding');
 Insert INTO HasSong VALUES (1019,'Burn');
 
 INSERT INTO Item (title, type, category, company, year, price, stock) 
-VALUES ('I Need Your Love','1' , '2', 'Columbia', 2012, 1.29, 400);
+VALUES ('I Need Your Love','1' , '2', 'Columbia', '2012-01-01', 1.29, 400);
 Insert INTO LeadSinger VALUES (1020, 'Calvin Harris');
 Insert INTO HasSong VALUES (1020,'I Need Your Love');
 
 INSERT INTO Item (title, type, category, company, year, price, stock) 
-VALUES ('Levels','1' , '2', 'Island Records', 2011, 1.29, 400);
+VALUES ('Levels','1' , '2', 'Island Records', '2011-01-01', 1.29, 400);
 Insert INTO LeadSinger VALUES (1021, 'Avicii');
 Insert INTO HasSong VALUES (1021,'Wake Me Up');
 
 INSERT INTO Item (title, type, category, company, year, price, stock) 
-VALUES ('Holy Grail','1' , '3', 'Roc Nation', 2013, 1.29, 400);
+VALUES ('Holy Grail','1' , '3', 'Roc Nation', '2013-01-01', 1.29, 400);
 Insert INTO LeadSinger VALUES (1022, 'Jay-Z');
 Insert INTO HasSong VALUES (1022,'Holy Grail');
 
 INSERT INTO Item (title, type, category, company, year, price, stock) 
-VALUES ('Clarity','1' , '2', 'Interscope', 2012, 1.29, 400);
+VALUES ('Clarity','1' , '2', 'Interscope', '2012-01-01', 1.29, 400);
 Insert INTO LeadSinger VALUES (1023, 'Zedd');
 Insert INTO HasSong VALUES (1023,'Clarity');
 
 INSERT INTO Item (title, type, category, company, year, price, stock) 
-VALUES ('Finally Moving','1' , '7', 'Pretty Lights Music', 2010, 0.99, 400);
+VALUES ('Finally Moving','1' , '7', 'Pretty Lights Music', '2010-01-01', 0.99, 400);
 Insert INTO LeadSinger VALUES (1024, 'Pretty Lights');
 Insert INTO HasSong VALUES (1024,'Finally Moving');
 
 INSERT INTO Item (title, type, category, company, year, price, stock) 
-VALUES ('Sail','1' , '2', 'Red Bull Records', 2011, 1.29, 400);
+VALUES ('Sail','1' , '2', 'Red Bull Records', '2011-01-01', 1.29, 400);
 Insert INTO LeadSinger VALUES (1025, 'AWOLNATION');
 Insert INTO HasSong VALUES (1025,'Sail');
