@@ -8,8 +8,70 @@ function IndexController($scope, $http, $routeParams){
 }
 
 function AdvancedController($scope){}
-function ManagerAddItemsController($scope){}
-function ManagerSalesReportController($scope){}
+function ManagerAddItemsController($scope, $http){
+
+  console.log('ellol');
+  $scope.selectedFlag = true;
+  $scope.selectedItem = {upc:"", title:"", price:'', stock:''};
+  $scope.resp = "";
+  refresh();
+  function refresh() {
+    $http.get("api/items").success(function(data){
+      $scope.items = data.data;
+    });
+  } 
+  
+  $scope.update = function(){
+  $.post('/api/items/add',
+  { 
+    upc:$scope.selectedItem.upc, 
+    quantity:$scope.newStock,
+    price:$scope.newPrice 
+  },  function(resp){
+    refresh();
+    console.log(resp);
+    $scope.resp = resp;
+  }
+  );
+  return false;
+  }
+
+  $scope.selectItem = function(item){
+    $scope.selectedItem = item;
+    $scope.selectedFlag = false;
+    $scope.newPrice = item.price;
+    $scope.newStock = 0;
+  }
+  
+
+
+}
+
+function ManagerSalesReportController($scope, $http){
+  function refresh() {
+    $http.get("api/items").success(function(data){
+      $scope.items = data.data;
+    });
+  } 
+    $scope.title = "hello world";
+    console.log('Sales report controller ');
+    $scope.update = function(){
+      console.log(' clicked');
+      $.post( '/api/manager/sales_report', {date:'2013-08-10'},
+        function(resp){
+          console.log('changing scope...');
+          console.log($scope.title);
+          addToScope(resp);
+          refresh();
+        }
+      );
+    }
+    function addToScope(resp){
+        $scope.title="hi";
+        $scope.data = JSON.stringify(resp);
+    }
+}
+
 function ManagerTopItemsController($scope){}
 function ManagerProcessDeliveryController($scope){}
 

@@ -340,10 +340,10 @@ Sales Report, Top Items, Delivery Update
 ==================================================
 """
 
-@app.route('/api/sales_report', methods=["GET"])
+@app.route('/api/manager/sales_report', methods=["GET", "POST"])
 def sales_report():
 	cur = conn.get_cursor()
-	date = str(request.args['date'])	
+	date = str(request.form['date'])	
 	if len(date) > 10:
 		return 'Invalid Input'
 
@@ -368,7 +368,7 @@ def sales_report():
 
 	return jsonify(partition)
 
-@app.route('/api/top_items', methods=["GET"])
+@app.route('/api/manager/top_items', methods=["GET"])
 def top_items():
 	cur = conn.get_cursor()
 	date = str(request.args['date'])

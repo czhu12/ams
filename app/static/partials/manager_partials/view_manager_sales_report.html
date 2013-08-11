@@ -1,0 +1,25 @@
+<div id="manager-sales-report">
+  <div class="grid">
+    <div class="col-2-1">
+      <div id="manager-sales-report-view">
+        Sales Report
+      </div>
+    </div>
+    <div class="col-1-3">
+        <div id="manager-sales-report-form">
+            <fieldset>
+                    <br>Enter Date:</br>
+                    <input name="date" type="text">
+                    <button id="sales_report" ng-click="update()">Submit</button>
+            </fieldset>
+            <fieldset>
+              <legend>Report</legend>
+              Items Sold: <span id="manager-sales-table">{{title}}</span>
+            </fieldset>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

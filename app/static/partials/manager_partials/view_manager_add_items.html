@@ -2,23 +2,33 @@
   <div class="grid">
     <div class="col-2-3">
       <div id="manager-item-view">
-        hello world
+        <ul>
+          <li ng-repeat="item in items | filter:query" ng-click="selectItem(item)">
+            {{item.upc}} - {{item.title}} - {{item.price}} - {{item.stock}}
+          </li>
+        </ul>
       </div>
     </div>
     <div class="col-1-3">
       <div id="manager-item-change">
         <input type="text" ng-model="query">
         <div id="manager-item-form">
-          <form action="" method="POST">
+          <form action="">
             <fieldset>
               <legend>Update Item</legend>
-              UPC: <span id="manager-song-upc">{{selectedSong.upc}}</span>
-              Title: <span id="manager-song-title">{{selectedSong.title}}</span>
-              Stock: <input id="manager-song-stock" type="text" value="selectedSong.stock"></span>
-              Price: $<input id="manager-song-price" type="text" value="selectedSong.price"></span>
+              UPC: <input id="manager-song-upc" disabled="true" value="{{selectedItem.upc}}">
+              <br />
+              Title: <input id="manager-song-title" disabled="true" value="{{selectedItem.title}}"></span>
+              <br />
+              Add Quantity: <input size=10 id="manager-song-stock" type="text" ng-model="newStock" value="0" ng-disabled="selectedFlag"></span>
+              <br />
+              Price: $<input id="manager-song-price" type="text" ng-model="newPrice" value="{{selectedSong.price}}" ng-disabled="selectedFlag"></span>
+              <br />
+              <input type="submit" value="Update" name="submit" ng-click="update()">
             </fieldset>
           </form>
         </div>
+        {{resp}}
       </div>
     </div>
   </div>
