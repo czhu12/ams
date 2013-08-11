@@ -220,7 +220,11 @@ function CheckoutController($scope, $http){
   $http.get('api/checkout/expected').success(function(data){
     $scope.expected_date = data;
   });
-  var cart = $.parseJSON($.cookie("cart"));
+  var cart;
+	$http.get('/api/get_cart').success(function(data){
+		console.log(data);
+		cart = data;
+	});
 	$scope.upcs = {};
 	var allItems;
 	$http.get('api/items').success(function(data){

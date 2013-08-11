@@ -79,18 +79,24 @@ def add_to_cart():
 			return jsonify({'error':'item not exist'})
 
 		conn.con.commit()
+
 		if upc in session['cart']:
-			cart_quantity  = session['cart'][upc] + quantity
-			if cart_quantity > stock:
-				available = max(0, stock-cart_quantity)
-				if available == 0:
-					return jsonify({'error':'Item out of stock'})
-				return jsonify({'error':'Not Enough Stock', 'available':available})
-			else:
-				session['cart'][upc] = cart_quantity
+			current_cart = session['cart'][upc]
+			cart_quantity  = current_cart + quantity
 		else:
-			session['cart'][upc] = quantity
+			current_cart = 0
+			cart_quantity = quantity
+
+		if cart_quantity > stock:
+			available = max(0, stock-current_cart)
+			if available == 0:
+				return jsonify({'error':'Item out of stock'})
+			return jsonify({'available':available})
+		else:
+			session['cart'][upc] = cart_quantity
+
 		return jsonify({"success": 'add successful'})
+
 	else:
 		return jsonify({'error': "login Required"})
 
@@ -288,6 +294,9 @@ def purchase_credit():
 	credit = json.loads(request.form['credit'])
 	if 'expirydate' not in credit:
 		return 'invalid input'
+	
+	if len(str(credit['cardnum'])) != 16 or len(str(credit['expirydate'])) != 10:
+		return jsonify({'error':'invalid card'})
 
 	insert_args = (today, str(credit['cardnum']), str(credit['expirydate']) )
 	try:
