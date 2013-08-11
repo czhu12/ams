@@ -105,16 +105,16 @@ def update_cart():
 		except ValueError:
 			return jsonify({'error':'invalid quantity'})
 
-		if quantity < session[upc]:
-			session[upc] = quantity
-			return jsonify({"success": 'Update successful'})
-
 		cur = conn.get_cursor()
 		cur.execute("SELECT upc,stock FROM Item WHERE upc=%s", upc)
 		stock = cur.fetchone()['stock']
 
 		if not stock:
 			return jsonify({'error':'item not exist'})
+
+		if quantity < stock:
+			session[upc] = quantity
+			return jsonify({"success": 'Update successful'})
 
 		conn.con.commit()
 		if upc in session['cart']:
