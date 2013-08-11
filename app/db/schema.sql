@@ -75,4 +75,3 @@ CREATE TABLE ReturnItem(
 	PRIMARY KEY(retid, upc),
 	FOREIGN KEY(upc) REFERENCES Item(upc)
 );
-

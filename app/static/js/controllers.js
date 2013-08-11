@@ -45,6 +45,29 @@ function ManagerAddItemsController($scope, $http){
 
 }
 function ManagerSalesReportController($scope){}
+=======
+function ManagerAddItemsController($scope){}
+
+function ManagerSalesReportController($scope){
+    $scope.title = "hello world";
+    console.log('Sales report controller ');
+    $("#sales_report").click(function(){
+        console.log(' clicked');
+        $.get(
+                '/api/manager/sales_report',
+                {date:'2013-08-10'},
+                function(resp){
+                    addToScope(resp);
+                }
+        );
+    });
+    function addToScope(resp){
+        $scope.title="hi";
+        $scope.data = JSON.stringify(resp);
+    }
+}
+
+>>>>>>> 28f42d8c2149bab60443b2f6daf2683fcc242af0
 function ManagerTopItemsController($scope){}
 function ManagerProcessDeliveryController($scope){}
 
