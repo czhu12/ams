@@ -262,3 +262,27 @@ INSERT INTO Item (title, type, category, company, year, price, stock)
 VALUES ('Sail','1' , '2', 'Red Bull Records', '2011-01-01', 1.29, 400);
 Insert INTO LeadSinger VALUES (1025, 'AWOLNATION');
 Insert INTO HasSong VALUES (1025,'Sail');
+
+INSERT INTO Customer VALUES('emilio','password','Emilio Zand','123 Fake Street','1234567890');
+
+INSERT INTO Purchase (purchasedate,cid,cardnum,expirydate) 
+VALUES ('2013-08-09', 'emilio',1234567890123456,'2014-01-01');
+
+INSERT INTO Purchase (purchasedate,cid,cardnum,expirydate) 
+VALUES ('2013-06-09', 'emilio',1234567890123456,'2014-01-01');
+
+INSERT INTO PurchaseItem VALUES(1000,1004,4);
+INSERT INTO PurchaseItem VALUES(1000,1023,1);
+INSERT INTO PurchaseItem VALUES(1000,1009,1);
+INSERT INTO PurchaseItem VALUES(1000,10015,3);
+INSERT INTO PurchaseItem VALUES(1001,1015,4);
+INSERT INTO PurchaseItem VALUES(1001,1003,1);
+INSERT INTO PurchaseItem VALUES(1001,1017,1);
+
+INSERT INTO ReturnTable (returndate,receiptid) VALUES('2013-08-10',1000);
+INSERT INTO ReturnTable (returndate,receiptid) VALUES('2013-06-10',1001);
+
+INSERT INTO ReturnItem VALUES (1000,1004,3);
+INSERT INTO ReturnItem VALUES (1001,1015,4);
+
+
