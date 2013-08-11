@@ -56,10 +56,10 @@ Insert INTO HasSong VALUES (1003, 'Something Stupid (feat. Reese Witherspoon)');
 Insert INTO HasSong VALUES (1003, 'Come Dance With Me');
 Insert INTO HasSong VALUES (1003, 'Close Your Eyes');
 Insert INTO HasSong VALUES (1003, 'After All (feat. Bryan Adams)');
-Insert INTO HasSong VALUES (1003, 'Have I Told You Lately That I Love You (With Naturally 7)');
+Insert INTO HasSong VALUES (1003, 'Have I Told You Lately That I Love You');
 Insert INTO HasSong VALUES (1003, 'To Be Loved');
 Insert INTO HasSong VALUES (1003, 'You''ve Got A Friend In Me');
-Insert INTO HasSong VALUES (1003, ' Nevertheless (I''m In Love With You) [feat. The Puppini Sisters]');
+Insert INTO HasSong VALUES (1003, 'Nevertheless (I''m In Love With You)');
 Insert INTO HasSong VALUES (1003, 'I Got It Easy');
 Insert INTO HasSong VALUES (1003, 'Young At Heart');
 
