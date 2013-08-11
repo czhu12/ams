@@ -291,7 +291,7 @@ def add_item():
 @app.route('/api/manager/sales_report', methods=["GET", "POST"])
 def sales_report():
 	cur = conn.get_cursor()
-	date = str(request.form['date'])	
+	date = str(request.args['date'])	
 	if len(date) > 10:
 		return 'Invalid Input'
 
@@ -319,9 +319,9 @@ def sales_report():
 @app.route('/api/manager/top_items', methods=["GET"])
 def top_items():
 	cur = conn.get_cursor()
-	date = str(request.form['date'])
+	date = str(request.args['date'])
 	try:
-		n = int(request.form['n'])
+		n = int(request.args['n'])
 	except ValueError:
 		return 'Invalid Input'
 
