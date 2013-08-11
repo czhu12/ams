@@ -5,7 +5,6 @@ from flask import url_for, redirect, session
 from datetime import date, timedelta
 import json
 
-
 conn = db_con.Database()
 
 """
@@ -283,6 +282,13 @@ def get_item(item_upc):
   songs = curr.fetchall()
   conn.con.commit()
   return jsonify({ "data": stringify(item), "songs": stringify(songs)})
+
+@app.route('/api/outstanding', methods=["GET"])
+def oustanding():
+	curr = conn.get_cursor()
+	curr.execute("SELECT * from Purchase WHERE cid IS NOT NULL AND delivereddate is NULL")
+	purchases = curr.fetchall()
+	return jsonify(stringify(purchases))
 
 @app.route('/api/checkout/expected', methods=["GET"])
 def expected_delivery():
