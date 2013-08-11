@@ -71,7 +71,7 @@
               $("#error-message-login").html(resp.error);
             }else{
               $("#login-form").dialog("close");
-							window.location="/#/";
+							window.location.replace("/#/");
 							location.reload();
             }
     			}
@@ -158,7 +158,7 @@
       </li>
 
     </ul>
-    <span class="logout-button" style='float:right;' >hi</span>
+    <span class="logout-button" style='float:right;' >Not Logged In</span>
 
   <div class="clear"></div>
   </div>

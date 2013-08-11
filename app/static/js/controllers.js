@@ -409,7 +409,7 @@ function ClerkRegisterController($scope, $http){
 
 }
 
-function SongController($scope, $routeParams, $http){
+function SongController($scope, $routeParams, $http, $location){
   $scope.imgUrl = img_url[$routeParams.songUpc];
   console.log($scope.imgUrl);
   $scope.songs = [];
@@ -444,17 +444,33 @@ function SongController($scope, $routeParams, $http){
 			alert("Must specify a valid Quantity");
 			return false;
 		}
+		console.log('making post');
+		$.post("/api/add_to_cart", {
+			upc:$scope.item.upc,
+			quantity: parseInt($scope.quantity)
+		}, function(resp){
+			console.log(resp);	
+			if("error" in resp) {
+				alert(resp.error);
+			}else if("available" in resp){
+				alert(resp.available);	
+				
+			}else {
+				//successfully added
+				alert(resp.success);	
+			}
+		});
     
-    var currentCart = $.parseJSON($.cookie("cart"));
-		var writeQuan = parseInt($scope.quantity);
-		if ($scope.item.upc in currentCart){
-			var currentQuan = parseInt(currentCart[$scope.song.upc]);
-			writeQuan = writeQuan + currentQuan;
-		}
-		currentCart[$scope.item.upc] = writeQuan;
-		$.cookie("cart", JSON.stringify(currentCart), {expires:3, path:'/'});
-    console.log($.cookie('cart'));
-    window.location = "#/";
+    //var currentCart = $.parseJSON($.cookie("cart"));
+		//var writeQuan = parseInt($scope.quantity);
+		//if ($scope.item.upc in currentCart){
+		//	var currentQuan = parseInt(currentCart[$scope.song.upc]);
+		//	writeQuan = writeQuan + currentQuan;
+		//}
+		//currentCart[$scope.item.upc] = writeQuan;
+		//$.cookie("cart", JSON.stringify(currentCart), {expires:3, path:'/'});
+    //console.log($.cookie('cart'));
+    //window.location = "#/";
   };
 
   
