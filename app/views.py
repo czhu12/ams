@@ -91,6 +91,43 @@ def add_to_cart():
 		return jsonify({"success": 'add successful'})
 	else:
 		return jsonify({'error': "login Required"})
+
+@app.route('/api/update_cart', methods=['POST'])
+def update_cart():
+	if is_logged_in():
+		item = request.form
+		upc = item['upc']
+		
+		try:
+			quantity = int(item['quantity'])
+		except ValueError:
+			return jsonify({'error':'invalid quantity'})
+
+		if quantity < session[upc]:
+			session[upc] = quantity
+			return jsonify({"success": 'Update successful'})
+
+		cur = conn.get_cursor()
+		cur.execute("SELECT upc,stock FROM Item WHERE upc=%s", upc)
+		stock = cur.fetchone()['stock']
+
+		if not stock:
+			return jsonify({'error':'item not exist'})
+
+		conn.con.commit()
+		if upc in session['cart']:
+			cart_quantity  = quantity - session['cart'][upc]
+			if cart_quantity > stock:
+				available = max(0, stock-cart_quantity)
+				return jsonify({'error':'Not Enough Stock', 'available':available})
+			else:
+				session['cart'][upc] = cart_quantity
+		else:
+			session['cart'][upc] = quantity
+		return jsonify({"success": 'Update successful'})
+
+	else:
+		return jsonify({'error': "login Required"})
 	
 """
 ==================================================
