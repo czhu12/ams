@@ -388,6 +388,7 @@ function ClerkRegisterController($scope, $http){
 function SongController($scope, $routeParams, $http){
   $scope.imgUrl = img_url[$routeParams.songUpc];
   console.log($scope.imgUrl);
+  $scope.songs = [];
   $scope.validate = function(){
     console.log('validating...');
     if(isNaN(parseInt($scope.quantity))){
@@ -406,6 +407,8 @@ function SongController($scope, $routeParams, $http){
 
 	$http.get("/api/items/" + $routeParams.songUpc).success(function(data){
 		$scope.song = data.data[0];
+		$scope.artist = data.singers[0];
+		$scope.songs = data.songs;
   	if ($scope.song.stock === "0") {
     	$("#song-stock").css("color", "red");
   	}
