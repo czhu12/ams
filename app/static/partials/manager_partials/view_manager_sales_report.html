@@ -15,8 +15,15 @@
             <fieldset>
               <legend>Report</legend>
               Items Sold: <span id="manager-sales-table">{{title}}</span>
-            </fieldset>
-          </form>
+                <div>
+                    I have {{friends.length}} friends. They are:
+                    <ul>
+                        <li ng-repeat="friend in friends">
+                            [{{$index + 1}}] {{friend.name}} who is {{friend.age}} years old.
+                        </li>
+                    </ul>
+                </div>
+             </fieldset>
         </div>
       </div>
     </div>

@@ -12,14 +12,22 @@ function ManagerAddItemsController($scope){}
 
 function ManagerSalesReportController($scope){
     $scope.title = "hello world";
+    $scope.friends = [{name:'John', age:25}, {name:'M', age:28}];
+    $scope.friends.concat([{name:'Chris', age:20}]);
+    
     console.log('Sales report controller ');
     $("#sales_report").click(function(){
         console.log(' clicked');
         $.get(
                 '/api/manager/sales_report',
-                {date:'2013-08-10'},
+                {date:'2013-08-05'},
                 function(resp){
                     addToScope(resp);
+                    console.log(resp);
+                    console.log('In callback');
+                    $scope.data = resp;
+                    $scope.friends.concat([{name:'Henry', age:20}]);
+                    $scope.title = 'response';
                 }
         );
     });
@@ -29,7 +37,23 @@ function ManagerSalesReportController($scope){
     }
 }
 
-function ManagerTopItemsController($scope){}
+function ManagerTopItemsController($scope){
+    console.log('TopItemsController');
+    $scope.data = 'data';
+    $("#top_selling").click(function(){
+        console.log('top_selling clicked');
+        $.get(
+                '/api/manager/top_item',
+                {date:'2013-08-05'},
+                {n:5},
+                function(resp){
+                    $scope.data = resp;
+                    addToScope(resp);
+                }
+        );
+    });
+}
+
 function ManagerProcessDeliveryController($scope){}
 
 function ClerkController($scope, $location){
