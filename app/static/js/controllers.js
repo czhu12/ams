@@ -8,32 +8,90 @@ function IndexController($scope, $http, $routeParams){
 }
 
 function AdvancedController($scope){}
-function ManagerAddItemsController($scope){}
+function ManagerAddItemsController($scope, $http){
 
-function ManagerSalesReportController($scope){
+  console.log('ellol');
+  $scope.selectedFlag = true;
+  $scope.selectedItem = {upc:"", title:"", price:'', stock:''};
+  $scope.resp = "";
+  refresh();
+  function refresh() {
+    $http.get("api/items").success(function(data){
+      $scope.items = data.data;
+    });
+  } 
+  
+  $scope.update = function(){
+  $.post('/api/items/add',
+  { 
+    upc:$scope.selectedItem.upc, 
+    quantity:$scope.newStock,
+    price:$scope.newPrice 
+  },  function(resp){
+    refresh();
+    console.log(resp);
+    $scope.resp = resp;
+  }
+  );
+  return false;
+  }
+
+  $scope.selectItem = function(item){
+    $scope.selectedItem = item;
+    $scope.selectedFlag = false;
+    $scope.newPrice = item.price;
+    $scope.newStock = 0;
+  }
+  
+
+
+}
+
+function ManagerSalesReportController($scope, $http){
+  function refresh() {
+    $http.get("api/items").success(function(data){
+      $scope.items = data.data;
+    });
+  } 
     $scope.title = "hello world";
     $scope.friends = [{name:'John', age:25}, {name:'M', age:28}];
     $scope.friends.concat([{name:'Chris', age:20}]);
     
     console.log('Sales report controller ');
+
     $("#sales_report").click(function(){
-        console.log(' clicked');
-        $.get(
+        console.log( $("#date") );
+        $.post(
                 '/api/manager/sales_report',
-                {date:'2013-08-05'},
+                {date:$scope.date},
                 function(resp){
                     addToScope(resp);
-                    console.log(resp);
-                    console.log('In callback');
-                    $scope.data = resp;
-                    $scope.friends.concat([{name:'Henry', age:20}]);
-                    $scope.title = 'response';
+                    console.log('changing scope...');
+                    refresh();
                 }
         );
     });
     function addToScope(resp){
         $scope.title="hi";
-        $scope.data = JSON.stringify(resp);
+        $scope.data_str = JSON.stringify(resp);
+        $scope.data = JSON.parse($scope.data_str);
+        $scope.data_cat = {}
+        for ( var key in $scope.data ) {
+            console.log( key );
+            for( var item in $scope.data[key] ) {
+                console.log($scope.data[key][item].upc );
+                if(key in $scope.data_cat) {
+                    $scope.data_cat[key].item_list.push($scope.data[key][item]);
+                }
+                else {
+                    $scope.data_cat[key] = {item_list:[], total_units:0, total_sales:0 };
+                    $scope.data_cat[key].item_list.push($scope.data[key][item]);
+                }
+                $scope.data_cat[key].total_units += parseInt($scope.data[key][item].units);
+                $scope.data_cat[key].total_sales += parseFloat($scope.data[key][item].total);
+            }
+            console.log($scope.data_cat[key].item_list);
+        }
     }
 }
 

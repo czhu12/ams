@@ -337,11 +337,11 @@ Sales Report, Top Items, Delivery Update
 @app.route('/api/manager/sales_report', methods=["GET", "POST"])
 def sales_report():
 	cur = conn.get_cursor()
-	date = str(request.args['date'])	
+	date = str(request.form['date'])	
 	if len(date) > 10:
 		return 'Invalid Input'
 
-	query = " SELECT I.upc, category, SUM(quantity) units, I.price*SUM(quantity) total " + \
+	query = " SELECT I.upc, category, SUM(quantity) units, I.price, I.price*SUM(quantity) total " + \
 		"FROM Item I,Purchase P,PurchaseItem PI " + \
 		"WHERE I.upc = PI.upc AND P.receiptid = PI.receiptid " + \
     		"AND purchasedate = '" + date + "' " \
