@@ -1,0 +1,29 @@
+<div id="manager-top-selling">
+  <div class="grid">
+    <div class="col-2-1">
+      <div id="manager-top-selling-view">
+      Top Selling Daily Item
+      </div>
+    </div>
+    <div class="col-1-3">
+        <div id="manager-top-selling-form">
+            <fieldset>
+                <form action= "/api/manager/top_itmes" method="POST">
+                    <br>Enter Date:</br>
+                    <input name="date" type="text">
+                    
+                    <br>Top number of items:</br>
+                    <input name="n" type="text">>
+                    <input type="submit" name="submit" value="Submit"/>
+                </form>
+            </fieldset>
+            <fieldset>
+              <legend>Report</legend>
+              UPC: <span id="manager-top-selling">{{selecte.upc}}</span>
+            </fieldset>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

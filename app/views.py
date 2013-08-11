@@ -288,10 +288,10 @@ def add_item():
 		return 'Item ' + upc + ' now has stock ' + str(result['stock']) + ' and price is not changed' 
 
 
-@app.route('/api/sales_report', methods=["GET"])
+@app.route('/api/manager/sales_report', methods=["GET", "POST"])
 def sales_report():
 	cur = conn.get_cursor()
-	date = str(request.args['date'])	
+	date = str(request.form['date'])	
 	if len(date) > 10:
 		return 'Invalid Input'
 
@@ -316,12 +316,12 @@ def sales_report():
 
 	return jsonify(partition)
 
-@app.route('/api/top_items', methods=["GET"])
+@app.route('/api/manager/top_items', methods=["GET"])
 def top_items():
 	cur = conn.get_cursor()
-	date = str(request.args['date'])
+	date = str(request.form['date'])
 	try:
-		n = int(request.args['n'])
+		n = int(request.form['n'])
 	except ValueError:
 		return 'Invalid Input'
 
