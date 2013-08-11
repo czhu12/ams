@@ -8,8 +8,9 @@
       <span id="song-title"></span>
       <p class="meta-data"><span id="song-stock">Stock: {{item.stock}}</span>| Format: {{item.type}}</p>
       <hr />
-      <p class="price">Price: <span id="song-price">${{song.price}}</p></span>
+      <p class="price">Price: <span id="song-price">${{item.price}}</p></span>
       <p class="artist" ng-click="search(artist.name)">{{artist.name}}</p>
+      <p class="company" ng-click="search(item.company)">{{item.company}} - {{item.year.substring(0,4)}}</p>
       Quantity: <input type="text" size=5 ng-model="quantity" name="quantity" value=1 ng-change="validate()"/>
       <br/>
       <br/>
@@ -22,7 +23,7 @@
   <div class="col-1-3">
    <h2>Track List:</h2>
    <div id="item-songs">
-      <ul class="song-song-list" style="overflow:auto;height=100px;">
+      <ul class="song-song-list" >
         <li ng-repeat="songs in songs" >{{$index + 1}}. {{songs.title}}</li>
       </ul>
     </div>

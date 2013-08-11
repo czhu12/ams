@@ -1,6 +1,6 @@
 var img_url = {
-  1000:"http://ecx.images-amazon.com/images/I/51BqrqLNyKL._SL500_AA300_.jpg",
-  1001:"http://ecx.images-amazon.com/images/I/51BqrqLNyKL._SL500_AA300_.jpg",
+  1000:"http://www.thedaftclub.com/wp-content/uploads/2013/03/Random-Access-Memories-300x300.jpg",
+  1001:"http://www.radiocremebrulee.com/wp-content/uploads/2013/03/Justin-Amazon.jpg",
   1002:"http://upload.wikimedia.org/wikipedia/en/5/55/21Adele.jpg",
   1003:"http://www.sainsburysentertainment.co.uk/media/ProductImage/largeImage/ProductImage-7583250.jpg",
   1004:"http://ecx.images-amazon.com/images/I/51Jc2v9ndpL._SL500_AA300_.jpg",

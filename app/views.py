@@ -49,7 +49,7 @@ def login():
 @app.route('/api/user', methods=["GET"])
 def get_user():
 	if 'login' in session:
-		return jsonify({'success':str(cid)})
+		return jsonify({'success':str(session['cid'])})
 	else:
 		return jsonify({'error': ''})
 	
@@ -175,7 +175,7 @@ def registration():
 	if not is_customer_valid(customer):
 		return jsonify({'error':"invalid input"})
 
-	cur.execute("select * from customer where cid=%s", cid)
+	cur.execute("select * from Customer where cid=%s", cid)
 	if cur.fetchall():
 		conn.con.commit()
 		return jsonify({'error':"cid already exist"})
@@ -191,8 +191,9 @@ def registration():
 	phone = str(customer['phone'])
 	input_args = (cid, password, name, address, phone)
 
-	cur.execute("insert into customer values (%s, %s, %s, %s, %s)", input_args)
+	cur.execute("insert into Customer values (%s, %s, %s, %s, %s)", input_args)
 	conn.con.commit()
+	login(cur, customer)
 	return jsonify({'sucess':"registration complete"})
 	
 
@@ -290,8 +291,8 @@ def purchase_credit():
 
 	insert_args = (today, str(credit['cardnum']), str(credit['expirydate']) )
 	try:
-		cur.execute("insert into purchase (purchasedate, cardnum, expirydate) values (%s,%s,%s)", insert_args)
-	except mdb.error, e:
+		cur.execute("insert into Purchase (purchasedate, cardnum, expirydate) values (%s,%s,%s)", insert_args)
+	except mdb.Error, e:
 		return 'invalid input'
 	
 	cur.execute("select last_insert_id()")
@@ -317,7 +318,7 @@ def purchase_cash():
 		except ValueError:
 			return jsonify({'error':'invalid quantity'})
 
-	cur.execute("insert into purchase (purchasedate) values (%s)", today) 
+	cur.execute("insert into Purchase (purchasedate) values (%s)", today) 
 
 	cur.execute("select last_insert_id()")
 	pid = cur.fetchone()['last_insert_id()']

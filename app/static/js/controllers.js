@@ -1,6 +1,11 @@
 'use strict';
 
-function IndexController($scope, $http, $routeParams){
+function IndexController($scope, $http, $routeParams, $location){
+  $.get('/api/user', function(resp){
+    if('error' in resp){
+     $location.path('customer');
+    }
+  });
   $scope.query = $routeParams.query;
   $http.get("/api/items").success(function(data){
     $scope.songs = data.data;
@@ -19,6 +24,13 @@ function AdvancedController($scope, $http){
   }
 }
 function CustomerController($scope){
+  $scope.login = function(){
+    console.log('clicked me');
+    $("#login-form").dialog();
+  }
+  $scope.register = function() {
+    $("#dialog-registration").dialog();
+  }
 }
 
 function ManagerAddItemsController($scope, $http){
@@ -418,10 +430,10 @@ function SongController($scope, $routeParams, $http){
   }
 
 	$http.get("/api/items/" + $routeParams.songUpc).success(function(data){
-		$scope.song = data.data[0];
+		$scope.item = data.data[0];
 		$scope.artist = data.singers[0];
 		$scope.songs = data.songs;
-  	if ($scope.song.stock === "0") {
+  	if ($scope.item.stock === "0") {
     	$("#song-stock").css("color", "red");
   	}
     $scope.songs = data.songs;
