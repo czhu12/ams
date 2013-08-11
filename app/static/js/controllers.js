@@ -252,6 +252,7 @@ function ClerkRegisterController($scope, $http){
   };
 
   var totalPrice = 0;
+
   function refresh(){
 	$http.get('api/items/1000');
   }
@@ -266,17 +267,7 @@ function ClerkRegisterController($scope, $http){
   };
 
   $scope.purchase = function(){
-    var orders = [];
-    $.each($(".selected-songs"), function(index, Element){
-      var input = $(Element).find("input");
-      var order = {
-        upc: input.attr('name'),
-        quantity: input.val()
-      }; 
-      orders.push(order);
-    });
-    console.log(JSON.stringify({'arr':orders}));
-		$.post('/api/store_purchase', {'arr':JSON.stringify(orders)} );
+	$.post('/api/store_purchase/cash', {'arr':JSON.stringify(selectedSongsArr())}, function(resp){console.log(resp);} );
     return false;
   }
 
