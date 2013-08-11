@@ -52,9 +52,6 @@ function ManagerAddItemsController($scope, $http){
     $scope.newPrice = item.price;
     $scope.newStock = 0;
   }
-  
-
-
 }
 
 function ManagerSalesReportController($scope, $http){
@@ -202,6 +199,9 @@ function ClerkController($scope, $location){
 }
 
 function CheckoutController($scope, $http){
+  $scope.getImgUrl = function(upc){
+    return img_url[upc];
+  }
   $http.get('api/checkout/expected').success(function(data){
     $scope.expected_date = data;
   });
@@ -322,6 +322,8 @@ function ClerkRegisterController($scope, $http){
   
   $scope.dropItem = function(upc){
     delete $scope.selectedSongs[upc];
+    computeTotalPrice();
+    $("#totalprice").text(Math.round(totalPrice*100)/100);
   }
 
 }

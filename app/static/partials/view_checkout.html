@@ -6,9 +6,11 @@
         <div style="text-align:center;"><h2>Checkout</h2></div>
           <ul>
             <li id="checkout-song-list" ng-repeat="itemOrder in selectedItems">
+              <!--<span><img class="thumb" src="{{getImgUrl(itemOrder.item.upc)}}"></img></span>
+              <span>-->
               UPC: {{itemOrder.item.upc}} <br />
               Title: {{itemOrder.item.title}} - {{itemOrder.item.category}}
-              Quantity: <input type="text" name="quantity" value="{{itemOrder.quantity}}"/>
+              <span style="float:right;">Quantity: <input size="3" type="text" name="quantity" value="{{itemOrder.quantity}}"/></span></span>
             </li>
           </ul>
         </div>
