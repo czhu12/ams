@@ -99,12 +99,12 @@ def registration():
 	cid = str(customer['cid'])
 
 	if not is_customer_valid(customer):
-		return "Invalid input"
+		return jsonify({'error':"Invalid input"})
 
 	cur.execute("SELECT * from Customer WHERE cid=%s", cid)
 	if cur.fetchall():
 		conn.con.commit()
-		return "CID is already exist"
+		return jsonify({'error':"CID is already exist"})
 
 	cid = str(customer['cid'])
 	password = str(customer['password'])
@@ -115,7 +115,7 @@ def registration():
 
 	cur.execute("INSERT INTO Customer VALUES (%s, %s, %s, %s, %s)", input_args)
 	conn.con.commit()
-	return "Registration complete"
+	return jsonify({'sucess':"Registration complete"})
 	
 
 @app.route('/api/price', methods=["GET"])
@@ -163,7 +163,7 @@ def purchase_online():
 
 """
 ==================================================
-Credit Purchase, Cash Purchase, Return
+Credit Purchase, Cash Purchase, Return, Get Purchases, Get Purchase
 ==================================================
 """
 @app.route('/api/store_purchase/credit', methods=["POST"])
