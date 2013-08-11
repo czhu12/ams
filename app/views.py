@@ -375,7 +375,7 @@ Get Item(s), Expected delivery, Add item,
 """
 @app.route('/api/items', methods=["GET"])
 def get_items():
-  return jsonify({ "data": stringify(conn.read("SELECT * FROM Item")) })
+  return jsonify({ "data": stringify(conn.read("SELECT * FROM Item I, LeadSinger LS WHERE I.upc=LS.upc")) })
 
 @app.route('/api/items/<item_upc>', methods=["GET"])
 def get_item(item_upc):
