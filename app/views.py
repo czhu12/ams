@@ -4,6 +4,7 @@ from flask import request, render_template, make_response, jsonify
 from flask import url_for, redirect, session
 from datetime import date, timedelta
 import json
+import MySQLdb as mdb
 
 conn = db_con.Database()
 
@@ -29,6 +30,7 @@ Login and Logout
 def logout():
 	if 'login' in session:
 		cid = session['cid']
+		del session['cart']
 		del session['login']
 		del session['cid']
 		return cid + ' Logged out'
@@ -39,13 +41,10 @@ def logout():
 def login():
 	cur = conn.get_cursor()
 	customer = request.form
-	if authenticate(cur, customer) =='Success':
-		session['login'] = 'Success'
-		session['cid'] = customer['cid']
-		return session['cid'] + ' Login Succeeded'
-		return redirect(url_for('index'))
+	if login(cur, customer):
+		return jsonify({'success': "Login Successful"})
 	else:
-		return 'Login Required'
+		return jsonify({'error': "Login Required"})
 
 @app.route('/api/user', methods=["GET"])
 def get_user():
@@ -53,6 +52,45 @@ def get_user():
 		return jsonify({'success':str(cid)})
 	else:
 		return jsonify({'error': ''})
+	
+@app.route('/api/get_cart', methods=['GET'])
+def get_cart():
+	if is_logged_in():
+		return jsonify(session['cart'])
+	else:
+		return jsonify({'error': "Login Required"})
+
+@app.route('/api/add_to_cart', methods=['POST'])
+def add_to_cart():
+	if is_logged_in():
+		item = request.form
+		upc = item['upc']
+
+		try:
+			quantity = int(item['quantity'])
+		except ValueError:
+			return jsonify({'error':'invalid quantity'})
+
+		cur = conn.get_cursor()
+		cur.execute("SELECT upc,stock FROM Item WHERE upc=%s", upc)
+		stock = cur.fetchone()['stock']
+
+		if not stock:
+			return jsonify({'error':'item not exist'})
+
+		conn.con.commit()
+		if upc in session['cart']:
+			cart_quantity  = session['cart'][upc] + quantity
+			if cart_quantity > stock:
+				available = max(0, stock-cart_quantity)
+				return jsonify({'error':'Not Enough Stock', 'available':available})
+			else:
+				session['cart'][upc] = cart_quantity
+		else:
+			session['cart'][upc] = quantity
+		return jsonify({"success": 'add successful'})
+	else:
+		return jsonify({'error': "login Required"})
 	
 """
 ==================================================
@@ -96,16 +134,16 @@ def registration():
 	cid = str(customer['cid'])
 
 	if not is_customer_valid(customer):
-		return jsonify({'error':"Invalid input"})
+		return jsonify({'error':"invalid input"})
 
-	cur.execute("SELECT * from Customer WHERE cid=%s", cid)
+	cur.execute("select * from customer where cid=%s", cid)
 	if cur.fetchall():
 		conn.con.commit()
-		return jsonify({'error':"CID already exist"})
+		return jsonify({'error':"cid already exist"})
 
 	if customer['password'] != customer['password_confirmation']:
 		conn.con.commit()
-		return jsonify({'error':"Passwords do not match"})
+		return jsonify({'error':"passwords do not match"})
 
 	cid = str(customer['cid'])
 	password = str(customer['password'])
@@ -114,46 +152,72 @@ def registration():
 	phone = str(customer['phone'])
 	input_args = (cid, password, name, address, phone)
 
-	cur.execute("INSERT INTO Customer VALUES (%s, %s, %s, %s, %s)", input_args)
+	cur.execute("insert into customer values (%s, %s, %s, %s, %s)", input_args)
 	conn.con.commit()
-	return jsonify({'sucess':"Registration complete"})
+	return jsonify({'sucess':"registration complete"})
 	
 
-@app.route('/api/price', methods=["GET"])
+@app.route('/api/price', methods=["get"])
 def price_request():
 	items = json.loads(request.args['arr'])
 	if is_valid(items):
 		return str(price(items))
 	else:
-		return 'Invalid input'
+		return 'invalid input'
 
-@app.route('/api/online_purchase', methods=["POST"])
+@app.route('/api/online_purchase', methods=["post"])
 def purchase_online():
 	cur = conn.get_cursor()
-	today = str(date.today())
-	items = json.loads(request.form['arr'])
-	expected = str(expected_delivery())
+	if not is_logged_in():
+		return 'login required'
+		
 	customer = json.loads(request.form['customer'])
+	if authenticate(cur, customer) != 'Success':
+		return 'Authentication failed'
 
-	if not is_valid(items):
-		return 'Invalid input'
+	#customer = json.loads(request.form['customer'])
+	#if not is_logged_in():
+		#if not login(cur, customer):
+			#return 'authentication failed'
+		
+	#items = json.loads(request.form['arr'])
+	items_dict = session['cart']
+	items = []
+	for item in items_dict:
+		temp = {}
+		temp['upc'] = item
+		temp['quantity'] = items_dict[item]
+		items.append(temp)
+
+	cid = session['cid']
+	today = str(date.today())
+	expected = str(expected_delivery())
 
 	if not is_legal_quantity(cur, items):
-		return 'Illegal quantity'
+		session['cart'] = {}
+		return 'illegal quantity'
 
-	result = authenticate(cur, customer)
-	if not result=='Success': 
-		return result
-
+	trivial = True;
+	for key,val in items_dict:
+		if val>0:
+			trivial = False
+			break;
+	if trivial:
+		return 'Trivial quantity'
+		
 	credit = json.loads(request.form['credit'])
-	insert_args = (today, str(credit['cardnum']), str(credit['expirydate']), expected, str(customer['cid']) )
-	cur.execute("INSERT INTO Purchase (purchasedate, cardnum, expirydate, expecteddate, cid) VALUES (%s,%s,%s,%s, %s)", insert_args)
+	insert_args = (today, str(credit['cardnum']), str(credit['expirydate']), expected, cid )
+	try:
+		cur.execute("insert into purchase (purchasedate, cardnum, expirydate, expecteddate, cid) values (%s,%s,%s,%s, %s)", insert_args)
+	except mdb.Error, e:
+		return jsonify({'error':'Invalid Input'})
 
-	cur.execute("SELECT last_insert_id()")
+	cur.execute("select last_insert_id()")
 	pid = cur.fetchone()['last_insert_id()']
 	purchase_item(cur, items)
 	conn.con.commit()
 
+	session['cart'] = {}
 	context = receipt_base(cur, pid, today, items)
 	context['cardnum'] = str(credit['cardnum'])[-5:]
 	context['expecteddate'] = expected
@@ -163,23 +227,30 @@ def purchase_online():
 
 """
 ==================================================
-Credit Purchase, Cash Purchase, Return, Get Purchases, Get Purchase
+credit purchase, cash purchase, return, get purchases, get purchase
 ==================================================
 """
-@app.route('/api/store_purchase/credit', methods=["POST"])
+@app.route('/api/store_purchase/credit', methods=["post"])
 def purchase_credit():
 	cur = conn.get_cursor()
 	today = str(date.today())
 	items = json.loads(request.form['arr'])
 
 	if not is_valid(items):
-		return 'Invalid input'
+		return 'invalid input'
 
 	credit = json.loads(request.form['credit'])
-	insert_args = (today, str(credit['cardnum']), str(credit['expirydate']) )
-	cur.execute("INSERT INTO Purchase (purchasedate, cardnum, expirydate) VALUES (%s,%s,%s)", insert_args)
+	if 'expirydate' not in credit:
+		return 'invalid input'
 
-	cur.execute("SELECT last_insert_id()")
+	insert_args = (today, str(credit['cardnum']), str(credit['expirydate']) )
+	try:
+		cur.execute("insert into purchase (purchasedate, cardnum, expirydate) values (%s,%s,%s)", insert_args)
+	except mdb.error, e:
+		return 'invalid input'
+	
+
+	cur.execute("select last_insert_id()")
 	pid = cur.fetchone()['last_insert_id()']
 	purchase_item(cur, items)
 	conn.con.commit()
@@ -189,18 +260,18 @@ def purchase_credit():
 
 	return jsonify(context)
 
-@app.route('/api/store_purchase/cash', methods=["POST"])
+@app.route('/api/store_purchase/cash', methods=["post"])
 def purchase_cash():
 	cur = conn.get_cursor()
 	today = str(date.today())
 	items = json.loads(request.form['arr'])
 
 	if not is_valid(items):
-		return 'Invalid input'
+		return 'invalid input'
 
-	cur.execute("INSERT INTO Purchase (purchasedate) VALUES (%s)", today) 
+	cur.execute("insert into purchase (purchasedate) values (%s)", today) 
 
-	cur.execute("SELECT last_insert_id()")
+	cur.execute("select last_insert_id()")
 	pid = cur.fetchone()['last_insert_id()']
 	purchase_item(cur, items)
 	conn.con.commit()
@@ -234,15 +305,21 @@ def return_item():
 	curr.execute("SELECT upc,quantity FROM PurchaseItem WHERE receiptid= %s", receiptid)
 	purchased_items = {}
 	for item in curr.fetchall():
-		purchased_items[item['upc']] = item['quantity']
+		purchased_items[str(item['upc'])] = item['quantity']
 
 	curr.execute("SELECT upc,SUM(quantity) FROM ReturnItem,ReturnTable WHERE receiptid= %s GROUP BY upc", receiptid)
 	returned_items = {}
 	for item in curr.fetchall():
 		returned_items[item['upc']] = item['SUM(quantity)']
+
+	#return str(returned_items) + '\n' + str(purchased_items)
 	for item in items:
 		upc = item['upc']
-		quantity = item['quantity']
+		try:
+			quantity = int(item['quantity'])
+		except ValueError:
+			return "Invalid Input"
+
 		not_returned = purchased_items[upc]
 		if upc in returned_items:
 			not_returned -= returned_items[upc]
@@ -298,7 +375,7 @@ Get Item(s), Expected delivery, Add item,
 """
 @app.route('/api/items', methods=["GET"])
 def get_items():
-  return jsonify({ "data": stringify(conn.read("SELECT * FROM Item")) })
+  return jsonify({ "data": stringify(conn.read("SELECT * FROM Item I, LeadSinger LS WHERE I.upc=LS.upc")) })
 
 @app.route('/api/items/<item_upc>', methods=["GET"])
 def get_item(item_upc):
@@ -465,6 +542,15 @@ def is_logged_in():
 		return False
 	return True
 
+def login(cur, customer):
+	if authenticate(cur, customer) =='Success':
+		session['login'] = 'Success'
+		session['cid'] = customer['cid']
+		session['cart'] = {}
+		return True;
+	else:
+		return False
+
 def authenticate(cur, customer):
 	cur.execute("SELECT password FROM Customer WHERE cid = %s", str(customer['cid']))
 	result = cur.fetchone()
@@ -541,8 +627,22 @@ def stringify(items):
 	return items
 
 def is_customer_valid(customer):
+	if 'cid' not in customer:
+		return False
+	if 'password' not in customer:
+		return False
+	if 'password_confirmation' not in customer:
+		return False
+	if 'name' not in customer:
+		return False
+	if 'address' not in customer:
+		return False
+	if 'phone' not in customer:
+		return False
+
 	cid = len(str(customer['cid']))
 	password = len(str(customer['password']))
+	password_conf = len(str(customer['password_confirmation']))
 	name = len(str(customer['name']))
 	address = len(str(customer['address']))
 	phone = len(str(customer['phone']))
@@ -550,6 +650,8 @@ def is_customer_valid(customer):
 	if cid > 20 or cid < 1:
 		return False
 	if password > 20 or password < 1:
+		return False
+	if not password == password_conf:
 		return False
 	if name > 50 or name < 1:
 		return False

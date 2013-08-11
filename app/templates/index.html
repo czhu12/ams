@@ -35,6 +35,26 @@
 
   <script type="text/javascript">
     $("document").ready(function(){
+			$("#login").click(function(){
+				$.post(
+    			'/api/login',
+    			{cid:'adf', password:'adf'},
+    			function(resp){
+        		console.log(resp);
+    			}
+				);
+			});
+
+			$("#logout").click(function(){
+				$.post(
+    				'/api/logout',
+    				{},
+    				function(resp){
+        				console.log(resp);
+    				}
+				);
+			});
+
       $.fn.serializeObject = function() {
         var o = {};
         var a = this.serializeArray();
@@ -109,7 +129,7 @@
 -->
   <div id="menu">
     <ul id="nav">
-      <li><a href="#">Customer</a>
+      <li><a href="/#/customer">Customer</a>
         <ul>
           <li><a href="#">Search</a></li>
           <li><a href="/#/advanced">Advanced Search</a></li>
@@ -131,7 +151,9 @@
         </ul>
       </li>
 
-      <span class="menu-button"><li><input type="button" id="btnShowRegistration" value="Register" /></li></span>
+      <span class="menu-button"><input type="button" id="btnShowRegistration" value="Register" /></span>
+      <span class="menu-button"><input type="button" id="login" value="Login" /></span>
+      <span class="menu-button"><input type="button" id="logout" value="Logout" /></span>
     </ul>
   <div class="clear"></div>
   </div>

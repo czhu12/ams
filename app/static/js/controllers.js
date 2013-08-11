@@ -18,6 +18,9 @@ function AdvancedController($scope, $http){
     });
   }
 }
+function CustomerController($scope){
+}
+
 function ManagerAddItemsController($scope, $http){
 
   console.log('ellol');
@@ -226,16 +229,56 @@ function CheckoutController($scope, $http){
 function ClerkRefundController($scope, $http){
   $scope.rids = [];
   $scope.items = [];
+  $scope.id = -1;
+  $scope.message = ''
   $http.get("/api/purchases").success(function(data){
     console.log(data);
     $scope.rids = data.data;
   });
   
+  function refresh(){
+	$http.get('api/items/1000').success(function(data){});
+  }
+
   $scope.addRid = function(rid){
     $http.get("/api/purchase/" + rid.receiptid).success(function(data){
       console.log(data.data);
       $scope.items = data.data;
+      $scope.id = rid.receiptid;
     });
+  }
+
+  $scope.returnItem = function(){
+    if($scope.id==-1)
+      return;
+	var arr = ItemsArr();
+	var trivial = true;
+    $.each(arr, function(index){
+		if(arr[index].quantity > 0)
+			trivial = false;
+	});
+	if(trivial){
+		$scope.message = "No items returned"
+		return;
+	}
+    console.log({arr:JSON.stringify(ItemsArr()), receiptid:$scope.id});
+	$.post(
+	  'api/return',
+      {arr:JSON.stringify(ItemsArr()), receiptid:$scope.id},
+      function(resp){
+		$scope.message = resp;
+		$scope.addRid({receiptid: $scope.id});
+      }
+    );
+  }
+
+  function ItemsArr(){
+	var arr = [];
+    $.each($scope.items, function(index){
+        var upc = $scope.items[index].upc;
+		arr.push({upc:upc, quantity:$("input[name="+ upc +"]").val()});
+	});
+	return arr;
   }
 }
 
@@ -277,7 +320,18 @@ function ClerkRegisterController($scope, $http){
   };
 
   $scope.purchase = function(){
-	$.post('/api/store_purchase/cash', {'arr':JSON.stringify(selectedSongsArr())}, function(resp){console.log(resp);} );
+	var arr = selectedSongsArr();
+	if (arr.length == 0){
+		return;
+	}
+	var arg = {'arr':JSON.stringify(selectedSongsArr())};
+
+	if($("input[name='ccb']").is(':checked')){
+		arg['credit'] = JSON.stringify({'cardnum':$("input[name='ccn']").val(), 'expirydate':$("input[name='cce']").val()});
+		$.post('/api/store_purchase/credit', arg, function(resp){console.log(resp);} );
+	} else {
+		$.post('/api/store_purchase/cash', arg, function(resp){console.log(resp);} );
+	}
     return false;
   }
 
@@ -346,6 +400,7 @@ function ClerkRegisterController($scope, $http){
 function SongController($scope, $routeParams, $http){
   $scope.imgUrl = img_url[$routeParams.songUpc];
   console.log($scope.imgUrl);
+  $scope.songs = [];
   $scope.validate = function(){
     console.log('validating...');
     if(isNaN(parseInt($scope.quantity))){
@@ -363,8 +418,10 @@ function SongController($scope, $routeParams, $http){
   }
 
 	$http.get("/api/items/" + $routeParams.songUpc).success(function(data){
-		$scope.item = data.data[0];
-  	if ($scope.item.stock === "0") {
+		$scope.song = data.data[0];
+		$scope.artist = data.singers[0];
+		$scope.songs = data.songs;
+  	if ($scope.song.stock === "0") {
     	$("#song-stock").css("color", "red");
   	}
     $scope.songs = data.songs;

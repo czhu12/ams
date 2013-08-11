@@ -64,6 +64,33 @@ $.post(
 	}
 );
 
+Online Purchase (session)
+$.post(
+	'/api/online_purchase',
+	{customer:JSON.stringify({cid:'asd', password:'asd'}), credit:JSON.stringify({cardnum:1234567890, expirydate:'2013-01-02'})},
+	function(resp){
+		console.log(resp);
+	}
+);
+
+Get Cart
+$.get(
+	'/api/get_cart',
+	{},
+	function(resp){
+		console.log(resp);
+	}
+);
+
+Add to Cart
+$.post(
+	'/api/add_to_cart',
+	{upc:1002, quantity:5},
+	function(resp){
+		console.log(resp);
+	}
+);
+
 Return Item
 $.post(
 	'/api/return',

@@ -14,6 +14,7 @@ angular.module("ams", []).
     when("/clerk/refund", {templateUrl:"static/partials/clerk_partials/view_clerk_refund.html", controller: ClerkRefundController}).
     when("/checkout", {templateUrl:"static/partials/view_checkout.html", controller: CheckoutController}).
     when("/advanced", {templateUrl:"static/partials/view_advanced.html", controller: AdvancedController}).
+    when("/customer", {templateUrl:"static/partials/view_customer.html", controller: CustomerController}).
     //$routeProvider.when("/signup", {templateUrl:"partials/signup.html", controller: SignupController}).
     otherwise({redirectTo:"/"});
 }]);
