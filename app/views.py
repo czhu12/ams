@@ -4,6 +4,7 @@ from flask import request, render_template, make_response, jsonify
 from flask import url_for, redirect, session
 from datetime import date, timedelta
 import json
+import MySQLdb as mdb
 
 conn = db_con.Database()
 
@@ -176,8 +177,15 @@ def purchase_credit():
 		return 'Invalid input'
 
 	credit = json.loads(request.form['credit'])
+	if 'expirydate' not in credit:
+		return 'Invalid input'
+
 	insert_args = (today, str(credit['cardnum']), str(credit['expirydate']) )
-	cur.execute("INSERT INTO Purchase (purchasedate, cardnum, expirydate) VALUES (%s,%s,%s)", insert_args)
+	try:
+		cur.execute("INSERT INTO Purchase (purchasedate, cardnum, expirydate) VALUES (%s,%s,%s)", insert_args)
+	except mdb.Error, e:
+		return 'Invalid input'
+	
 
 	cur.execute("SELECT last_insert_id()")
 	pid = cur.fetchone()['last_insert_id()']
@@ -234,15 +242,21 @@ def return_item():
 	curr.execute("SELECT upc,quantity FROM PurchaseItem WHERE receiptid= %s", receiptid)
 	purchased_items = {}
 	for item in curr.fetchall():
-		purchased_items[item['upc']] = item['quantity']
+		purchased_items[str(item['upc'])] = item['quantity']
 
 	curr.execute("SELECT upc,SUM(quantity) FROM ReturnItem,ReturnTable WHERE receiptid= %s GROUP BY upc", receiptid)
 	returned_items = {}
 	for item in curr.fetchall():
 		returned_items[item['upc']] = item['SUM(quantity)']
+
+	#return str(returned_items) + '\n' + str(purchased_items)
 	for item in items:
 		upc = item['upc']
-		quantity = item['quantity']
+		try:
+			quantity = int(item['quantity'])
+		except ValueError:
+			return "Invalid Input"
+
 		not_returned = purchased_items[upc]
 		if upc in returned_items:
 			not_returned -= returned_items[upc]

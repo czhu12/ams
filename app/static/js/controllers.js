@@ -216,16 +216,56 @@ function CheckoutController($scope, $http){
 function ClerkRefundController($scope, $http){
   $scope.rids = [];
   $scope.items = [];
+  $scope.id = -1;
+  $scope.message = ''
   $http.get("/api/purchases").success(function(data){
     console.log(data);
     $scope.rids = data.data;
   });
   
+  function refresh(){
+	$http.get('api/items/1000').success(function(data){});
+  }
+
   $scope.addRid = function(rid){
     $http.get("/api/purchase/" + rid.receiptid).success(function(data){
       console.log(data.data);
       $scope.items = data.data;
+      $scope.id = rid.receiptid;
     });
+  }
+
+  $scope.returnItem = function(){
+    if($scope.id==-1)
+      return;
+	var arr = ItemsArr();
+	var trivial = true;
+    $.each(arr, function(index){
+		if(arr[index].quantity > 0)
+			trivial = false;
+	});
+	if(trivial){
+		$scope.message = "No items returned"
+		return;
+	}
+    console.log({arr:JSON.stringify(ItemsArr()), receiptid:$scope.id});
+	$.post(
+	  'api/return',
+      {arr:JSON.stringify(ItemsArr()), receiptid:$scope.id},
+      function(resp){
+		$scope.message = resp;
+		$scope.addRid({receiptid: $scope.id});
+      }
+    );
+  }
+
+  function ItemsArr(){
+	var arr = [];
+    $.each($scope.items, function(index){
+        var upc = $scope.items[index].upc;
+		arr.push({upc:upc, quantity:$("input[name="+ upc +"]").val()});
+	});
+	return arr;
   }
 }
 
