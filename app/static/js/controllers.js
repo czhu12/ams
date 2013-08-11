@@ -8,7 +8,42 @@ function IndexController($scope, $http, $routeParams){
 }
 
 function AdvancedController($scope){}
-function ManagerAddItemsController($scope){}
+function ManagerAddItemsController($scope, $http){
+  $scope.selectedFlag = true;
+  $scope.selectedItem = {upc:"", title:"", price:'', stock:''};
+  $scope.resp = ""
+  refresh();
+  function refresh() {
+    $http.get("api/items").success(function(data){
+      $scope.items = data.data;
+    });
+  } 
+  
+  $scope.update = function(){
+  $.post('/api/items/add',
+  { 
+    upc:$scope.selectedItem.upc, 
+    quantity:$scope.newStock,
+    price:$scope.newPrice 
+  },  function(resp){
+    refresh();
+   console.log(resp);
+   $scope.resp = resp
+  }
+  );
+  return false;
+  }
+
+  $scope.selectItem = function(item){
+    $scope.selectedItem = item;
+    $scope.selectedFlag = false;
+    $scope.newPrice = item.price;
+    $scope.newStock = 0;
+  }
+  
+
+
+}
 function ManagerSalesReportController($scope){}
 function ManagerTopItemsController($scope){}
 function ManagerProcessDeliveryController($scope){}
