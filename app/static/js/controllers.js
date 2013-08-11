@@ -267,7 +267,18 @@ function ClerkRegisterController($scope, $http){
   };
 
   $scope.purchase = function(){
-	$.post('/api/store_purchase/cash', {'arr':JSON.stringify(selectedSongsArr())}, function(resp){console.log(resp);} );
+	var arr = selectedSongsArr();
+	if (arr.length == 0){
+		return;
+	}
+	var arg = {'arr':JSON.stringify(selectedSongsArr())};
+
+	if($("input[name='ccb']").is(':checked')){
+		arg['credit'] = JSON.stringify({'cardnum':$("input[name='ccn']").val(), 'expirydate':$("input[name='cce']").val()});
+		$.post('/api/store_purchase/credit', arg, function(resp){console.log(resp);} );
+	} else {
+		$.post('/api/store_purchase/cash', arg, function(resp){console.log(resp);} );
+	}
     return false;
   }
 

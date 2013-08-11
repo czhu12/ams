@@ -355,7 +355,7 @@ li#song:hover{
 }
 .big-buttons {
 }
-.manager-buttons{
+.manager-buttons, .clerk-buttons{
   width:400px;
 }
 

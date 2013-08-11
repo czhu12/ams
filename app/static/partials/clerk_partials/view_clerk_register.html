@@ -26,13 +26,18 @@
     <form action="" method="POST">
       <fieldset>
         <legend>Purchase</legend>
-          Credit: <input type="checkbox" ng-change="toggleCredit()" ng-model="creditCheckBox"/>
+          Credit: <input name="ccb" type="checkbox" ng-change="toggleCredit()" ng-model="creditCheckBox"/>
           <br/>
           Credit Card Number: 
           <br/>
-          <input type="text" name="ccn" ng-disabled="credit" size="16" />
+          <input type="text" name="ccn" size="16" />
           <br/>
-          Price: $<input type="text" name="price" size="10"/>
+          Credit Expiry Date: 
+          <br/>
+          <input type="date" name="cce" size="16" />
+          <br/>
+          Price: <span ng-hide="price == 0">${{ price }}</span>
+			<button name="get_price">GET</button>
           <br>
           <input type="submit" name="submit" value="Purchase" ng-click="purchase()" />
           
