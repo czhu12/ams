@@ -72,7 +72,35 @@ function ManagerSalesReportController($scope, $http){
     }
 }
 
-function ManagerTopItemsController($scope){}
+function ManagerTopItemsController($scope, $http){
+	$scope.message = '';
+	$scope.data = [];
+	function refresh(){
+    	$http.get("api/items/1000").success(function(data){
+    	});
+	}
+
+	$scope.getTopItems = function(){
+		var n = $("input[name='n']").val();
+		var date = $("input[name='date']").val();
+		$.get(
+			'api/manager/top_items',
+			{date: date, n:n},
+			function(data){
+				console.log(data);
+				if ('success' in data){
+					$scope.message = 'Top ' + n + ' items on ' + date + ' are';
+					$scope.data = data['success'];
+				} else {
+					$scope.message = data['error'];
+				}
+				refresh();
+			}
+		);
+	}
+}
+
+
 function ManagerProcessDeliveryController($scope){}
 
 function ClerkController($scope, $location){

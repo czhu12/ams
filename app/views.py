@@ -403,16 +403,16 @@ def top_items():
 	try:
 		n = int(request.args['n'])
 	except ValueError:
-		return 'Invalid Input'
+		return jsonify({'error':'Invalid Input'})
 
 	if len(date) > 10:
-		return 'Invalid Input'
+		return jsonify({'error':'Invalid Input'})
 	
-	query = " SELECT I.upc, SUM(quantity) units " + \
+	query = " SELECT I.upc, I.title, I.company, I.stock, SUM(quantity) units " + \
 		"FROM Item I,Purchase P,PurchaseItem PI " + \
 		"WHERE I.upc = PI.upc AND P.receiptid = PI.receiptid " + \
     		"AND purchasedate = '" + date + "' " \
-		"GROUP BY I.upc " + \
+		"GROUP BY I.upc, I.title, I.company, I.stock " + \
 		"ORDER BY SUM(quantity) DESC"
 
 	cur.execute(query)
@@ -424,7 +424,7 @@ def top_items():
 		data.append(entry)
 		
 	conn.con.commit()
-	return jsonify({'items':stringify(data)})
+	return jsonify({'success':stringify(data)})
 		
 @app.route('/api/deliver_update', methods=["POST"])
 def deliver_update():

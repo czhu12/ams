@@ -153,5 +153,3 @@ WHERE I.upc = PI.upc AND P.receiptid = PI.receiptid
 GROUP BY I.upc
 ORDER BY SUM(quantity) DESC
 ;
-
-
