@@ -108,9 +108,19 @@ function CheckoutController($scope, $http){
 }
 
 function ClerkRefundController($scope, $http){
-  $http.get("api/songs/" + $scope.upc).success(function(data){
-    $scope.song = data.song;
+  $scope.rids = [];
+  $scope.items = [];
+  $http.get("/api/purchases").success(function(data){
+    console.log(data);
+    $scope.rids = data.data;
   });
+  
+  $scope.addRid = function(rid){
+    $http.get("/api/purchase/" + rid.receiptid).success(function(data){
+      console.log(data.data);
+      $scope.items = data.data;
+    });
+  }
 }
 
 function ManagerController($scope, $http, $location){
