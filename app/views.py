@@ -371,11 +371,13 @@ Sales Report, Top Items, Delivery Update
 @app.route('/api/manager/sales_report', methods=["GET", "POST"])
 def sales_report():
 	cur = conn.get_cursor()
+	if not 'date' in request.form:
+		return jsonify({'error':'Invalid Input'})
 	date = str(request.form['date'])	
-	if len(date) > 10:
-		return 'Invalid Input'
+	if len(date) > 10 or len(date) < 1:
+		return jsonify({'error':'Invalid Input'})
 
-	query = " SELECT I.upc, category, SUM(quantity) units, I.price*SUM(quantity) total " + \
+	query = " SELECT I.upc, category, SUM(quantity) units, I.price, I.price*SUM(quantity) total " + \
 		"FROM Item I,Purchase P,PurchaseItem PI " + \
 		"WHERE I.upc = PI.upc AND P.receiptid = PI.receiptid " + \
     		"AND purchasedate = '" + date + "' " \
@@ -394,7 +396,7 @@ def sales_report():
 	for part in partition.keys():
 		partition[part] = stringify(partition[part])
 
-	return jsonify(partition)
+	return jsonify({'success': partition})
 
 @app.route('/api/manager/top_items', methods=["GET"])
 def top_items():
@@ -403,16 +405,16 @@ def top_items():
 	try:
 		n = int(request.args['n'])
 	except ValueError:
-		return 'Invalid Input'
+		return jsonify({'error':'Invalid Input'})
 
 	if len(date) > 10:
-		return 'Invalid Input'
+		return jsonify({'error':'Invalid Input'})
 	
-	query = " SELECT I.upc, SUM(quantity) units " + \
+	query = " SELECT I.upc, I.title, I.company, I.stock, SUM(quantity) units " + \
 		"FROM Item I,Purchase P,PurchaseItem PI " + \
 		"WHERE I.upc = PI.upc AND P.receiptid = PI.receiptid " + \
     		"AND purchasedate = '" + date + "' " \
-		"GROUP BY I.upc " + \
+		"GROUP BY I.upc, I.title, I.company, I.stock " + \
 		"ORDER BY SUM(quantity) DESC"
 
 	cur.execute(query)
@@ -424,7 +426,7 @@ def top_items():
 		data.append(entry)
 		
 	conn.con.commit()
-	return jsonify({'items':stringify(data)})
+	return jsonify({'success':stringify(data)})
 		
 @app.route('/api/deliver_update', methods=["POST"])
 def deliver_update():
