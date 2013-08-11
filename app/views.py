@@ -49,7 +49,7 @@ def login():
 @app.route('/api/user', methods=["GET"])
 def get_user():
 	if 'login' in session:
-		return jsonify({'success':str(cid)})
+		return jsonify({'success':str(session['cid'])})
 	else:
 		return jsonify({'error': ''})
 	
@@ -154,6 +154,7 @@ def registration():
 
 	cur.execute("insert into Customer values (%s, %s, %s, %s, %s)", input_args)
 	conn.con.commit()
+	login(cur, customer)
 	return jsonify({'sucess':"registration complete"})
 	
 
@@ -245,8 +246,8 @@ def purchase_credit():
 
 	insert_args = (today, str(credit['cardnum']), str(credit['expirydate']) )
 	try:
-		cur.execute("insert into purchase (purchasedate, cardnum, expirydate) values (%s,%s,%s)", insert_args)
-	except mdb.error, e:
+		cur.execute("insert into Purchase (purchasedate, cardnum, expirydate) values (%s,%s,%s)", insert_args)
+	except mdb.Error, e:
 		return 'invalid input'
 	
 
@@ -269,7 +270,7 @@ def purchase_cash():
 	if not is_valid(items):
 		return 'invalid input'
 
-	cur.execute("insert into purchase (purchasedate) values (%s)", today) 
+	cur.execute("insert into Purchase (purchasedate) values (%s)", today) 
 
 	cur.execute("select last_insert_id()")
 	pid = cur.fetchone()['last_insert_id()']

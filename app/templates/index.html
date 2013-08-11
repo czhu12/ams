@@ -35,25 +35,49 @@
 
   <script type="text/javascript">
     $("document").ready(function(){
-			$("#login").click(function(){
+			//check if user is logged in
+			console.log('checking if logged in');
+			$.get("api/user", function(resp){
+
+				if ("error" in resp){
+					console.log(resp);
+				}else {
+					console.log(resp);
+					$("span.logout-button").html(resp.success + " is Logged in " + "<input type='button' id='logout' value='Logout' />");
+					$("#logout").click(function(){
+						$.post(
+    						'/api/logout',
+    						{},
+    						function(resp){
+      		  				console.log(resp);
+										location.reload();
+    						}
+						);
+					});
+				}
+
+			});
+			
+				
+			$("#login-form").submit(function(){
+        //var customerInfo = JSON.stringify($("#login-form").serializeObject());
 				$.post(
-    			'/api/login',
-    			{cid:'adf', password:'adf'},
+    			'/api/login', //{ customerInfo },
+          {cid:$("#login-form").find("input[name='cid']").val(),
+            password: $("#login-form").find("input[name='password']").val()},
     			function(resp){
-        		console.log(resp);
+            console.log(resp);
+            if ("error" in resp){
+              $("#error-message-login").html(resp.error);
+            }else{
+              $("#login-form").dialog("close");
+							window.location="/#/";
+							location.reload();
+            }
     			}
 				);
 			});
 
-			$("#logout").click(function(){
-				$.post(
-    				'/api/logout',
-    				{},
-    				function(resp){
-        				console.log(resp);
-    				}
-				);
-			});
 
       $.fn.serializeObject = function() {
         var o = {};
@@ -71,13 +95,15 @@
         return o;
       };
       $("#registration-form").submit(function(){
-
         var customerInfo = JSON.stringify($("#registration-form").serializeObject());
         console.log({customer: customerInfo});
         $.post("/api/registration", 
         {customer: customerInfo}, function(resp){
           if ("error" in resp){
             $("#error-message").html(resp.error);
+          }else {
+            $("#dialog-registration").dialog("close");
+            window.location="/#/";
           }
         });
         return false; 
@@ -107,26 +133,6 @@
 
   </div>
 
-<!--<div id='cssmenu'>
-  <ul>
-    <li class='active'><a href='index.html'><span>Home</span></a></li>
-    <li class='has-sub'><a href='#'><span>Products</span></a>
-  <ul>
-    <li><a href='#'><span>Widgets</span></a></li>
-    <li><a href='#'><span>Menus</span></a></li>
-    <li class='last'><a href='#'><span>Products</span></a></li>
-  </ul>
-  </li>
-  <li class='has-sub'><a href='#'><span>Company</span></a>
-  <ul>
-  <li><a href='#'><span>About</span></a></li>
-  <li class='last'><a href='#'><span>Location</span></a></li>
-  </ul>
-  </li>
-  <li class='last'><a href='#'><span>Contact</span></a></li>
-  </ul>
-</div>
--->
   <div id="menu">
     <ul id="nav">
       <li><a href="/#/customer">Customer</a>
@@ -151,10 +157,9 @@
         </ul>
       </li>
 
-      <span class="menu-button"><input type="button" id="btnShowRegistration" value="Register" /></span>
-      <span class="menu-button"><input type="button" id="login" value="Login" /></span>
-      <span class="menu-button"><input type="button" id="logout" value="Logout" /></span>
     </ul>
+    <span class="logout-button" style='float:right;' >hi</span>
+
   <div class="clear"></div>
   </div>
 
@@ -162,7 +167,7 @@
     <div data-ng-view id="content" >
     </div>
     <div class="modal" id="dialog-registration" title="Register" style="display:none;">
-      <form action="/customers" method="POST" id="registration-form">
+      <form id="registration-form">
         User ID: <input type="text" name="cid" />
         Password: <input type="password" name="password" />
         Password Confirmation: <input type="password" name="password_confirmation" />
@@ -171,6 +176,14 @@
         Phone: <input type="text" name="phone" />
         <div id="error-message" class="error"></div>
         <input type="submit" value="Register" name="submit"/>
+      </form>
+    </div>
+    <div class="modal" id="dialog-login" title="Login" style="display:none;">
+      <form id="login-form">
+        User ID: <input type="text" name="cid" />
+        Password: <input type="password" name="password" />
+        <div id="error-message-login" class="error"></div>
+        <input type="submit" value="Login" name="submit"/>
       </form>
     </div>
   </div>

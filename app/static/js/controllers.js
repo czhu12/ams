@@ -1,6 +1,11 @@
 'use strict';
 
-function IndexController($scope, $http, $routeParams){
+function IndexController($scope, $http, $routeParams, $location){
+  $.get('/api/user', function(resp){
+    if('error' in resp){
+     $location.path('customer');
+    }
+  });
   $scope.query = $routeParams.query;
   $http.get("/api/items").success(function(data){
     $scope.songs = data.data;
@@ -19,6 +24,13 @@ function AdvancedController($scope, $http){
   }
 }
 function CustomerController($scope){
+  $scope.login = function(){
+    console.log('clicked me');
+    $("#login-form").dialog();
+  }
+  $scope.register = function() {
+    $("#dialog-registration").dialog();
+  }
 }
 
 function ManagerAddItemsController($scope, $http){
