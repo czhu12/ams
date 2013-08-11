@@ -267,7 +267,7 @@ def return_item():
 @app.route('/api/purchase/<receiptid>', methods=["GET"])
 def get_purchase(receiptid):
 	curr = conn.get_cursor()
-	curr.execute("SELECT * from purchaseitem WHERE receiptid = %s", receiptid)
+	curr.execute("SELECT I.upc,title,price,quantity FROM Item I, PurchaseItem PI WHERE I.upc=PI.upc AND receiptid = %s", receiptid)
 	items = curr.fetchall()
 	curr.execute("SELECT upc, SUM(quantity) FROM ReturnItem RI, ReturnTable R WHERE RI.retid=R.retid AND receiptid=%s GROUP BY upc", receiptid)
 	returned_data = curr.fetchall()
