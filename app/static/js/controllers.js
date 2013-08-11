@@ -276,6 +276,7 @@ function ClerkRegisterController($scope, $http){
   }
 
   $("#clerk-main-list").on('input', function(){
+      console.log('ol');
       computeTotalPrice();
       $("#totalprice").text(Math.round(totalPrice*100)/100);
   });
@@ -317,6 +318,8 @@ function ClerkRegisterController($scope, $http){
 }
 
 function SongController($scope, $routeParams, $http){
+  $scope.imgUrl = img_url[$routeParams.songUpc];
+  console.log($scope.imgUrl);
   $scope.validate = function(){
     console.log('validating...');
     if(isNaN(parseInt($scope.quantity))){

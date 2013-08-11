@@ -16,10 +16,9 @@
   <link rel="stylesheet" href="static/lib/button-styles/css/component.css">
   <link rel="stylesheet" href="static/css/stylesheet.css">
   <link rel="stylesheet" href="static/css/dropdown.css">
-  <script src="static/lib/button-styles/js/modernizr.custom.js"></script>
-  <script src="static/lib/button-styles/js/classie.js"></script>
 
 
+  <script src="static/js/coverart.js"></script>
   <script src="static/lib/jquery-ui/jquery-1.9.1.js"></script>
   <script src="static/lib/jquery-ui/jquery-ui-1.10.3.custom.js"></script>
   <script src="static/lib/jquery/jquery.cookie.js"></script>
@@ -57,7 +56,9 @@
         console.log({customer: customerInfo});
         $.post("/api/registration", 
         {customer: customerInfo}, function(resp){
-          console.log(resp);
+          if ("error" in resp){
+            $("#error-message").html(resp.error);
+          }
         });
         return false; 
       });
@@ -147,6 +148,7 @@
         Name: <input type="text" name="name" />
         Address: <input type="text" name="address" />
         Phone: <input type="text" name="phone" />
+        <div id="error-message" class="error"></div>
         <input type="submit" value="Register" name="submit"/>
       </form>
     </div>
