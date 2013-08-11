@@ -54,24 +54,48 @@ function ManagerSalesReportController($scope, $http){
     });
   } 
     $scope.title = "hello world";
+    $scope.friends = [{name:'John', age:25}, {name:'M', age:28}];
+    $scope.friends.concat([{name:'Chris', age:20}]);
+    
     console.log('Sales report controller ');
-    $scope.update = function(){
-      console.log(' clicked');
-      $.post( '/api/manager/sales_report', {date:'2013-08-10'},
-        function(resp){
-          console.log('changing scope...');
-          console.log($scope.title);
-          addToScope(resp);
-          refresh();
-        }
-      );
-    }
+
+    $("#sales_report").click(function(){
+        console.log( $("#date") );
+        $.post(
+                '/api/manager/sales_report',
+                {date:$scope.date},
+                function(resp){
+                    addToScope(resp);
+                    console.log('changing scope...');
+                    refresh();
+                }
+        );
+    });
     function addToScope(resp){
         $scope.title="hi";
-        $scope.data = JSON.stringify(resp);
+        $scope.data_str = JSON.stringify(resp);
+        $scope.data = JSON.parse($scope.data_str);
+        $scope.data_cat = {}
+        for ( var key in $scope.data ) {
+            console.log( key );
+            for( var item in $scope.data[key] ) {
+                console.log($scope.data[key][item].upc );
+                if(key in $scope.data_cat) {
+                    $scope.data_cat[key].item_list.push($scope.data[key][item]);
+                }
+                else {
+                    $scope.data_cat[key] = {item_list:[], total_units:0, total_sales:0 };
+                    $scope.data_cat[key].item_list.push($scope.data[key][item]);
+                }
+                $scope.data_cat[key].total_units += parseInt($scope.data[key][item].units);
+                $scope.data_cat[key].total_sales += parseFloat($scope.data[key][item].total);
+            }
+            console.log($scope.data_cat[key].item_list);
+        }
     }
 }
 
+<<<<<<< HEAD
 function ManagerTopItemsController($scope, $http){
 	$scope.message = '';
 	$scope.data = [];
@@ -102,6 +126,50 @@ function ManagerTopItemsController($scope, $http){
 
 
 function ManagerProcessDeliveryController($scope){}
+=======
+function ManagerTopItemsController($scope){
+    console.log('TopItemsController');
+    $scope.data = 'data';
+    $("#top_selling").click(function(){
+        console.log('top_selling clicked');
+        $.get(
+                '/api/manager/top_item',
+                {date:'2013-08-05'},
+                {n:5},
+                function(resp){
+                    $scope.data = resp;
+                    addToScope(resp);
+                }
+        );
+    });
+}
+
+function ManagerProcessDeliveryController($scope, $http){
+  $scope.rids = [];
+  $scope.items = [];
+  $scope.selectedItem = {};
+  $http.get("/api/outstanding").success(function(data){
+    console.log(data);
+    $scope.rids = data.data;
+  });
+  
+$scope.update = function(){ 
+	$.post(
+	"/api/deliver_update",
+	{date:$("input[name=deliverydate]").val(), receiptid:$scope.selectedItem.receiptid},
+	function(resp){
+		console.log(resp);
+	});
+}
+  $scope.addRid = function(rid){
+    $http.get("/api/purchase/" + rid.receiptid).success(function(data){
+      console.log(data.data);
+      $scope.items = data.data;
+      $scope.selectedItem = rid;
+    });
+  }
+}
+>>>>>>> b4311bb143c4c518dd60a6d06d71f3b4eaffc854
 
 function ClerkController($scope, $location){
   $scope.purchase = function(){

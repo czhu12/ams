@@ -9,14 +9,50 @@
         <div id="manager-sales-report-form">
             <fieldset>
                     <br>Enter Date:</br>
-                    <input name="date" type="text">
+                    <input id="date" name="date" type="date" ng-model="date">
                     <button id="sales_report" ng-click="update()">Submit</button>
             </fieldset>
             <fieldset>
               <legend>Report</legend>
-              Items Sold: <span id="manager-sales-table">{{title}}</span>
-            </fieldset>
-          </form>
+                <div>
+                    Daily Sales: 
+                    <table border=1>
+                        <thead>
+                            <th>*****</th>
+                        </thead>
+                        <tbody ng-repeat="(cat, values) in data_cat" >
+                            <tr>
+                                <td>
+                                    <table border=2>
+                                        <thead>
+                                            <th>UPC</th>
+                                            <th>Category</th>
+                                            <th>Unit Price</th>
+                                            <th>Units</th>
+                                            <th>Total Value</th>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-repeat="value in values.item_list">
+                                                <td> {{value.upc}} </td>
+                                                <td> {{value.category}} </td>
+                                                <td> {{value.price}} </td>
+                                                <td> {{value.units}} </td>
+                                                <td> {{value.total}} </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td> Total Units: {{values.total_units}} </td>
+                            </tr>
+                            <tr>
+                                <td> Total Sales: ${{values.total_sales}} </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+             </fieldset>
         </div>
       </div>
     </div>
