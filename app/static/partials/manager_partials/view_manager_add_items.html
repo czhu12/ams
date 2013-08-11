@@ -1,17 +1,20 @@
 <div id="manager-add-items">
   <div class="grid">
     <div class="col-2-3">
-      <div id="manager-item-view">
-        <ul>
-          <li ng-repeat="item in items | filter:query" ng-click="selectItem(item)">
-            {{item.upc}} - {{item.title}} - {{item.price}} - {{item.stock}}
-          </li>
-        </ul>
+      <div id="clerk-register">
+      <h2>Register</h2>
+        <div class="main-list">
+          <ul>
+            <li ng-repeat="item in items | filter:query" ng-click="selectItem(item)">
+              {{item.upc}} - {{item.title}} - {{item.price}} - {{item.stock}}
+            </li>
+          </ul>
+        </div>
+        <input type="text" ng-model="query" class="input-query" />
       </div>
     </div>
     <div class="col-1-3">
       <div id="manager-item-change">
-        <input type="text" ng-model="query">
         <div id="manager-item-form">
           <form action="">
             <fieldset>
