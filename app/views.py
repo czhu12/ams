@@ -5,7 +5,6 @@ from flask import url_for, redirect, session
 from datetime import date, timedelta
 import json
 
-
 conn = db_con.Database()
 
 """
@@ -100,12 +99,12 @@ def registration():
 	cid = str(customer['cid'])
 
 	if not is_customer_valid(customer):
-		return "Invalid input"
+		return jsonify({'error':"Invalid input"})
 
 	cur.execute("SELECT * from Customer WHERE cid=%s", cid)
 	if cur.fetchall():
 		conn.con.commit()
-		return "CID is already exist"
+		return jsonify({'error':"CID is already exist"})
 
 	cid = str(customer['cid'])
 	password = str(customer['password'])
@@ -116,7 +115,7 @@ def registration():
 
 	cur.execute("INSERT INTO Customer VALUES (%s, %s, %s, %s, %s)", input_args)
 	conn.con.commit()
-	return "Registration complete"
+	return jsonify({'sucess':"Registration complete"})
 	
 
 @app.route('/api/price', methods=["GET"])
@@ -164,7 +163,7 @@ def purchase_online():
 
 """
 ==================================================
-Credit Purchase, Cash Purchase, Return
+Credit Purchase, Cash Purchase, Return, Get Purchases, Get Purchase
 ==================================================
 """
 @app.route('/api/store_purchase/credit', methods=["POST"])
@@ -265,6 +264,33 @@ def return_item():
 	return "Return Processed, return $" + str(total) + " in cash"
 
 
+@app.route('/api/purchase/<receiptid>', methods=["GET"])
+def get_purchase(receiptid):
+	curr = conn.get_cursor()
+	curr.execute("SELECT I.upc,title,price,quantity FROM Item I, PurchaseItem PI WHERE I.upc=PI.upc AND receiptid = %s", receiptid)
+	items = curr.fetchall()
+	curr.execute("SELECT upc, SUM(quantity) FROM ReturnItem RI, ReturnTable R WHERE RI.retid=R.retid AND receiptid=%s GROUP BY upc", receiptid)
+	returned_data = curr.fetchall()
+	returned = {}
+	for data in returned_data:
+		returned[data['upc']] = data['SUM(quantity)']
+
+	for item in items:
+		if item['upc'] in returned:
+			item['quantity'] -= returned[item['upc']]
+
+	conn.con.commit()
+	return jsonify({'data': stringify(items)})
+
+@app.route('/api/purchases', methods=["GET"])
+def get_purchases():
+	earliest = str(date.today() - timedelta(days=15))
+	curr = conn.get_cursor()
+	curr.execute("SELECT receiptid,purchasedate FROM Purchase WHERE purchasedate >= %s", earliest)
+	purchases = curr.fetchall()
+	conn.con.commit()
+	return jsonify({'data':stringify(purchases)})
+
 """
 ==================================================
 Get Item(s), Expected delivery, Add item, 
@@ -283,6 +309,14 @@ def get_item(item_upc):
   songs = curr.fetchall()
   conn.con.commit()
   return jsonify({ "data": stringify(item), "songs": stringify(songs)})
+
+@app.route('/api/outstanding', methods=["GET"])
+def oustanding():
+	curr = conn.get_cursor()
+	curr.execute("SELECT * from Purchase WHERE cid IS NOT NULL AND delivereddate is NULL")
+	purchases = curr.fetchall()
+	conn.con.commit()
+	return jsonify({'data':stringify(purchases)})
 
 @app.route('/api/checkout/expected', methods=["GET"])
 def expected_delivery():

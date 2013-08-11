@@ -56,10 +56,10 @@ Insert INTO HasSong VALUES (1003, 'Something Stupid (feat. Reese Witherspoon)');
 Insert INTO HasSong VALUES (1003, 'Come Dance With Me');
 Insert INTO HasSong VALUES (1003, 'Close Your Eyes');
 Insert INTO HasSong VALUES (1003, 'After All (feat. Bryan Adams)');
-Insert INTO HasSong VALUES (1003, 'Have I Told You Lately That I Love You (With Naturally 7)');
+Insert INTO HasSong VALUES (1003, 'Have I Told You Lately That I Love You');
 Insert INTO HasSong VALUES (1003, 'To Be Loved');
 Insert INTO HasSong VALUES (1003, 'You''ve Got A Friend In Me');
-Insert INTO HasSong VALUES (1003, ' Nevertheless (I''m In Love With You) [feat. The Puppini Sisters]');
+Insert INTO HasSong VALUES (1003, 'Nevertheless (I''m In Love With You)');
 Insert INTO HasSong VALUES (1003, 'I Got It Easy');
 Insert INTO HasSong VALUES (1003, 'Young At Heart');
 
@@ -262,3 +262,37 @@ INSERT INTO Item (title, type, category, company, year, price, stock)
 VALUES ('Sail','1' , '2', 'Red Bull Records', '2011-01-01', 1.29, 400);
 Insert INTO LeadSinger VALUES (1025, 'AWOLNATION');
 Insert INTO HasSong VALUES (1025,'Sail');
+
+INSERT INTO Customer VALUES('emilio','password','Emilio Zand','123 Fake Street','1234567890');
+
+INSERT INTO Purchase (purchasedate,cid,cardnum,expirydate,expecteddate) 
+VALUES ('2013-08-10', 'emilio',1234567890123456,'2014-01-01','2013-08-11');
+
+INSERT INTO Purchase (purchasedate,cid,cardnum,expirydate,expecteddate,delivereddate) 
+VALUES ('2013-06-09', 'emilio',1234567890123456,'2014-01-01','2014-06-11','2014-06-11');
+
+INSERT INTO Purchase (purchasedate,cardnum,expirydate) 
+VALUES ('2013-07-01', 1234567890123456,'2014-01-01');
+
+INSERT INTO Purchase (purchasedate) 
+VALUES ('2013-08-10');
+
+INSERT INTO PurchaseItem VALUES(1000,1004,4);
+INSERT INTO PurchaseItem VALUES(1000,1023,1);
+INSERT INTO PurchaseItem VALUES(1000,1009,1);
+INSERT INTO PurchaseItem VALUES(1000,1015,3);
+INSERT INTO PurchaseItem VALUES(1001,1015,4);
+INSERT INTO PurchaseItem VALUES(1001,1003,1);
+INSERT INTO PurchaseItem VALUES(1001,1017,1);
+INSERT INTO PurchaseItem VALUES(1002,1010,2);
+INSERT INTO PurchaseItem VALUES(1002,1001,1);
+INSERT INTO PurchaseItem VALUES(1003,1009,5);
+INSERT INTO PurchaseItem VALUES(1003,1020,3);
+
+
+INSERT INTO ReturnTable (returndate,receiptid) VALUES('2013-06-10',1001);
+INSERT INTO ReturnTable (returndate,receiptid) VALUES('2013-07-10',1003);
+
+INSERT INTO ReturnItem VALUES (1000,1003,1);
+INSERT INTO ReturnItem VALUES (1001,1020,2);
+INSERT INTO ReturnItem VALUES (1001,1009,3);

@@ -86,7 +86,7 @@ $.post(
 
 Daily Sales Report
 $.get(
-	'/api/sales_report',
+	'/api/manager/sales_report',
 	{date:'2013-08-10'},
 	function(resp){
 		console.log(resp);
@@ -106,6 +106,15 @@ Delivery Update
 $.post(
 	'/api/deliver_update',
 	{receiptid:'1001', date:'2013-08-09'},
+	function(resp){
+		console.log(resp);
+	}
+);
+
+Outstanding Purchase
+$.get(
+	'/api/outstanding',
+	{},
 	function(resp){
 		console.log(resp);
 	}

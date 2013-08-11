@@ -112,7 +112,31 @@ function ManagerTopItemsController($scope){
     });
 }
 
-function ManagerProcessDeliveryController($scope){}
+function ManagerProcessDeliveryController($scope, $http){
+  $scope.rids = [];
+  $scope.items = [];
+  $scope.selectedItem = {};
+  $http.get("/api/outstanding").success(function(data){
+    console.log(data);
+    $scope.rids = data.data;
+  });
+  
+$scope.update = function(){ 
+	$.post(
+	"/api/deliver_update",
+	{date:$("input[name=deliverydate]").val(), receiptid:$scope.selectedItem.receiptid},
+	function(resp){
+		console.log(resp);
+	});
+}
+  $scope.addRid = function(rid){
+    $http.get("/api/purchase/" + rid.receiptid).success(function(data){
+      console.log(data.data);
+      $scope.items = data.data;
+      $scope.selectedItem = rid;
+    });
+  }
+}
 
 function ClerkController($scope, $location){
   $scope.purchase = function(){
@@ -147,9 +171,19 @@ function CheckoutController($scope, $http){
 }
 
 function ClerkRefundController($scope, $http){
-  $http.get("api/songs/" + $scope.upc).success(function(data){
-    $scope.song = data.song;
+  $scope.rids = [];
+  $scope.items = [];
+  $http.get("/api/purchases").success(function(data){
+    console.log(data);
+    $scope.rids = data.data;
   });
+  
+  $scope.addRid = function(rid){
+    $http.get("/api/purchase/" + rid.receiptid).success(function(data){
+      console.log(data.data);
+      $scope.items = data.data;
+    });
+  }
 }
 
 function ManagerController($scope, $http, $location){
