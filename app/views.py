@@ -104,7 +104,11 @@ def registration():
 	cur.execute("SELECT * from Customer WHERE cid=%s", cid)
 	if cur.fetchall():
 		conn.con.commit()
-		return jsonify({'error':"CID is already exist"})
+		return jsonify({'error':"CID already exist"})
+
+	if customer['password'] != customer['password_confirmation']:
+		conn.con.commit()
+		return jsonify({'error':"Passwords do not match"})
 
 	cid = str(customer['cid'])
 	password = str(customer['password'])
@@ -305,10 +309,12 @@ def get_item(item_upc):
   curr = conn.get_cursor()
   curr.execute("SELECT * FROM Item WHERE upc = %s", item_upc)
   item = curr.fetchall()
-  curr.execute("SELECT * FROM HasSong WHERE upc = %s", item_upc)
+  curr.execute("SELECT * FROM HasSong and WHERE upc = %s", item_upc)
   songs = curr.fetchall()
+  curr.execute("SELECT * FROM LeadSinger WHERE upc = %s", item_upc)
+  singers = curr.fetchall()
   conn.con.commit()
-  return jsonify({ "data": stringify(item), "songs": stringify(songs)})
+  return jsonify({ "data": stringify(item), "songs": stringify(songs), "singers": stringify()}
 
 @app.route('/api/outstanding', methods=["GET"])
 def oustanding():
