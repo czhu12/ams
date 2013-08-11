@@ -371,9 +371,11 @@ Sales Report, Top Items, Delivery Update
 @app.route('/api/manager/sales_report', methods=["GET", "POST"])
 def sales_report():
 	cur = conn.get_cursor()
+	if not 'date' in request.form:
+		return jsonify({'error':'Invalid Input'})
 	date = str(request.form['date'])	
-	if len(date) > 10:
-		return 'Invalid Input'
+	if len(date) > 10 or len(date) < 1:
+		return jsonify({'error':'Invalid Input'})
 
 	query = " SELECT I.upc, category, SUM(quantity) units, I.price, I.price*SUM(quantity) total " + \
 		"FROM Item I,Purchase P,PurchaseItem PI " + \
@@ -394,7 +396,7 @@ def sales_report():
 	for part in partition.keys():
 		partition[part] = stringify(partition[part])
 
-	return jsonify(partition)
+	return jsonify({'success': partition})
 
 @app.route('/api/manager/top_items', methods=["GET"])
 def top_items():

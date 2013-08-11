@@ -14,11 +14,12 @@
             </fieldset>
             <fieldset>
               <legend>Report</legend>
-                <div>
+				{{ message }}
+                <div ng-hide="data_cat.length==0">
                     Daily Sales: 
                     <table border=1>
                         <thead>
-                            <th>*****</th>
+                            <th>{{ date }}</th>
                         </thead>
                         <tbody ng-repeat="(cat, values) in data_cat" >
                             <tr>

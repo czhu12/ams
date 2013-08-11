@@ -48,6 +48,9 @@ function ManagerAddItemsController($scope, $http){
 }
 
 function ManagerSalesReportController($scope, $http){
+  $scope.message = '';
+  $scope.data_cat = [];
+
   function refresh() {
     $http.get("api/items").success(function(data){
       $scope.items = data.data;
@@ -65,12 +68,18 @@ function ManagerSalesReportController($scope, $http){
                 '/api/manager/sales_report',
                 {date:$scope.date},
                 function(resp){
-                    addToScope(resp);
+					if ('success' in resp){
+						$scope.message = ''
+                    	addToScope(resp['success']);
+					} else {
+						$scope.message = resp['error'];
+					}
                     console.log('changing scope...');
                     refresh();
                 }
         );
     });
+
     function addToScope(resp){
         $scope.title="hi";
         $scope.data_str = JSON.stringify(resp);
@@ -95,7 +104,6 @@ function ManagerSalesReportController($scope, $http){
     }
 }
 
-<<<<<<< HEAD
 function ManagerTopItemsController($scope, $http){
 	$scope.message = '';
 	$scope.data = [];
@@ -107,15 +115,17 @@ function ManagerTopItemsController($scope, $http){
 	$scope.getTopItems = function(){
 		var n = $("input[name='n']").val();
 		var date = $("input[name='date']").val();
+		if(date=='')
+			return;
 		$.get(
 			'api/manager/top_items',
 			{date: date, n:n},
 			function(data){
-				console.log(data);
 				if ('success' in data){
 					$scope.message = 'Top ' + n + ' items on ' + date + ' are';
 					$scope.data = data['success'];
 				} else {
+					$scope.data = [];
 					$scope.message = data['error'];
 				}
 				refresh();
@@ -126,7 +136,7 @@ function ManagerTopItemsController($scope, $http){
 
 
 function ManagerProcessDeliveryController($scope){}
-=======
+/*
 function ManagerTopItemsController($scope){
     console.log('TopItemsController');
     $scope.data = 'data';
@@ -143,6 +153,7 @@ function ManagerTopItemsController($scope){
         );
     });
 }
+*/
 
 function ManagerProcessDeliveryController($scope, $http){
   $scope.rids = [];
@@ -169,7 +180,6 @@ $scope.update = function(){
     });
   }
 }
->>>>>>> b4311bb143c4c518dd60a6d06d71f3b4eaffc854
 
 function ClerkController($scope, $location){
   $scope.purchase = function(){
