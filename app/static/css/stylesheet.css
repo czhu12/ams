@@ -311,6 +311,7 @@ li#song:hover{
 .main-list {
   height:250px;
   border:1px solid #000;
+  overflow:auto;
 }
 
 .selector-list {
