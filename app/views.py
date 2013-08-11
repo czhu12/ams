@@ -337,7 +337,7 @@ Sales Report, Top Items, Delivery Update
 @app.route('/api/manager/sales_report', methods=["GET", "POST"])
 def sales_report():
 	cur = conn.get_cursor()
-	date = str(request.args['date'])	
+	date = str(request.form['date'])	
 	if len(date) > 10:
 		return 'Invalid Input'
 
