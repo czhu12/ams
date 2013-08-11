@@ -69,14 +69,14 @@ def search():
 		singer = str(search_terms['leadsinger']).lower()
 		if len(singer) > 100:
 			return "Invalid input"
-		query += "AND LOWER(L.name)='" + singer + "' "
+		query += "AND LOWER(L.name) LIKE '%" + singer + "%' "
 		
 
 	if 'title' in search_terms:
 		title = str(search_terms['title'])
 		if len(title) > 100:
 			return "Invalid input"
-		query += "AND I.title='" + title + "' "
+		query += "AND I.title LIKE '%" + title + "%' "
 
 	if 'category' in search_terms:
 		category = str(search_terms['category'])
