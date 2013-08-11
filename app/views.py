@@ -264,6 +264,33 @@ def return_item():
 	return "Return Processed, return $" + str(total) + " in cash"
 
 
+@app.route('/api/purchase/<receiptid>', methods=["GET"])
+def get_purchase(receiptid):
+	curr = conn.get_cursor()
+	curr.execute("SELECT * from purchaseitem WHERE receiptid = %s", receiptid)
+	items = curr.fetchall()
+	curr.execute("SELECT upc, SUM(quantity) FROM ReturnItem RI, ReturnTable R WHERE RI.retid=R.retid AND receiptid=%s GROUP BY upc", receiptid)
+	returned_data = curr.fetchall()
+	returned = {}
+	for data in returned_data:
+		returned[data['upc']] = data['SUM(quantity)']
+
+	for item in items:
+		if item['upc'] in returned:
+			item['quantity'] -= returned[item['upc']]
+
+	conn.con.commit()
+	return jsonify({'data': stringify(items)})
+
+@app.route('/api/purchases', methods=["GET"])
+def get_purchases():
+	earliest = str(date.today() - timedelta(days=15))
+	curr = conn.get_cursor()
+	curr.execute("SELECT receiptid,purchasedate FROM Purchase WHERE purchasedate >= %s", earliest)
+	purchases = curr.fetchall()
+	conn.con.commit()
+	return jsonify({'data':stringify(purchases)})
+
 """
 ==================================================
 Get Item(s), Expected delivery, Add item, 
@@ -288,6 +315,7 @@ def oustanding():
 	curr = conn.get_cursor()
 	curr.execute("SELECT * from Purchase WHERE cid IS NOT NULL AND delivereddate is NULL")
 	purchases = curr.fetchall()
+	conn.con.commit()
 	return jsonify(stringify(purchases))
 
 @app.route('/api/checkout/expected', methods=["GET"])
