@@ -246,11 +246,7 @@ def purchase_online():
 
 	if not is_legal_quantity(cur, items):
 		session['cart'] = {}
-<<<<<<< HEAD
-		return 'Illegal quantity'
-=======
 		return jsonify({'error':'illegal quantity'})
->>>>>>> cd1e7a60f362b374d11c62c0a365267f6442afa0
 
 	trivial = True;
 	for key in items_dict.keys():
