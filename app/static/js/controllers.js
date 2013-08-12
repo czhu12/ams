@@ -300,9 +300,6 @@ function CheckoutController($scope, $http, $location){
 			})
 		};
 		$.post('api/online_purchase', data, function(resp){
-    if("error" in resp){
-      console.log(resp);
-    }
                     function receipt_message(resp) {
                         if( jQuery.type(resp) === "string" )  {
                             return resp;
