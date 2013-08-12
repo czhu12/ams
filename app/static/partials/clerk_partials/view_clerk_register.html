@@ -41,7 +41,9 @@
           Price: <span ng-hide="price == 0">${{ price }}</span>
 			<button name="get_price">GET</button>
           <br>
-          <input type="submit" name="submit" value="Purchase" ng-click="purchase()" />
+          <button ng-click="random()">Authorization</button>{{ authorization }}
+					<br>
+					<input type="submit" name="submit" value="Purchase" ng-click="purchase()" />
       </fieldset>
     </form>
   </div>

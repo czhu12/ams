@@ -12,7 +12,14 @@ function IndexController($scope, $http, $routeParams, $location){
   });
 }
 
-function AdvancedController($scope, $http){
+function AdvancedController($scope, $http, $location){
+  $.get('/api/user', function(resp){
+    if('error' in resp){
+			console.log(resp);
+			window.location="/#/customer";
+    }
+  });
+
   $scope.search = function(){
     $.get("/api/search", {
       title: $scope.title,
@@ -213,33 +220,104 @@ function ClerkController($scope, $location){
   }
 }
 
-function CheckoutController($scope, $http){
+function CheckoutController($scope, $http, $location){
+  $.get('/api/user', function(resp){
+    if('error' in resp){
+			window.location="/#/customer";
+    }
+  });
+  var cart;
+	$scope.update = function(){
+		$.each($scope.selectedItems, function(upc, item){
+			var quantity = parseFloat($("input[name=" + item.item.upc + "]").val());
+			$.post('api/update_cart',{upc:upc, quantity:quantity},function(resp){
+					console.log(resp);
+					refresh();
+			});
+
+		});
+	}
+
+	$scope.totalPrice = 0;
+  function computeTotalPrice(){
+  	$scope.totalPrice = 0;
+    $.each($scope.selectedItems, function(index, item){
+      var quantity = parseFloat($("input[name=" + item.item.upc + "]").val());
+      var price = parseFloat(item.item.price);
+      $scope.totalPrice += quantity*price;
+    });
+  };
+	
+	$("#checkout-main").on('input', function(){
+		computeTotalPrice();
+		updateTotal();
+	});
+
+	function updateTotal(){
+		$("#total-price").text(Math.round($scope.totalPrice*100)/100);
+	}
   $scope.getImgUrl = function(upc){
     return img_url[upc];
   }
   $http.get('api/checkout/expected').success(function(data){
     $scope.expected_date = data;
   });
-  var cart;
-	$http.get('/api/get_cart').success(function(data){
-		console.log(data);
-		cart = data;
-	});
-	$scope.upcs = {};
-	var allItems;
-	$http.get('api/items').success(function(data){
-		allItems = data.data;
-		$scope.selectedItems = {};
-		for(var i = 0; i < allItems.length; i++){
-		if (allItems[i].upc in cart) {
-			$scope.selectedItems[allItems[i].upc] = {};
-			$scope.selectedItems[allItems[i].upc].item = allItems[i];
-			$scope.selectedItems[allItems[i].upc].quantity = cart[allItems[i].upc];
-		}
+
+	function refresh() {
+		$http.get('/api/get_cart').success(function(data){
+			cart = data;
+			$scope.upcs = {};
+			var allItems;
+			$http.get('api/items').success(function(data){
+			
+			allItems = data.data;
+			$scope.selectedItems = {};
+			for(var i = 0; i < allItems.length; i++){
+				if (allItems[i].upc in cart) {
+					$scope.selectedItems[allItems[i].upc] = {};
+					$scope.selectedItems[allItems[i].upc].item = allItems[i];
+					$scope.selectedItems[allItems[i].upc].quantity = cart[allItems[i].upc];
+					$scope.totalPrice += $scope.selectedItems[allItems[i].upc].quantity * $scope.selectedItems[allItems[i].upc].item.price; 
+				}
+			}
+			updateTotal();
+			});
+		});
 	}
-	console.log($scope.selectedItems);
-	});
-	
+	refresh();
+
+	//$http.get('api/items').success(function(data){
+	//
+	//allItems = data.data;
+	//$scope.selectedItems = {};
+	//for(var i = 0; i < allItems.length; i++){
+	//	if (allItems[i].upc in cart) {
+	//		$scope.selectedItems[allItems[i].upc] = {};
+	//		$scope.selectedItems[allItems[i].upc].item = allItems[i];
+	//		$scope.selectedItems[allItems[i].upc].quantity = cart[allItems[i].upc];
+	//		$scope.totalPrice += $scope.selectedItems[allItems[i].upc].quantity * $scope.selectedItems[allItems[i].upc].item.price; 
+	//	}
+	//}
+	//updateTotal();
+	//});
+
+	$scope.purchase = function(){
+		console.log('hello');
+		var data = {
+			customer: JSON.stringify({
+				cid: $scope.userid,
+				password: $scope.pwd
+			}),
+			credit: JSON.stringify({
+				cardnum: $scope.ccn,
+				expirydate: $scope.expires
+			})
+		};
+		console.log(data);
+		$.post('api/online_purchase', data, function(resp){
+			console.log(resp);	
+		});
+	}
 }
 
 function ClerkRefundController($scope, $http){
@@ -411,8 +489,22 @@ function ClerkRegisterController($scope, $http){
 	return arr;
   }
 
+	$scope.random = function(){
+		if (Math.random() < 0.5){
+				$scope.authorization = 'Failed';
+				window.setTimeout(function(){
+						$scope.authorization = '';
+						refresh();
+				},1000);
+		}else{
+				$scope.authorization = 'Success';
+				window.setTimeout(function(){
+						$scope.authorization = '';
+						refresh();
+				},1000);
+		}
+	}
 }
-
 function SongController($scope, $routeParams, $http, $location){
   $scope.imgUrl = img_url[$routeParams.songUpc];
   console.log($scope.imgUrl);

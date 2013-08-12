@@ -1,25 +1,43 @@
 <div id="advanced-view">
-  <h2>Advanced Search</h2>
-  <form id="advanced-search">
-    Title:<input type="text" name="title" ng-model="title" />
-    <br />
-    Lead Singer: <input type="text" name="singer" ng-model="singer" />
-    <br />
-  </form>
-
-  Category:
-  <select id="select-category" ng-model="category">
-    <option value=""></option>
-    <option value="rock">Rock</option>
-    <option value="pop">Pop</option>
-    <option value="rap">Rap</option>
-    <option value="country">Country</option>
-    <option value="classical">Classical</option>
-    <option value="new">New Age</option>
-    <option value="instrumental">Instrumental</option>
-  </select>
-  <br/>
-
-  <button ng-click="search()">Search</button>
-
+	<div class="grid">
+		<div class="col-1-3">
+		<div id="advanced-form">
+	  <h2>Advanced Search</h2>
+	  <form id="advanced-search">
+	    Title:<input type="text" name="title" ng-model="title" />
+	    <br />
+	    Lead Singer: <input type="text" name="singer" ng-model="singer" />
+	    <br />
+	  </form>
+	
+	  Category:
+	  <select id="select-category" ng-model="category">
+	    <option value=""></option>
+	    <option value="rock">Rock</option>
+	    <option value="pop">Pop</option>
+	    <option value="rap">Rap</option>
+	    <option value="country">Country</option>
+	    <option value="classical">Classical</option>
+	    <option value="new">New Age</option>
+	    <option value="instrumental">Instrumental</option>
+	  </select>
+	  <br/>
+	
+	  <button ng-click="search()">Search</button>
+		</div>
+		</div>
+		<div class="col-2-3">
+			<div id="advanced-results">
+				<ul id="advanced-list">
+					<li ng-repeat="item in items"><a href="#/songs/{{item.upc}}">
+						{{item.title}} - {{item.name}}
+						<br />
+						{{item.company}} - {{item.type}}
+						</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	
+	</div>
 </div>

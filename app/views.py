@@ -111,27 +111,33 @@ def update_cart():
 		except ValueError:
 			return jsonify({'error':'invalid quantity'})
 
-		if quantity < session[upc]:
-			session[upc] = quantity
-			return jsonify({"success": 'Update successful'})
 
 		cur = conn.get_cursor()
 		cur.execute("SELECT upc,stock FROM Item WHERE upc=%s", upc)
 		stock = cur.fetchone()['stock']
 
 		if not stock:
+			conn.con.commit()
 			return jsonify({'error':'item not exist'})
+
+		if quantity <= session['cart'][upc]:
+			session['cart'][upc] = quantity
+			conn.con.commit()
+			if session['cart'][upc] == 0:
+					del session['cart'][upc]
+			return jsonify({"success": 'Update successful'})
 
 		conn.con.commit()
 		if upc in session['cart']:
-			cart_quantity  = quantity - session['cart'][upc]
-			if cart_quantity > stock:
-				available = max(0, stock-cart_quantity)
+			if quantity > stock:
+				available = stock
 				return jsonify({'error':'Not Enough Stock', 'available':available})
 			else:
-				session['cart'][upc] = cart_quantity
+				session['cart'][upc] = quantity
 		else:
 			session['cart'][upc] = quantity
+
+
 		return jsonify({"success": 'Update successful'})
 
 	else:
@@ -241,20 +247,24 @@ def purchase_online():
 
 	if not is_legal_quantity(cur, items):
 		session['cart'] = {}
-		return 'illegal quantity'
+		return 'Illegal quantity'
 
 	trivial = True;
-	for key,val in items_dict:
-		if val>0:
+	for key in items_dict.keys():
+		if items_dict[key]>0:
 			trivial = False
 			break;
 	if trivial:
 		return 'Trivial quantity'
 		
 	credit = json.loads(request.form['credit'])
+
+	if 'cardnum' not in credit or 'expirydate' not in credit:
+		return 'Invalid input'
+
 	insert_args = (today, str(credit['cardnum']), str(credit['expirydate']), expected, cid )
 	try:
-		cur.execute("insert into purchase (purchasedate, cardnum, expirydate, expecteddate, cid) values (%s,%s,%s,%s, %s)", insert_args)
+		cur.execute("INSERT into Purchase (purchasedate, cardnum, expirydate, expecteddate, cid) VALUES (%s,%s,%s,%s, %s)", insert_args)
 	except mdb.Error, e:
 		return jsonify({'error':'Invalid Input'})
 
@@ -609,6 +619,9 @@ def login(cur, customer):
 		return False
 
 def authenticate(cur, customer):
+	if 'cid' not in customer or 'password' not in customer:
+		return 'Invalid input'
+
 	cur.execute("SELECT password FROM Customer WHERE cid = %s", str(customer['cid']))
 	result = cur.fetchone()
 	if not result:

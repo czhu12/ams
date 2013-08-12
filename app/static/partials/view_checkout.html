@@ -10,12 +10,14 @@
               <span>-->
               UPC: {{itemOrder.item.upc}} <br />
               Title: {{itemOrder.item.title}} - {{itemOrder.item.category}}
-              <span style="float:right;">Quantity: <input size="3" type="text" name="quantity" value="{{itemOrder.quantity}}"/></span></span>
+              <span style="float:right;">Quantity: <input size="3" type="text" name="{{itemOrder.item.upc}}" value="{{itemOrder.quantity}}" class="checkout-items"/></input>
+								<button ng-click="update()">Update</button>	
+							</span>
             </li>
           </ul>
         </div>
         <div id="checkout-main-total">
-          <span style="float:left;">Expected Delivery Date: {{expected_date}}</span><span style="float:right;">Total Price: ${{total-price}}</span>
+          <span style="float:left;">Expected Delivery Date: {{expected_date}}</span><span style="float:right;">Total Price: $<span id="total-price"></span></span>
         </div>
       </div>
     </div>
@@ -28,27 +30,27 @@
               <legend>User Information</legend>
               User ID: 
               <br/>
-              <input type="text" name="userid"/>
+              <input type="text" name="userid" ng-model="userid"/>
               <br/>
               Password: 
               <br/>
-              <input type="password" name="password"/>
+              <input type="password" name="password" ng-model="pwd"/>
             </fieldset>
             <fieldset>
               <legend>Credit Card Information</legend>
               Number: 
               <br/>
-              <input type="text" name="ccn"/>
+              <input type="text" name="ccn" ng-model="ccn" size="16" maxlength="16"/>
               <br/>
               Expires:
               <br/>
-              <input type="text" name="expires" size="5"/>
+              <input type="date" name="expires" ng-model="expires"/>
             </fieldset>
           </form>
         </div>
 
         <div id="checkout-side-purchase">
-          <button style="float:right;" id="purchase-button" class="btn btn-3 btn-3b icon-truck">Purchase</button>
+          <button style="float:right;" id="purchase-button" ng-click="purchase()" class="btn btn-3 btn-3b icon-truck">Purchase</button>
         </div>
 
       </div>
