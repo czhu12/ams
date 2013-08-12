@@ -6,7 +6,7 @@
               <legend>Top Selling Items</legend>
               <!--UPC: <span id="manager-top-selling">{{selecte.upc}}</span>-->
 				{{ message }}<br>
-				<table >
+				<table width=auto>
 					<thead ng-hide="data.length==0">
 						<th>upc</th>
 						<th>title</th>
@@ -16,7 +16,7 @@
 					</thead>
 					<tr ng-repeat="item in data">
 						<td> {{ item.upc }} </td>
-						<td> {{ item.title }} </td>
+						<td width =auto> {{ item.title }} </td>
 						<td> {{ item.company }} </td>
 						<td> {{ item.stock }} </td>
 						<td> {{ item.units }} </td>
