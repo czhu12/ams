@@ -241,7 +241,7 @@ def purchase_online():
 
 	if not is_legal_quantity(cur, items):
 		session['cart'] = {}
-		return 'illegal quantity'
+		return jsonify({'error':'illegal quantity'})
 
 	trivial = True;
 	for key,val in items_dict:
@@ -249,7 +249,7 @@ def purchase_online():
 			trivial = False
 			break;
 	if trivial:
-		return 'Trivial quantity'
+		return jsonify({'error':'Trivial quantity'})
 		
 	credit = json.loads(request.form['credit'])
 	insert_args = (today, str(credit['cardnum']), str(credit['expirydate']), expected, cid )
