@@ -303,7 +303,7 @@ def purchase_credit():
 		cur.execute("insert into Purchase (purchasedate, cardnum, expirydate) values (%s,%s,%s)", insert_args)
 	except mdb.Error, e:
 		return 'invalid input'
-	
+
 	cur.execute("select last_insert_id()")
 	pid = cur.fetchone()['last_insert_id()']
 	purchase_item(cur, items)
@@ -633,7 +633,7 @@ def receipt_base(cur, pid, today, items):
 	cur.execute("select * from Purchase, PurchaseItem, Item where Purchase.receiptid=%s and Purchase.receiptid=PurchaseItem.receiptid and PurchaseItem.upc = Item.upc", pid)
 	conn.con.commit()
 	context = {}
-	context['purhcaseitems'] = stringify(cur.fetchall())
+	context['purchaseitems'] = stringify(cur.fetchall())
 	context['price'] = str(price(items))
 	context['date'] = str(today)
 	context['pid'] = str(pid)

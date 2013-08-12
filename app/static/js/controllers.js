@@ -359,11 +359,34 @@ function ClerkRegisterController($scope, $http){
 	}
 	var arg = {'arr':JSON.stringify(selectedSongsArr())};
 
+        function receipt_message(resp) {
+            var msg = 'Receipt #' + resp.pid + '\nDate: ' + resp.date + '\n\n\n';
+            $.each(resp.purchaseitems, function(index,item) {
+                msg += item.quantity+ ' x '+ item.title + '\t$' + item.price + '\n';
+                }
+            );
+
+            msg += '----------------------------------------\n';
+            msg += 'Total: \t\t$' + totalPrice.toFixed(2);
+            return msg;
+        }
+
 	if($("input[name='ccb']").is(':checked')){
 		arg['credit'] = JSON.stringify({'cardnum':$("input[name='ccn']").val(), 'expirydate':$("input[name='cce']").val()});
-		$.post('/api/store_purchase/credit', arg, function(resp){console.log(resp);} );
+		$.post('/api/store_purchase/credit', arg, function(resp){
+                    if( 'error' in resp) {
+                        alert(resp['error']);
+                    } else {
+                        alert(receipt_message( resp )+ '\nCredit Card Number Ending in: ' + resp['cardnum']);
+                    }
+                        
+                    console.log('credit purchase:\n' + JSON.stringify(resp) +'\n');
+                } );
 	} else {
-		$.post('/api/store_purchase/cash', arg, function(resp){console.log(resp);} );
+		$.post('/api/store_purchase/cash', arg, function(resp){
+                    alert(receipt_message(resp));
+                    console.log(resp);
+                } );
 	}
     return false;
   }
