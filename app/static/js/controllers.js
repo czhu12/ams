@@ -72,16 +72,13 @@ function ManagerAddItemsController($scope, $http){
 function ManagerSalesReportController($scope, $http){
   $scope.message = '';
   $scope.data_cat = [];
+  $scope.num_items = 0;
 
   function refresh() {
     $http.get("api/items").success(function(data){
       $scope.items = data.data;
     });
   } 
-    $scope.title = "hello world";
-    $scope.friends = [{name:'John', age:25}, {name:'M', age:28}];
-    $scope.friends.concat([{name:'Chris', age:20}]);
-    
     console.log('Sales report controller ');
 
     $("#sales_report").click(function(){
@@ -103,14 +100,16 @@ function ManagerSalesReportController($scope, $http){
     });
 
     function addToScope(resp){
-        $scope.title="hi";
+        $scope.num_items = 0;
+        $scope.message = "";
+
         $scope.data_str = JSON.stringify(resp);
         $scope.data = JSON.parse($scope.data_str);
         $scope.data_cat = {}
+
         for ( var key in $scope.data ) {
-            console.log( key );
             for( var item in $scope.data[key] ) {
-                console.log($scope.data[key][item].upc );
+                //console.log($scope.data[key][item].upc );
                 if(key in $scope.data_cat) {
                     $scope.data_cat[key].item_list.push($scope.data[key][item]);
                 }
@@ -119,9 +118,21 @@ function ManagerSalesReportController($scope, $http){
                     $scope.data_cat[key].item_list.push($scope.data[key][item]);
                 }
                 $scope.data_cat[key].total_units += parseInt($scope.data[key][item].units);
+                console.log($scope.data[key][item].total);
                 $scope.data_cat[key].total_sales += parseFloat($scope.data[key][item].total);
+                console.log($scope.data_cat[key].total_sales.toFixed(2));
+                $scope.data_cat[key].total_sales.toFixed(2);
+                $scope.num_items += 1;
             }
-            console.log($scope.data_cat[key].item_list);
+            if(key in $scope.data_cat) {
+                $scope.data_cat[key].total_sales = $scope.data_cat[key].total_sales.toFixed(2);
+            }
+            //console.log($scope.data_cat[key].item_list);
+        }
+        if($scope.num_items > 0) {
+            $scope.message = $scope.num_items + ' items sold on ' + $scope.date;
+        } else {
+            $scope.message = 'No items sold on ' + $scope.date;
         }
     }
 }
@@ -143,9 +154,15 @@ function ManagerTopItemsController($scope, $http){
 			'api/manager/top_items',
 			{date: date, n:n},
 			function(data){
+                            console.log(data);
 				if ('success' in data){
+                                    if(data['success'].length > 0) {
 					$scope.message = 'Top ' + n + ' items on ' + date + ' are';
 					$scope.data = data['success'];
+                                    } else {
+                                        $scope.message = 'No items sold on ' + date +'.';
+                                        $scope.data = [];
+                                    }
 				} else {
 					$scope.data = [];
 					$scope.message = data['error'];
