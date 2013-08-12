@@ -1,6 +1,7 @@
 <div class="grid">
+        <div class="row" style="margin-bottom:15px;"><h2>{{item.title}}</h2></div>
   <div class="col-1-3">
-    <div class="image"><img src="{{imgUrl}}" class="thumb" /></div>
+    <div class="image row"><img src="{{imgUrl}}" class="thumb" /></div>
   </div>
 
   <div class="col-1-3">
@@ -19,12 +20,12 @@
       <span class="error">{{errorMessage}}</span>
       <span class="warning">{{warningMessage}}</span>
 			<span class="success">{{successMessage}}</span>
-			<button id="buy-song" class="btn btn-3 btn-3b" ng-click="addSongToCart()" style="float:right;">Add to Cart</button>
+			<button id="buy-song" class="btn btn-3 btn-3b" ng-click="addSongToCart()" style="float:right;margin-bottom:10px;">Add to Cart</button>
     </div>
   </div>
 
   <div class="col-1-3">
-   <h2>Track List:</h2>
+   <h3>Track List:</h3>
    <div id="item-songs">
       <ul class="song-song-list" >
         <li ng-repeat="songs in songs" >{{$index + 1}}. {{songs.title}}</li>
@@ -34,20 +35,4 @@
   </div>
 
 
-  <!--
-  <div class="image"><img src="{{song.thumbUrl}}" class="thumb" /></div>
-  </div>
-  <div id="col2">
-    <span id="song-title">{{song.title}}</span>
-    <p class="meta-data"><span id="song-stock">Stock: {{song.stock}}</span>| Format: {{song.type}}</p>
-    <hr />
-    <p class="price">Price: <span id="song-price">${{song.price}}</p></span>
-    <p class="artist" ng-click="search(song.artist)">{{song.artist}}</p>
-    <p class="album" ng-click="search(song.album)">{{song.album}}</p>
-    <input type="text" ng-model="quantity" name="quantity"/>
-    ${{ calcPrice(quantity, song.price) }}
-    <button id="buy-song" ng-click="addSongToCart()">Add to Cart</button>
-  </div>
-  <div class="clear"></div>
-  -->
 </div>

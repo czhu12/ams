@@ -228,6 +228,7 @@ function CheckoutController($scope, $http, $location){
 			window.location="/#/customer";
     }
   });
+
   var cart;
 	$scope.update = function(){
 		$.each($scope.selectedItems, function(upc, item){
@@ -299,7 +300,26 @@ function CheckoutController($scope, $http, $location){
 			})
 		};
 		$.post('api/online_purchase', data, function(resp){
-			console.log(resp);
+    if("error" in resp){
+      console.log(resp);
+    }
+                    function receipt_message(resp) {
+                        var msg = 'Receipt #' + resp.pid + '\nDate: ' + resp.date + '\n\n\n';
+                        $.each(resp.purchaseitems, function(index,item) {
+                            msg += item.quantity+ ' x '+ item.title + '\t$' + item.price + '\n';
+                            }
+                        );
+
+                        msg += '----------------------------------------\n';
+                        msg += 'Total: \t\t$' + $scope.totalPrice.toFixed(2) + '\n';
+
+                        msg += 'Expected Delivery Date: ' + $scope.expected_date + '\n';
+
+                        return msg;
+                    }
+	
+                    alert( receipt_message(resp) );
+                    console.log(resp);	
 		});
 	}
 }
@@ -545,7 +565,7 @@ function SongController($scope, $routeParams, $http, $location){
   
   $scope.addSongToCart = function(){
 		if (($scope.quantity == "") || (isNaN(parseInt($scope.quantity)))){
-			alert("Must specify a valid Quantity");
+      $scope.errorMessage = "Invalid quantity";
 			return false;
 		}
 		$.post("/api/add_to_cart", {
