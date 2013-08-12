@@ -1,0 +1,11 @@
+-------------------
+Source File Listing
+-------------------
+User Manual: ./README.txt
+Database Initialization: database table creation code included in ./app/db/schema.sql
+Code for :
+    - Operations: ./app/static/js/controllers.js
+    - Transactions: ./app/views.py
+    - User Interface: ./app/static/js/controllers.js
+                      ./app/static/partials/*
+

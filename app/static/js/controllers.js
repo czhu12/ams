@@ -338,18 +338,22 @@ function CheckoutController($scope, $http, $location){
 		$.post('api/online_purchase', data, function(resp){
                             
                     function receipt_message(resp) {
-                        var msg = 'Receipt #' + resp.pid + '\nDate: ' + resp.date + '\n\n\n';
-                        $.each(resp.purchaseitems, function(index,item) {
-                            msg += item.quantity+ ' x '+ item.title + '\t$' + item.price + '\n';
-                            }
-                        );
+                        if( jQuery.type(resp) === "string" )  {
+                            return resp;
+                        } else {
+                            var msg = 'Receipt #' + resp.pid + '\nDate: ' + resp.date + '\n\n\n';
+                            $.each(resp.purchaseitems, function(index,item) {
+                                msg += item.quantity+ ' x '+ item.title + '\t$' + item.price + '\n';
+                                }
+                            );
 
-                        msg += '----------------------------------------\n';
-                        msg += 'Total: \t\t$' + $scope.totalPrice.toFixed(2) + '\n';
+                            msg += '----------------------------------------\n';
+                            msg += 'Total: \t\t$' + $scope.totalPrice.toFixed(2) + '\n';
 
-                        msg += 'Expected Delivery Date: ' + $scope.expected_date + '\n';
+                            msg += 'Expected Delivery Date: ' + $scope.expected_date + '\n';
 
-                        return msg;
+                            return msg;
+                        }                     
                     }
 	
                     alert( receipt_message(resp) );
