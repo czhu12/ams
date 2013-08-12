@@ -16,7 +16,10 @@
       <br/>
       Total: ${{ calcPrice(quantity, item.price) }}
       <br/>
-      <button id="buy-song" class="btn btn-3 btn-3b" ng-click="addSongToCart()" style="float:right;">Add to Cart</button>
+      <span class="error">{{errorMessage}}</span>
+      <span class="warning">{{warningMessage}}</span>
+			<span class="success">{{successMessage}}</span>
+			<button id="buy-song" class="btn btn-3 btn-3b" ng-click="addSongToCart()" style="float:right;">Add to Cart</button>
     </div>
   </div>
 

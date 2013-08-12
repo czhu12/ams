@@ -19,15 +19,19 @@ function AdvancedController($scope, $http, $location){
 			window.location="/#/customer";
     }
   });
-
+	function refresh(){
+		$http.get('api/items').success(function(data){});
+	}
   $scope.search = function(){
     $.get("/api/search", {
       title: $scope.title,
       leadsinger: $scope.singer,
       category: $scope.category
-    }, function(resp){
-      console.log(resp);
-    });
+ 	   	}, function(data){
+		  	console.log(data);
+				$scope.items = data.result;
+				refresh();
+ 	   });
   }
 }
 function CustomerController($scope){
@@ -546,11 +550,13 @@ function ClerkRegisterController($scope, $http){
 	}
 }
 function SongController($scope, $routeParams, $http, $location){
+	$scope.errorMessage = "";
+	$scope.successMessage = "";
+	$scope.warningMessage = "";
   $scope.imgUrl = img_url[$routeParams.songUpc];
   console.log($scope.imgUrl);
   $scope.songs = [];
   $scope.validate = function(){
-    console.log('validating...');
     if(isNaN(parseInt($scope.quantity))){
       $("input[name=quantity]").attr("class", "error-input");
       return;
@@ -574,6 +580,13 @@ function SongController($scope, $routeParams, $http, $location){
   	}
     $scope.songs = data.songs;
 	});
+	function refresh(){ 
+	$scope.errorMessage = "";
+	$scope.warningMessage = "";
+	$scope.successMessage = "";
+	$http.get("api/items", function(data){
+		});
+	}
   
   $scope.addSongToCart = function(){
 		if (($scope.quantity == "") || (isNaN(parseInt($scope.quantity)))){
@@ -586,30 +599,18 @@ function SongController($scope, $routeParams, $http, $location){
 			quantity: parseInt($scope.quantity)
 		}, function(resp){
 			console.log(resp);	
+			refresh();
 			if("error" in resp) {
-				alert(resp.error);
+				$scope.errorMessage = resp.error;
 			}else if("available" in resp){
-				alert(resp.available);	
-				
+				$scope.warningMessage = "Only " + resp.available + " left";
+				$scope.quantity = resp.available;
 			}else {
-				//successfully added
-				alert(resp.success);	
+				$scope.successMessage = "Successfully Added";
 			}
 		});
     
-    //var currentCart = $.parseJSON($.cookie("cart"));
-		//var writeQuan = parseInt($scope.quantity);
-		//if ($scope.item.upc in currentCart){
-		//	var currentQuan = parseInt(currentCart[$scope.song.upc]);
-		//	writeQuan = writeQuan + currentQuan;
-		//}
-		//currentCart[$scope.item.upc] = writeQuan;
-		//$.cookie("cart", JSON.stringify(currentCart), {expires:3, path:'/'});
-    //console.log($.cookie('cart'));
-    //window.location = "#/";
   };
-
-  
   $scope.search = function(query){
     window.location="#/?query=" + query;
   };
