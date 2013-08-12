@@ -1,10 +1,11 @@
+<div class="black">
 <div class="grid">
   <div class="col-2-3">
-    <div id="clerk-main">
-      <h2>Selected</h2>
+    <div id="clerk-main" class="side-list">
+      <div class="row"><span class="title"><h2>Process Delivery</h2></span></div>
       <div id="clerk-main-list">
       <ul id="clerk-selected-list">
-        <li ng-repeat="item in items" >
+        <li ng-repeat="item in items" class='main-list-li'>
         {{item.title}}
         <span style="float:right;">
         Quantity: {{item.quantity}}
@@ -18,13 +19,16 @@
    </span>
   </div>
   <div class="col-1-3">
-  <input type="text" ng-model="ridquery" name="ridquery" placeholder="Receipt ID" />
-    <div id="clerk-upc-view">
+	<div class="side-list">
+  Search: <input type="text" ng-model="ridquery" name="ridquery" class="input-query rounded" />
+    <div id="clerk-upc-view" >
       <ul>
-        <li ng-repeat="rid in rids | filter:ridquery" ng-click="addRid(rid)">{{rid.receiptid}}</li>
+        <li ng-repeat="rid in rids | filter:ridquery" ng-click="addRid(rid)" >{{rid.receiptid}}</li>
       </ul>
     </div>
     <input type="date"  name="deliverydate" placeholder="Expected Delivery Date" />
     <button ng-click="update()">Update Delivery</button>
+	</div>
   </div>
+</div>
 </div>

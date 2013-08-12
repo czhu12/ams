@@ -1,3 +1,7 @@
+.extra {
+  background-color:white;
+  margin-top:10px;
+}
 *, *:before, *:after {
   -moz-box-sizing:border-box;
   -webkit-box-sizing:border-box;
@@ -13,14 +17,22 @@ body {
   width:100%;
   font: 1em Arial;
 }
-
+.btn-stretch {
+	width:100%;
+}
 .error {
   color:red;
 }
 .error-input {
   background:#FF0000;
 }
-
+.rounded {
+	border-radius:5px;
+	-webkit-border-radius:5px;
+	-moz-border-radius:5px;
+	-o-border-radius:5px;
+	-ms-border-radius:5px;
+}
 .success {
   color:green;
 }
@@ -97,7 +109,7 @@ img {
 }
 
 #main-search-list {
-  width:90%;
+  width:95%;
 }
 
 #wrap {
@@ -108,13 +120,13 @@ img {
 
 #index-view {
   text-align:center;
-  min-height:500px;
+  min-height:700px;
   
 }
 
 
 #search-bar{
-  margin:5px 0;
+  margin-top:15px;
   outline-width:0px;
   border: 3px solid #ccc;
   -moz-border-radius:10px;
@@ -123,7 +135,7 @@ img {
   -moz-box-shadow:1px 1px 1px #666;
   -webkit-box-shadow:1px 1px 1px #666;
   box-shadow:1px 1px 1px #666;
-  background:#cccccc;
+  background:#light-gray;
   width:500px;
   height: 50px;
   font-size: 25px;
@@ -174,9 +186,11 @@ li#song {
   transition:0.3s;
 
 }
-li#song:hover{
-
-  background-color:#FFE773;
+li#song:hover:nth-child(even){
+  background-color:#FFCC33;
+}
+li#song:hover:nth-child(odd){
+  background-color:#FFFF7A;
 }
 
 #col1-admin{
@@ -237,6 +251,10 @@ li#song:hover{
   font-weight:bold;
 }
 
+#fieldset {
+	padding:5px;
+}
+
 .grid:after {
   clear:both;
   content:"";
@@ -274,11 +292,31 @@ li#song:hover{
   width:66.66%
 }
 
-#checkout-view {
-  background-color:black;
+#clerk-upc-view {
+	overflow:auto;
+	border: 1px solid #000;
+	height:200px;
+	-webkit-border-radius:10px;
+	-moz-border-radius:10px;
+	height:200px;
+	padding-top: 10px;
+	padding-left:10px;
+	border-radius:10px;
 }
 
-#checkout-main {
+#checkout-view, .black {
+  background-color:black;
+}
+.white {
+	background-color:white;
+  -moz-border-radius:5px;
+  -ms-border-radius:5px;
+  -webkit-border-radius:5px;
+  -o-border-radius:5px;
+  border-radius:5px;
+}
+
+#checkout-main, .side-list {
   background-color:white;
   -moz-border-radius:5px;
   -ms-border-radius:5px;
@@ -311,6 +349,17 @@ li#song:hover{
 #checkout-main-list {
   height:90%;
 }
+.main-list-li{
+	padding:10px;
+}
+#clerk-selected-list {
+	border:1px solid #000;
+	overflow:auto;
+	height:250px;
+	-moz-border-radius:10px;
+	-webkit-border-radius:10px;
+	border-radius:10px;
+}
 #checkout-main-total {
   height:10%;
   font-weight:bold;
@@ -318,7 +367,6 @@ li#song:hover{
 
 .main-list {
   height:250px;
-  border:1px solid #000;
   overflow:auto;
 }
 

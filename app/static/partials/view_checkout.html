@@ -3,7 +3,7 @@
     <div class="col-2-3">
       <div id="checkout-main">
         <div id="checkout-main-list">
-        <div style="text-align:center;"><h2>Checkout</h2></div>
+        <div style="text-align:center;"><h2>Shopping Cart</h2></div>
           <ul>
             <li id="checkout-song-list" ng-repeat="itemOrder in selectedItems">
               <!--<span><img class="thumb" src="{{getImgUrl(itemOrder.item.upc)}}"></img></span>
@@ -50,7 +50,7 @@
         </div>
 
         <div id="checkout-side-purchase">
-          <button style="float:right;" id="purchase-button" ng-click="purchase()" class="btn btn-3 btn-3b icon-truck">Purchase</button>
+          <span ng-click="purchase()"><button style="float:right;" id="purchase-button" class="btn btn-3 btn-3b icon-truck">Purchase</button></span>
         </div>
 
       </div>

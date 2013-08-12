@@ -1,16 +1,20 @@
-<div id="advanced-view">
+<div id="advanced-view" class="black">
 	<div class="grid">
 		<div class="col-1-3">
-		<div id="advanced-form">
-	  <h2>Advanced Search</h2>
+		<div id="advanced-form" class="side-list">
 	  <form id="advanced-search">
-	    Title:<input type="text" name="title" ng-model="title" />
+	    Title:
+			<br/>
+			<input type="text" name="title" ng-model="title" class="input-query"/>
 	    <br />
-	    Lead Singer: <input type="text" name="singer" ng-model="singer" />
+	    Lead Singer: 
+			<br/>
+			<input type="text" name="singer" ng-model="singer" class="input-query" />
 	    <br />
 	  </form>
 	
 	  Category:
+		<br/>
 	  <select id="select-category" ng-model="category">
 	    <option value=""></option>
 	    <option value="rock">Rock</option>
@@ -27,7 +31,8 @@
 		</div>
 		</div>
 		<div class="col-2-3">
-			<div id="advanced-results">
+			<div id="advanced-results" class="side-list">
+				<div class="row"><h2>Advanced Search</h2></div>
 				<ul id="advanced-list">
 					<li ng-repeat="item in items"><a href="#/songs/{{item.upc}}">
 						{{item.title}} - {{item.name}}

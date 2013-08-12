@@ -73,10 +73,14 @@ def add_to_cart():
 
 		cur = conn.get_cursor()
 		cur.execute("SELECT upc,stock FROM Item WHERE upc=%s", upc)
-		stock = cur.fetchone()['stock']
+		stock = cur.fetchone()
 
 		if not stock:
 			return jsonify({'error':'item not exist'})
+
+		stock = stock['stock']
+		if not stock:
+			return jsonify({'error':'item out of stock'})
 
 		conn.con.commit()
 
@@ -113,11 +117,16 @@ def update_cart():
 
 		cur = conn.get_cursor()
 		cur.execute("SELECT upc,stock FROM Item WHERE upc=%s", upc)
-		stock = cur.fetchone()['stock']
+		stock = cur.fetchone()
 
 		if not stock:
 			conn.con.commit()
 			return jsonify({'error':'item not exist'})
+
+		stock = stock['stock']
+		if not stock:
+			conn.con.commit()
+			return jsonify({'error':'item out of stock'})
 
 		if quantity <= session['cart'][upc]:
 			session['cart'][upc] = quantity

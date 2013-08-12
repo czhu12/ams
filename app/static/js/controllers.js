@@ -15,7 +15,6 @@ function IndexController($scope, $http, $routeParams, $location){
 function AdvancedController($scope, $http, $location){
   $.get('/api/user', function(resp){
     if('error' in resp){
-			console.log(resp);
 			window.location="/#/customer";
     }
   });
@@ -28,7 +27,6 @@ function AdvancedController($scope, $http, $location){
       leadsinger: $scope.singer,
       category: $scope.category
  	   	}, function(data){
-		  	console.log(data);
 				$scope.items = data.result;
 				refresh();
  	   });
@@ -36,7 +34,6 @@ function AdvancedController($scope, $http, $location){
 }
 function CustomerController($scope){
   $scope.login = function(){
-    console.log('clicked me');
     $("#login-form").dialog();
   }
   $scope.register = function() {
@@ -46,7 +43,6 @@ function CustomerController($scope){
 
 function ManagerAddItemsController($scope, $http){
 
-  console.log('ellol');
   $scope.selectedFlag = true;
   $scope.selectedItem = {upc:"", title:"", price:'', stock:''};
   $scope.resp = "";
@@ -65,7 +61,6 @@ function ManagerAddItemsController($scope, $http){
     price:$scope.newPrice 
   },  function(resp){
     refresh();
-    console.log(resp);
     $scope.resp = resp;
   }
   );
@@ -90,10 +85,8 @@ function ManagerSalesReportController($scope, $http){
       $scope.items = data.data;
     });
   } 
-    console.log('Sales report controller ');
 
     $("#sales_report").click(function(){
-        console.log( $("#date") );
         $.post(
                 '/api/manager/sales_report',
                 {date:$scope.date},
@@ -104,7 +97,6 @@ function ManagerSalesReportController($scope, $http){
 					} else {
 						$scope.message = resp['error'];
 					}
-                    console.log('changing scope...');
                     refresh();
                 }
         );
@@ -120,7 +112,6 @@ function ManagerSalesReportController($scope, $http){
 
         for ( var key in $scope.data ) {
             for( var item in $scope.data[key] ) {
-                //console.log($scope.data[key][item].upc );
                 if(key in $scope.data_cat) {
                     $scope.data_cat[key].item_list.push($scope.data[key][item]);
                 }
@@ -129,16 +120,13 @@ function ManagerSalesReportController($scope, $http){
                     $scope.data_cat[key].item_list.push($scope.data[key][item]);
                 }
                 $scope.data_cat[key].total_units += parseInt($scope.data[key][item].units);
-                console.log($scope.data[key][item].total);
                 $scope.data_cat[key].total_sales += parseFloat($scope.data[key][item].total);
-                console.log($scope.data_cat[key].total_sales.toFixed(2));
                 $scope.data_cat[key].total_sales.toFixed(2);
                 $scope.num_items += 1;
             }
             if(key in $scope.data_cat) {
                 $scope.data_cat[key].total_sales = $scope.data_cat[key].total_sales.toFixed(2);
             }
-            //console.log($scope.data_cat[key].item_list);
         }
         if($scope.num_items > 0) {
             $scope.message = $scope.num_items + ' items sold on ' + $scope.date;
@@ -165,7 +153,6 @@ function ManagerTopItemsController($scope, $http){
 			'api/manager/top_items',
 			{date: date, n:n},
 			function(data){
-                            console.log(data);
 				if ('success' in data){
                                     if(data['success'].length > 0) {
 					$scope.message = 'Top ' + n + ' items on ' + date + ' are';
@@ -185,13 +172,10 @@ function ManagerTopItemsController($scope, $http){
 }
 
 
-function ManagerProcessDeliveryController($scope){}
 /*
 function ManagerTopItemsController($scope){
-    console.log('TopItemsController');
     $scope.data = 'data';
     $("#top_selling").click(function(){
-        console.log('top_selling clicked');
         $.get(
                 '/api/manager/top_item',
                 {date:'2013-08-05'},
@@ -210,7 +194,6 @@ function ManagerProcessDeliveryController($scope, $http){
   $scope.items = [];
   $scope.selectedItem = {};
   $http.get("/api/outstanding").success(function(data){
-    console.log(data);
     $scope.rids = data.data;
   });
   
@@ -219,12 +202,10 @@ $scope.update = function(){
 	"/api/deliver_update",
 	{date:$("input[name=deliverydate]").val(), receiptid:$scope.selectedItem.receiptid},
 	function(resp){
-		console.log(resp);
 	});
 }
   $scope.addRid = function(rid){
     $http.get("/api/purchase/" + rid.receiptid).success(function(data){
-      console.log(data.data);
       $scope.items = data.data;
       $scope.selectedItem = rid;
     });
@@ -252,7 +233,6 @@ function CheckoutController($scope, $http, $location){
 		$.each($scope.selectedItems, function(upc, item){
 			var quantity = parseFloat($("input[name=" + item.item.upc + "]").val());
 			$.post('api/update_cart',{upc:upc, quantity:quantity},function(resp){
-					console.log(resp);
 					refresh();
 			});
 
@@ -307,23 +287,7 @@ function CheckoutController($scope, $http, $location){
 	}
 	refresh();
 
-	//$http.get('api/items').success(function(data){
-	//
-	//allItems = data.data;
-	//$scope.selectedItems = {};
-	//for(var i = 0; i < allItems.length; i++){
-	//	if (allItems[i].upc in cart) {
-	//		$scope.selectedItems[allItems[i].upc] = {};
-	//		$scope.selectedItems[allItems[i].upc].item = allItems[i];
-	//		$scope.selectedItems[allItems[i].upc].quantity = cart[allItems[i].upc];
-	//		$scope.totalPrice += $scope.selectedItems[allItems[i].upc].quantity * $scope.selectedItems[allItems[i].upc].item.price; 
-	//	}
-	//}
-	//updateTotal();
-	//});
-
 	$scope.purchase = function(){
-		console.log('hello');
 		var data = {
 			customer: JSON.stringify({
 				cid: $scope.userid,
@@ -334,9 +298,8 @@ function CheckoutController($scope, $http, $location){
 				expirydate: $scope.expires
 			})
 		};
-		console.log(data);
 		$.post('api/online_purchase', data, function(resp){
-			console.log(resp);	
+			console.log(resp);
 		});
 	}
 }
@@ -347,7 +310,6 @@ function ClerkRefundController($scope, $http){
   $scope.id = -1;
   $scope.message = ''
   $http.get("/api/purchases").success(function(data){
-    console.log(data);
     $scope.rids = data.data;
   });
   
@@ -357,7 +319,6 @@ function ClerkRefundController($scope, $http){
 
   $scope.addRid = function(rid){
     $http.get("/api/purchase/" + rid.receiptid).success(function(data){
-      console.log(data.data);
       $scope.items = data.data;
       $scope.id = rid.receiptid;
     });
@@ -376,7 +337,6 @@ function ClerkRefundController($scope, $http){
 		$scope.message = "No items returned"
 		return;
 	}
-    console.log({arr:JSON.stringify(ItemsArr()), receiptid:$scope.id});
 	$.post(
 	  'api/return',
       {arr:JSON.stringify(ItemsArr()), receiptid:$scope.id},
@@ -416,7 +376,6 @@ function ClerkRegisterController($scope, $http){
   $scope.price = 0;
   $scope.selectedSongs = {};
   $scope.quantityChange = function(upc){
-    console.log('hello' + upc);
   };
 
   var totalPrice = 0;
@@ -462,12 +421,10 @@ function ClerkRegisterController($scope, $http){
                         alert(receipt_message( resp )+ '\nCredit Card Number Ending in: ' + resp['cardnum']);
                     }
                         
-                    console.log('credit purchase:\n' + JSON.stringify(resp) +'\n');
                 } );
 	} else {
 		$.post('/api/store_purchase/cash', arg, function(resp){
                     alert(receipt_message(resp));
-                    console.log(resp);
                 } );
 	}
     return false;
@@ -484,7 +441,6 @@ function ClerkRegisterController($scope, $http){
 		function(resp){
 			$scope.price = resp;
 			refresh();
-			console.log(resp);
 		}
 	);
   });
@@ -554,7 +510,6 @@ function SongController($scope, $routeParams, $http, $location){
 	$scope.successMessage = "";
 	$scope.warningMessage = "";
   $scope.imgUrl = img_url[$routeParams.songUpc];
-  console.log($scope.imgUrl);
   $scope.songs = [];
   $scope.validate = function(){
     if(isNaN(parseInt($scope.quantity))){
@@ -593,12 +548,10 @@ function SongController($scope, $routeParams, $http, $location){
 			alert("Must specify a valid Quantity");
 			return false;
 		}
-		console.log('making post');
 		$.post("/api/add_to_cart", {
 			upc:$scope.item.upc,
 			quantity: parseInt($scope.quantity)
 		}, function(resp){
-			console.log(resp);	
 			refresh();
 			if("error" in resp) {
 				$scope.errorMessage = resp.error;
